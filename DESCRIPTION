@@ -1,0 +1,18 @@
+Package: scrattch
+Type: Package
+Title: Single Cell RNA Analysis for Transcriptomic Type Characterization
+Version: 0.0.1
+Date: 2015-11-09
+Author: Lucas T. Gray
+Maintainer: Lucas Gray <lucasg@alleninstitute.org>
+Description: Cell type analysis, built from scrattch.
+License: GPL-3
+LazyData: true
+Imports:
+  dplyr (>= 0.4.3),
+  ggplot2 (>= 1.0.1),
+  grid (>= 3.2.2),
+  DBI (>= 0.3.1),
+  RSQLite (>= 1.0.0),
+  rtracklayer (>= 1.28.10)
+  
