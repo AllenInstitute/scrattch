@@ -6,7 +6,7 @@ Date: 2015-11-09
 Author: Lucas T. Gray
 Maintainer: Lucas Gray <lucasg@alleninstitute.org>
 Description: Cell type analysis, built from scrattch.
-License: GPL-3
+License: For internal use at the Allen Institute for Brain Science.
 LazyData: true
 Imports:
   dplyr (>= 0.4.3),
