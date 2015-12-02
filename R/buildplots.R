@@ -33,8 +33,8 @@ barcell_plot <- function(genes=c("Hspa8","Snap25","Gad2","Slc17a6"),grouping="fi
   genes <- rev(genes)
   
   if(data_source == "internal") {
-    data <- gray::v1_data
-    all.anno <- gray::v1_anno
+    data <- scrattch::v1_data
+    all.anno <- scrattch::v1_anno
     
     data <- data %>%
       filter(gene %in% genes)
@@ -232,8 +232,8 @@ heatcell_plot <- function(genes=c("Hspa8","Snap25","Gad2","Slc17a6"),clusters=1:
   genes <- rev(genes)
   
   if(data_source == "internal") {
-    data <- gray::v1_data
-    all.anno <- gray::v1_anno
+    data <- scrattch::v1_data
+    all.anno <- scrattch::v1_anno
     
     data <- data %>%
       filter(gene %in% genes)
@@ -391,8 +391,8 @@ pottery_plot <- function(genes=c("Hspa8","Snap25","Gad2","Slc17a6"),clusters=1:4
   genes <- rev(genes)
 
   if(data_source == "internal") {
-    data <- gray::v1_data
-    all.anno <- gray::v1_anno
+    data <- scrattch::v1_data
+    all.anno <- scrattch::v1_anno
     
     data <- data %>%
       filter(gene %in% genes)
@@ -520,8 +520,8 @@ boxter_plot <- function(genes=c("Hspa8","Snap25","Gad2","Slc17a6"),clusters=1:49
   genes <- rev(genes)
   
   if(data_source == "internal") {
-    data <- gray::v1_data
-    all.anno <- gray::v1_anno
+    data <- scrattch::v1_data
+    all.anno <- scrattch::v1_anno
     
     data <- data %>%
       filter(gene %in% genes)
@@ -647,8 +647,8 @@ heater_plot <- function(genes=c("Hspa8","Snap25","Gad2","Slc17a6"),clusters=1:49
   genes <- rev(genes)
   
   if(data_source == "internal") {
-    data <- gray::v1_data
-    all.anno <- gray::v1_anno
+    data <- scrattch::v1_data
+    all.anno <- scrattch::v1_anno
     
     data <- data %>%
       filter(gene %in% genes)
