@@ -140,7 +140,8 @@ barcell_plot <- function(genes=c("Hspa8","Snap25","Gad2","Slc17a6"),grouping="fi
   for(i in 1:length(genes)) {
     gene <- genes[i]
     if(logscale) {
-      data[gene] <- log10(data[gene]+1)/5*0.9 + i
+      data[gene] <- log10(data[gene]+1)
+      data[gene] <- data[gene]/max(data[gene])*0.9 + i
     } else {
       data[gene] <- data[gene]/max(data[gene])*0.9 + i
     }
