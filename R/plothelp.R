@@ -73,3 +73,77 @@ theme_no_x <- function(base_size = 12, base_family = "") {
           axis.ticks.margin = unit(0,"cm"),
           axis.ticks.x = element_blank())
 }
+
+#' Split a character string by commas, spaces, and tabs
+#' 
+#' @param in_string a chr string containing commas, spaces, and/or tabs
+#' @return a character vector with each object separated by any combination of commas, spaces, and/or tabs
+#' 
+#' @examples
+#' test <- "Hspa8, Scnn1a,Rbp4    Ptgs2"
+#' split_chr(test)
+split_cst <- function(in_string) {
+  out_chr <- strsplit(in_string,"[, \t]+")[[1]]
+  return(out_chr)
+}
+
+#' Convert the case of objects in a character vector to Title Case
+#' 
+#' @param in_chr a character vector
+#' @return a character vector with Each Object In Title Case
+#' 
+#' @examples
+#' test <- c("hspa8","scnn1a","fhqwghads")
+#' title_case(test)
+title_case <- function(in_chr) {
+    lower <- tolower(in_chr)
+    s <- strsplit(lower, " ")
+    result <- paste(toupper(substring(s, 1,1)), substring(s, 2), sep="")
+    return(result)
+}
+
+#' Convert the case of Riken genes no matter input case
+#' 
+#' @param in_chr a character vector of Riken gene symbols
+#' @return a character vector with correck Riken capitalization
+#' 
+#' @examples
+#' test <- c("6330527o06RiK","A930038C07RIK","a330070k13rik")
+#' riken_case(test)
+riken_case <- function(in_chr) {
+  upper <- toupper(in_chr)
+  result <- sub("RIK","Rik",upper)
+  return(result)
+}
+
+#' Correct case of mouse gene symbols
+#' 
+#' @param genes a character vector containing gene symbols
+#' @return a character vector containing genes with proper case
+#' 
+#' @examples
+#' test <- c("a330070k13rik","HDAC1","sncg","SeRPinB11")
+#' fix_mouse_genes(test)
+fix_mouse_genes <- function(genes) {
+  genes[grepl("[Rr]ik$",genes)] <- riken_case(genes[grepl("[Rr]ik$",genes)])
+  genes[!grepl("[Rr]ik$",genes)] <- title_case(genes[!grepl("[Rr]ik$",genes)])
+  
+  return(genes)
+}
+
+#' Convert a character object to a format compatible with SQL SELECT
+#' 
+#' @param in_chr a character vector
+#' @return a character vector consisting of a single string with each object separated by 
+#' escaped quotes, bracketted by parens.
+#' 
+#' @examples
+#' test <- c("Hspa8","Cux2","Snap25","Rspo2")
+#' chr_to_sql(test)
+#' 
+#' sql_query <- paste0("SELECT * FROM my_table WHERE gene IN ",chr_to_sql(test))
+#' print(sql_query)
+chr_to_sql <- function(in_chr) {
+  result <- paste0("(",paste0("\"",in_chr,"\"",collapse=","),")")
+  return(result)
+}
