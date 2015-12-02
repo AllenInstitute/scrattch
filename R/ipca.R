@@ -1,15 +1,15 @@
 library(dplyr)
-ercc_counts <- read.csv("//AIBSData2/mct-t200/HiSeq/Analysis/032315_hiseq/1679_cells_passQC/ercc_counts.csv",row.names=1)
-ercc_counts <- ercc_counts[!grepl("tdT",rownames(ercc_counts)),]
-ercc_count_mat <- as.matrix(ercc_counts,dimnames=c(rownames(ercc_counts),names(ercc_counts)))
-
-gene_counts <- read.csv("//AIBSData2/mct-t200/HiSeq/Analysis/032315_hiseq/1679_cells_passQC/counts.csv",row.names=1)
-gene_counts <- gene_counts[!grepl("^mt|^c",rownames(gene_counts)),]
-gene_count_mat <- as.matrix(gene_counts,dimnames=c(rownames(gene_counts),names(gene_counts)))
-
-gene_rpkm <- read.csv("//AIBSData2/mct-t200/HiSeq/Analysis/032315_hiseq/1679_cells_passQC/rpkm.csv",row.names=1)
-gene_rpkm <- gene_rpkm[!grepl("^mt|^c",rownames(gene_rpkm)),]
-gene_rpkm_mat <- as.matrix(gene_rpkm,dimnames=c(rownames(gene_rpkm),names(gene_rpkm)))
+# ercc_counts <- read.csv("//AIBSData2/mct-t200/HiSeq/Analysis/032315_hiseq/1679_cells_passQC/ercc_counts.csv",row.names=1)
+# ercc_counts <- ercc_counts[!grepl("tdT",rownames(ercc_counts)),]
+# ercc_count_mat <- as.matrix(ercc_counts,dimnames=c(rownames(ercc_counts),names(ercc_counts)))
+# 
+# gene_counts <- read.csv("//AIBSData2/mct-t200/HiSeq/Analysis/032315_hiseq/1679_cells_passQC/counts.csv",row.names=1)
+# gene_counts <- gene_counts[!grepl("^mt|^c",rownames(gene_counts)),]
+# gene_count_mat <- as.matrix(gene_counts,dimnames=c(rownames(gene_counts),names(gene_counts)))
+# 
+# gene_rpkm <- read.csv("//AIBSData2/mct-t200/HiSeq/Analysis/032315_hiseq/1679_cells_passQC/rpkm.csv",row.names=1)
+# gene_rpkm <- gene_rpkm[!grepl("^mt|^c",rownames(gene_rpkm)),]
+# gene_rpkm_mat <- as.matrix(gene_rpkm,dimnames=c(rownames(gene_rpkm),names(gene_rpkm)))
 
 run_brennecke <- function(ercc_count_mat, 
                           gene_count_mat, 
