@@ -147,3 +147,9 @@ chr_to_sql <- function(in_chr) {
   result <- paste0("(",paste0("\"",in_chr,"\"",collapse=","),")")
   return(result)
 }
+
+#' Evaluate a character string to a numeric vector
+chr_to_num <- function(in_chr) {
+  result <- eval(parse(text=paste0("round(c(",in_chr,"),0)")))
+  return(result)
+}
