@@ -14,5 +14,4 @@ Imports:
   grid (>= 3.2.2),
   DBI (>= 0.3.1),
   RSQLite (>= 1.0.0),
-  rtracklayer (>= 1.28.10)
   
