@@ -3,10 +3,10 @@ Type: Package
 Title: Single Cell RNA Analysis for Transcriptomic Type Characterization
 Version: 0.0.1
 Date: 2015-11-09
-Author: Lucas T. Gray
+Author: Lucas T. Gray, Vilas Menon, and Zizhen Yao
 Maintainer: Lucas Gray <lucasg@alleninstitute.org>
 Description: Cell type analysis, built from scrattch.
-License: For internal use at the Allen Institute for Brain Science.
+License: For internal use at the Allen Institute for Brain Science. Do not distribute (yet).
 LazyData: true
 Imports:
   dplyr (>= 0.4.3),
