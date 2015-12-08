@@ -50,10 +50,6 @@ barcell_plot <- function(genes=c("Hspa8","Snap25","Gad2","Slc17a6"),grouping="fi
       mutate(sample_id=row.names(data)) %>%
       select(one_of(c("sample_id",genes)))
     
-    # Fix Ndnf
-    genes[genes == "A930038C07Rik"] <- "Ndnf"
-    names(data)[names(data) == "A930038C07Rik"] <- "Ndnf"
-    
     genes[genes == "9630013A20Rik"] <- "X9630013A20Rik"
     names(data)[names(data) == "9630013A20Rik"] <- "X9630013A20Rik"
     
@@ -192,7 +188,7 @@ barcell_plot <- function(genes=c("Hspa8","Snap25","Gad2","Slc17a6"),grouping="fi
   
   # Axis scales
   p <- p + scale_x_continuous(expand=c(0,0)) +
-    scale_y_continuous(expand=c(0,0),breaks=1:length(genes)+0.5,labels=genes)
+    scale_y_continuous(expand=c(0,0),breaks=1:length(genes)+0.45,labels=genes)
   
   return(p)
   
@@ -251,10 +247,6 @@ heatcell_plot <- function(genes=c("Hspa8","Snap25","Gad2","Slc17a6"),clusters=1:
       select(one_of(c("sample_id",genes)))
     
   }
-  
-  # Fix Ndnf
-  genes[genes == "A930038C07Rik"] <- "Ndnf"
-  names(data)[names(data) == "A930038C07Rik"] <- "Ndnf"
   
   genes[genes == "9630013A20Rik"] <- "X9630013A20Rik"
   names(data)[names(data) == "9630013A20Rik"] <- "X9630013A20Rik"
@@ -350,7 +342,7 @@ heatcell_plot <- function(genes=c("Hspa8","Snap25","Gad2","Slc17a6"),clusters=1:
   
   # Axis scales
   p <- p + scale_x_continuous(expand=c(0,0)) +
-    scale_y_continuous(expand=c(0,0),breaks=1:length(genes)+0.5,labels=genes)
+    scale_y_continuous(expand=c(0,0),breaks=1:length(genes)+0.45,labels=genes)
   
   return(p)
   
@@ -386,7 +378,6 @@ pottery_plot <- function(genes=c("Hspa8","Snap25","Gad2","Slc17a6"),clusters=1:4
   library(ggplot2)
   
   # Fix Ndnf
-  genes[genes == "Ndnf"] <- "A930038C07Rik"
   genes[genes == "9630013A20Rik"] <- "X9630013A20Rik"
   
   genes <- rev(genes)
@@ -468,7 +459,7 @@ pottery_plot <- function(genes=c("Hspa8","Snap25","Gad2","Slc17a6"),clusters=1:4
     geom_rect(data=max.rect,aes(xmin=xmin,xmax=xmax,ymin=ymin,ymax=ymax,fill="white")) +
     geom_text(data=max.header,aes(x=x,y=y,label=label),angle=90,hjust=0,vjust=0.35,size=pt2mm(fontsize)) +
     geom_text(data=max.labels,aes(x=x,y=y,label=label),hjust=0,vjust=0.35,size=pt2mm(fontsize)) +
-    scale_y_continuous("",breaks=1:length(genes)+0.5,labels=genes,expand=c(0,0)) +
+    scale_y_continuous("",breaks=1:length(genes)+0.45,labels=genes,expand=c(0,0)) +
     scale_x_continuous("",expand=c(0,0)) +
     theme_classic(fontsize) +
     theme(axis.text = element_text(size=rel(1)),
@@ -514,8 +505,6 @@ boxter_plot <- function(genes=c("Hspa8","Snap25","Gad2","Slc17a6"),clusters=1:49
   library(dplyr)
   library(ggplot2)
   
-  # Fix Ndnf
-  genes[genes == "Ndnf"] <- "A930038C07Rik"  
   genes[genes == "9630013A20Rik"] <- "X9630013A20Rik"
   
   genes <- rev(genes)
@@ -594,7 +583,7 @@ boxter_plot <- function(genes=c("Hspa8","Snap25","Gad2","Slc17a6"),clusters=1:49
     geom_rect(data=max.rect,aes(xmin=xmin,xmax=xmax,ymin=ymin,ymax=ymax,fill="white")) +
     geom_text(data=max.header,aes(x=x,y=y,label=label),angle=90,hjust=0,vjust=0.35,size=pt2mm(fontsize)) +
     geom_text(data=max.labels,aes(x=x,y=y,label=label),hjust=0,vjust=0.35,size=pt2mm(fontsize)) +
-    scale_y_continuous("",breaks=1:length(genes)+0.5,labels=genes,expand=c(0,0)) +
+    scale_y_continuous("",breaks=1:length(genes)+0.45,labels=genes,expand=c(0,0)) +
     scale_x_continuous("",expand=c(0,0)) +
     theme_classic(fontsize) +
     theme(axis.text = element_text(size=rel(1)),
@@ -642,8 +631,6 @@ heater_plot <- function(genes=c("Hspa8","Snap25","Gad2","Slc17a6"),clusters=1:49
   library(dplyr)
   library(ggplot2)
   
-  # Fix Ndnf
-  genes[genes == "Ndnf"] <- "A930038C07Rik"  
   
   genes <- rev(genes)
   
