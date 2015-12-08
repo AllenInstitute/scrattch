@@ -427,7 +427,7 @@ pottery_plot <- function(genes=c("Hspa8","Snap25","Gad2","Slc17a6"),clusters=1:4
     filter(final_id %in% clusters) %>%
     arrange(final_id)
   
-  # Scale the datas
+  # Scale the data
   for(i in 1:length(genes)) {
     gene <- genes[i]
     if(logscale) {
@@ -464,7 +464,7 @@ pottery_plot <- function(genes=c("Hspa8","Snap25","Gad2","Slc17a6"),clusters=1:4
     geom_hline(data=hline.frame,aes(yintercept=y),size=0.2) +
     geom_rect(data=xlab.rect,aes(xmin=xmin,ymin=ymin,xmax=xmax,ymax=ymax,fill=color)) +
     geom_text(data=cluster.data,aes(y=labely,x=xpos,label=final_label),angle=90,hjust=0,vjust=0.35,size=pt2mm(fontsize)) +
-    geom_text(data=cluster.data,aes(y=cny,x=xpos,label=cn,size=40)) +
+    geom_text(data=cluster.data,aes(y=cny,x=xpos,label=cn),size=pt2mm(fontsize)) +
     geom_rect(data=max.rect,aes(xmin=xmin,xmax=xmax,ymin=ymin,ymax=ymax,fill="white")) +
     geom_text(data=max.header,aes(x=x,y=y,label=label),angle=90,hjust=0,vjust=0.35,size=pt2mm(fontsize)) +
     geom_text(data=max.labels,aes(x=x,y=y,label=label),hjust=0,vjust=0.35,size=pt2mm(fontsize)) +
