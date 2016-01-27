@@ -230,7 +230,7 @@ get_db_data <- function(data_source,genes,grouping,clusters) {
     arrange(cluster_x) %>%
     mutate(xpos=1:n()) %>%
     select(-plot_id) %>%
-    rename(plot_id=cluster_x)
+    rename_("plot_id" = "cluster_x")
   
   return(data)
 }
