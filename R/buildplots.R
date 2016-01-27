@@ -173,11 +173,12 @@ barcell_plot <- function(genes=c("Hspa8","Snap25","Gad2","Slc17a6"),grouping="fi
 #' heatcell_plot <- manybar_plot(my_genes,my_clusters,norm=T,font=12)
 #' 
 #' ggsave("plot_output.pdf",my_manybar_plot,height=0.2*length(my_genes)+2,width=4)
-heatcell_plot <- function(genes=c("Hspa8","Snap25","Gad2","Slc17a6"),
-                          grouping="final",clusters=1:49,
-                          data_source="internal",
-                          sort=F,logscale=T,normalize_rows=F,
-                          fontsize=7,labelheight=25) {
+heatcell_plot <- function(genes = c("Hspa8","Snap25","Gad2","Slc17a6"),
+                          grouping = "final", clusters = 1:49,
+                          data_source = "internal",
+                          sort = F, logscale = T, normalize_rows = F,
+                          fontsize = 7, labelheight = 25,
+                          labeltype = "poly") {
   
   library(dplyr)
   library(ggplot2)
@@ -203,10 +204,22 @@ heatcell_plot <- function(genes=c("Hspa8","Snap25","Gad2","Slc17a6"),
   poly.data <- data %>% 
     group_by(plot_id) %>%
     summarise(x2=min(xpos)-1,x1=max(xpos),color=plot_color[1])
-  poly.data <- poly.data %>%
-    mutate(x3=nrow(data)*(1:n_clusters-1)/n_clusters,
-           x4=nrow(data)*(1:n_clusters)/n_clusters,
-           y4=length(genes)+1+labheight*0.1,y3=length(genes)+1+labheight*0.1,y2=length(genes)+1,y1=length(genes)+1)
+  
+  if(labeltype == "poly") {
+    poly.data <- poly.data %>%
+      mutate(x3 = nrow(data)*(1:n_clusters-1)/n_clusters,
+             x4 = nrow(data)*(1:n_clusters)/n_clusters)
+  } else {
+    poly.data <- poly.data %>%
+      mutate(x3 = x2,
+             x4 = x1)
+  }
+
+poly.data <- poly.data %>%
+    mutate(y4=length(genes)+1+labheight*0.1,
+           y3=length(genes)+1+labheight*0.1,
+           y2=length(genes)+1,
+           y1=length(genes)+1)
   poly <- data.frame(id=rep(poly.data$plot_id,each=4),color=rep(poly.data$color,each=4))
   poly.x <- numeric()
   poly.y <- numeric()
@@ -218,17 +231,18 @@ heatcell_plot <- function(genes=c("Hspa8","Snap25","Gad2","Slc17a6"),
   
   # Build the cell type label rectangles
   xlab.rect <- data.frame(xmin=poly.data$x3,
-                          xmax=poly.data$x4,
-                          ymin=poly.data$y3,
-                          ymax=poly.data$y3+labheight*0.9,
-                          color=poly.data$color,
-                          label=unique(data$plot_label))  
+                            xmax=poly.data$x4,
+                            ymin=poly.data$y3,
+                            ymax=poly.data$y3+labheight*0.9,
+                            color=poly.data$color,
+                            label=unique(data$plot_label))
+
   
   # Build the maximum value labels for the right edge
   max.vals <- data %>% select(one_of(genes)) %>% summarise_each(funs(max)) %>% unlist()
   max.labels <- data.frame(x=nrow(data)+0.01*nrow(data),y=1:length(genes)+0.5,
                            label=sci_label(max.vals))
-  max.header <- data.frame(x=nrow(data)+0.075*nrow(data)/2,y=length(genes)+1.5,label="Max data")
+  max.header <- data.frame(x=nrow(data)+0.025*nrow(data)/2,y=length(genes)+1.5,label="Max data")
   
   # Scale the datas
   data_max <- max(max.vals)
