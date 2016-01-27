@@ -240,9 +240,9 @@ poly.data <- poly.data %>%
   
   # Build the maximum value labels for the right edge
   max.vals <- data %>% select(one_of(genes)) %>% summarise_each(funs(max)) %>% unlist()
-  max.labels <- data.frame(x=nrow(data)+0.01*nrow(data),y=1:length(genes)+0.5,
+  max.labels <- data.frame(x=nrow(data)+0.03*nrow(data),y=1:length(genes)+0.5,
                            label=sci_label(max.vals))
-  max.header <- data.frame(x=nrow(data)+0.025*nrow(data)/2,y=length(genes)+1.5,label="Max data")
+  max.header <- data.frame(x=nrow(data)+0.01*nrow(data),y=length(genes)+1.5,label="Max data")
   
   # Scale the datas
   data_max <- max(max.vals)
