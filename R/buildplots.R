@@ -33,59 +33,14 @@ barcell_plot <- function(genes=c("Hspa8","Snap25","Gad2","Slc17a6"),grouping="fi
   genes <- rev(genes)
   
   if(data_source == "internal") {
-    data <- scrattch::v1_data
-    all.anno <- scrattch::v1_anno
     
-    data <- data %>%
-      filter(gene %in% genes)
-    
-    # Reformat the retrieved data
-    row.names(data) <- data[,1]
-    data <- data %>% 
-      select(-1) %>% 
-      t() %>% 
-      as.data.frame()
-    
-    data <- data %>%
-      mutate(sample_id=row.names(data)) %>%
-      select(one_of(c("sample_id",genes)))
-    
-    genes[genes == "9630013A20Rik"] <- "X9630013A20Rik"
-    names(data)[names(data) == "9630013A20Rik"] <- "X9630013A20Rik"
+    data <- get_internal_data(genes,grouping,clusters)
     
   } else {
     
-    library(DBI)
-    library(RSQLite)
+    data <- get_db_data(data_source,genes,grouping,clusters)
     
-    con <- dbConnect(RSQLite::SQLite(),data_source)
-    get <- "SELECT * FROM anno;"
-    res <- dbSendQuery(con,get)
-    all.anno <- dbFetch(res,n=-1)
-    dbClearResult(res)
-    getgenes <- paste("\"",genes,"\"",collapse=",",sep="")
-    get <- paste("SELECT * from data WHERE gene IN (",getgenes,")",sep="")
-    res <- dbSendQuery(con,get)
-    data <- dbFetch(res,n=-1)
-    row.names(data) <- data[,1]
-    data <- data %>% 
-      select(-1) %>% 
-      t() %>% 
-      as.data.frame()
-    
-    data <- data %>%
-      mutate(sample_id=row.names(data)) %>%
-      select(one_of(c("sample_id",genes)))
   }
-    
-  # Filter and order the rows
-  data <- left_join(data,all.anno,by="sample_id") %>%
-    rename_("plot_id" = paste0(grouping,"_id"),
-            "plot_label" = paste0(grouping,"_label"),
-            "plot_color" = paste0(grouping,"_color")) %>%
-    filter(plot_id %in% clusters) %>%
-    arrange(plot_id) %>%
-    mutate(xpos=1:n())
   
   # Calculate the number of clusters
   nclust <- length(unique(data$plot_id))
@@ -218,7 +173,8 @@ barcell_plot <- function(genes=c("Hspa8","Snap25","Gad2","Slc17a6"),grouping="fi
 #' heatcell_plot <- manybar_plot(my_genes,my_clusters,norm=T,font=12)
 #' 
 #' ggsave("plot_output.pdf",my_manybar_plot,height=0.2*length(my_genes)+2,width=4)
-heatcell_plot <- function(genes=c("Hspa8","Snap25","Gad2","Slc17a6"),clusters=1:49,
+heatcell_plot <- function(genes=c("Hspa8","Snap25","Gad2","Slc17a6"),
+                          grouping="final",clusters=1:49,
                           data_source="internal",
                           sort=F,logscale=T,normalize_rows=F,
                           fontsize=7,labelheight=25) {
@@ -229,46 +185,29 @@ heatcell_plot <- function(genes=c("Hspa8","Snap25","Gad2","Slc17a6"),clusters=1:
   genes <- rev(genes)
   
   if(data_source == "internal") {
-    data <- scrattch::v1_data
-    all.anno <- scrattch::v1_anno
     
-    data <- data %>%
-      filter(gene %in% genes)
+    data <- get_internal_data(genes,grouping,clusters)
     
-    # Reformat the retrieved data
-    row.names(data) <- data[,1]
-    data <- data %>% 
-      select(-1) %>% 
-      t() %>% 
-      as.data.frame()
+  } else {
     
-    data <- data %>%
-      mutate(sample_id=row.names(data)) %>%
-      select(one_of(c("sample_id",genes)))
+    data <- get_db_data(data_source,genes,grouping,clusters)
     
   }
   
-  genes[genes == "9630013A20Rik"] <- "X9630013A20Rik"
-  names(data)[names(data) == "9630013A20Rik"] <- "X9630013A20Rik"
-  
-  # Filter and order the rows
-  data <- left_join(data,all.anno,by="sample_id") %>%
-    filter(final_id %in% clusters) %>%
-    arrange(final_id) %>%
-    mutate(xpos=1:n())
+  n_clusters <- length(unique(data$plot_id))
   
   #Calculate the height of the label:
   labheight <- length(genes)*(labelheight/100)/(1-labelheight/100)
   
   # Build cell type label polygons
   poly.data <- data %>% 
-    group_by(final_id) %>%
-    summarise(x2=min(xpos)-1,x1=max(xpos),color=final_color[1])
+    group_by(plot_id) %>%
+    summarise(x2=min(xpos)-1,x1=max(xpos),color=plot_color[1])
   poly.data <- poly.data %>%
-    mutate(x3=nrow(data)*(1:length(clusters)-1)/length(clusters),
-           x4=nrow(data)*(1:length(clusters))/length(clusters),
+    mutate(x3=nrow(data)*(1:n_clusters-1)/n_clusters,
+           x4=nrow(data)*(1:n_clusters)/n_clusters,
            y4=length(genes)+1+labheight*0.1,y3=length(genes)+1+labheight*0.1,y2=length(genes)+1,y1=length(genes)+1)
-  poly <- data.frame(id=rep(poly.data$final_id,each=4),color=rep(poly.data$color,each=4))
+  poly <- data.frame(id=rep(poly.data$plot_id,each=4),color=rep(poly.data$color,each=4))
   poly.x <- numeric()
   poly.y <- numeric()
   for(i in 1:nrow(poly.data)) {
@@ -283,7 +222,7 @@ heatcell_plot <- function(genes=c("Hspa8","Snap25","Gad2","Slc17a6"),clusters=1:
                           ymin=poly.data$y3,
                           ymax=poly.data$y3+labheight*0.9,
                           color=poly.data$color,
-                          label=unique(data$final_label))  
+                          label=unique(data$plot_label))  
   
   # Build the maximum value labels for the right edge
   max.vals <- data %>% select(one_of(genes)) %>% summarise_each(funs(max)) %>% unlist()
@@ -370,35 +309,23 @@ heatcell_plot <- function(genes=c("Hspa8","Snap25","Gad2","Slc17a6"),clusters=1:
 #' my_genes <- c("Ercc6","Ercc8","Trp53","Pgbd5")
 #' my_clusters <- c(1,5,9,10,24,37)
 #' pottery_plot(my_genes,my_clusters,logscale=T,fontsize=14)
-pottery_plot <- function(genes=c("Hspa8","Snap25","Gad2","Slc17a6"),clusters=1:49,
+pottery_plot <- function(genes=c("Hspa8","Snap25","Gad2","Slc17a6"),
+                         grouping="final",clusters=1:49,
                          data_source="internal",
                          logscale=F,
                          fontsize=7,labelheight=25) {
   library(dplyr)
   library(ggplot2)
   
-  # Fix Ndnf
-  genes[genes == "9630013A20Rik"] <- "X9630013A20Rik"
-  
-  genes <- rev(genes)
-
   if(data_source == "internal") {
-    data <- scrattch::v1_data
-    all.anno <- scrattch::v1_anno
     
-    data <- data %>%
-      filter(gene %in% genes)
+    data <- get_internal_data(genes,grouping,clusters) %>%
+      select(-xpos) %>% mutate(xpos = plot_id)
     
-    # Reformat the retrieved data
-    row.names(data) <- data[,1]
-    data <- data %>% 
-      select(-1) %>% 
-      t() %>% 
-      as.data.frame()
+  } else {
     
-    data <- data %>%
-      mutate(sample_id=row.names(data)) %>%
-      select(one_of(c("sample_id",genes)))
+    data <- get_db_data(data_source,genes,grouping,clusters) %>%
+      select(-xpos) %>% mutate(xpos = plot_id)
     
   }
   
@@ -408,15 +335,10 @@ pottery_plot <- function(genes=c("Hspa8","Snap25","Gad2","Slc17a6"),clusters=1:4
   # Build the maximum value labels for the right edge
   max.rect <- data.frame(xmin=length(clusters)+0.5,xmax=length(clusters)+2,
                          ymin=1,ymax=length(genes)+1+labheight)
-  max.vals <- data %>% select(-sample_id) %>% summarise_each(funs(max)) %>% unlist()
+  max.vals <- data %>% select(one_of(genes)) %>% summarise_each(funs(max)) %>% unlist()
   max.labels <- data.frame(x=length(clusters)+0.5,y=1:length(genes)+0.5,
                            label=sci_label(max.vals))
   max.header <- data.frame(x=length(clusters)+1.5,y=length(genes)+1,label="Max data")
-  
-  # Filter and order the rows
-  data <- left_join(data,all.anno,by="sample_id") %>%
-    filter(final_id %in% clusters) %>%
-    arrange(final_id)
   
   # Scale the data
   for(i in 1:length(genes)) {
@@ -428,33 +350,31 @@ pottery_plot <- function(genes=c("Hspa8","Snap25","Gad2","Slc17a6"),clusters=1:4
     }  
   }
   
-  cluster_positions <- data %>%
-    select(final_id) %>%
-    unique() %>%
-    mutate(xpos=1:n())
-  
-  data <- data %>% left_join(cluster_positions,by="final_id")
-  
   # Variance injection - geom_violin requires some variance, so I add a vanishingly small random number to each data value
   data[genes] <- data[genes] + runif(nrow(data),0,0.00001)
   
   cluster.data <- data %>%
-    select(final_label,final_color,final_id,xpos) %>%
-    group_by(final_label,final_color,final_id,xpos) %>%
+    select(plot_label,plot_color,plot_id) %>%
+    group_by(plot_label,plot_color,plot_id) %>%
     summarise(cn=n()) %>%
     as.data.frame(stringsAsFactors=F) %>%
-    arrange(final_id) %>%
+    arrange(plot_id) %>%
     mutate(labely=length(genes) + 1.1,
-           cny=length(genes) + 0.9 + labheight)
+           cny=length(genes) + 0.9 + labheight,
+           xpos=plot_id)
   
   hline.frame <- data.frame(y=seq(1,length(genes)+1,1))
-  xlab.rect <- data.frame(xmin=seq(0.5,length(clusters)-0.5,1),xmax=seq(1.5,length(clusters)+0.5,1),ymin=length(genes)+1,ymax=length(genes)+1+labheight,color=cluster.data$final_color)
+  xlab.rect <- data.frame(xmin=seq(0.5,length(clusters)-0.5,1),
+                          xmax=seq(1.5,length(clusters)+0.5,1),
+                          ymin=length(genes)+1,
+                          ymax=length(genes)+1+labheight,
+                          color=cluster.data$plot_color)
   
   p <- ggplot(data) +
     scale_fill_identity() +
     geom_hline(data=hline.frame,aes(yintercept=y),size=0.2) +
     geom_rect(data=xlab.rect,aes(xmin=xmin,ymin=ymin,xmax=xmax,ymax=ymax,fill=color)) +
-    geom_text(data=cluster.data,aes(y=labely,x=xpos,label=final_label),angle=90,hjust=0,vjust=0.35,size=pt2mm(fontsize)) +
+    geom_text(data=cluster.data,aes(y=labely,x=xpos,label=plot_label),angle=90,hjust=0,vjust=0.35,size=pt2mm(fontsize)) +
     geom_text(data=cluster.data,aes(y=cny,x=xpos,label=cn),size=pt2mm(fontsize)) +
     geom_rect(data=max.rect,aes(xmin=xmin,xmax=xmax,ymin=ymin,ymax=ymax,fill="white")) +
     geom_text(data=max.header,aes(x=x,y=y,label=label),angle=90,hjust=0,vjust=0.35,size=pt2mm(fontsize)) +
@@ -469,7 +389,7 @@ pottery_plot <- function(genes=c("Hspa8","Snap25","Gad2","Slc17a6"),clusters=1:4
   
   # plot the violins for each gene
   for(i in 1:length(genes)) {
-    p <- p + geom_violin(data=data,aes_string(x="xpos",y=genes[i],fill="final_color"),scale="width",adjust=2)
+    p <- p + geom_violin(data=data,aes_string(x="xpos",y=genes[i],fill="plot_color"),scale="width",adjust=2)
     p <- p + stat_summary(data=data,aes_string(x="xpos",y=genes[i]),fun.y="median",fun.ymin="median",fun.ymax="median",geom="point",size=1.3)
   }
   

@@ -51,15 +51,15 @@ run_brennecke <- function(ercc_count_mat,
     
   ##### test genes against the ERCC fit ####
   means_gene <- rowMeans( nCounts_gene )
-  vars_gene <- rowVars(nCounts_gene)
-  cv2_gene <- vars_gene / means_gene^2
+  vars_gene  <- rowVars(nCounts_gene)
+  cv2_gene   <- vars_gene / means_gene^2
   psia1theta <- mean( 1 / sf_gene ) + a1 * mean( sf_ercc / sf_gene )
-  m <- nrow(gene_count_mat)
-  cv2th <- a0 + minBiolDisp + a0 * minBiolDisp
-  testDenom <- ( means_gene * psia1theta + means_gene^2 * cv2th ) / ( 1 + cv2th/m )
-  p <- 1 - pchisq( vars_gene * (m-1) / testDenom, m-1 )
-  padj <- p.adjust( p, "BH" )
-  sig <- padj < .05
+  m          <- nrow(gene_count_mat)
+  cv2th      <- a0 + minBiolDisp + a0 * minBiolDisp
+  testDenom  <- ( means_gene * psia1theta + means_gene^2 * cv2th ) / ( 1 + cv2th/m )
+  p          <- 1 - pchisq( vars_gene * (m-1) / testDenom, m-1 )
+  padj       <- p.adjust( p, "BH" )
+  sig        <- padj < .05
   sig[is.na(sig)] <- FALSE
   print(paste0("Significant Genes: ",sum(sig)))
   
@@ -103,6 +103,8 @@ run_brennecke <- function(ercc_count_mat,
                full = list(fullVarTable))
   return(outlist)
 }
+
+library(dplyr)
 
 block_cluster <- function(titlename, 
                           ercc_count_mat, gene_count_mat, minBiolDisp, 

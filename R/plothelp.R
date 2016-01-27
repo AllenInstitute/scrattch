@@ -153,3 +153,84 @@ chr_to_num <- function(in_chr) {
   result <- eval(parse(text=paste0("round(c(",in_chr,"),0)")))
   return(result)
 }
+
+get_internal_data <- function(genes,grouping,clusters) {
+  data <- scrattch::v1_data
+  all.anno <- scrattch::v1_anno
+  
+  cluster_order <- data.frame(clusters=clusters) %>%
+    mutate(cluster_x=1:n())
+  
+  data <- data %>%
+    filter(gene %in% genes)
+  
+  # Reformat the retrieved data
+  row.names(data) <- data[,1]
+  data <- data %>% 
+    select(-1) %>% 
+    t() %>% 
+    as.data.frame()
+  
+  data <- data %>%
+    mutate(sample_id=row.names(data)) %>%
+    select(one_of(c("sample_id",genes)))
+  
+  genes[genes == "9630013A20Rik"] <- "X9630013A20Rik"
+  names(data)[names(data) == "9630013A20Rik"] <- "X9630013A20Rik"
+  
+  # Filter and order the rows
+  data <- left_join(data,all.anno,by="sample_id") %>%
+    rename_("plot_id" = paste0(grouping,"_id"),
+            "plot_label" = paste0(grouping,"_label"),
+            "plot_color" = paste0(grouping,"_color")) %>%
+    filter(plot_id %in% clusters) %>%
+    left_join(cluster_order,by=c("plot_id"="clusters")) %>%
+    arrange(cluster_x) %>%
+    mutate(xpos=1:n()) %>%
+    select(-plot_id) %>%
+    rename(plot_id=cluster_x)
+  
+  return(data)
+}
+
+get_db_data <- function(data_source,genes,grouping,clusters) {
+  library(DBI)
+  library(RSQLite)
+  
+  cluster_order <- data.frame(clusters=clusters) %>%
+    mutate(cluster_x=1:n())
+  
+  con <- dbConnect(RSQLite::SQLite(),data_source)
+  get <- "SELECT * FROM anno;"
+  res <- dbSendQuery(con,get)
+  all.anno <- dbFetch(res,n=-1)
+  dbClearResult(res)
+  getgenes <- paste("\"",genes,"\"",collapse=",",sep="")
+  get <- paste("SELECT * from data WHERE gene IN (",getgenes,")",sep="")
+  res <- dbSendQuery(con,get)
+  data <- dbFetch(res,n=-1)
+  dbClearResult(res)
+  row.names(data) <- data[,1]
+  data <- data %>% 
+    select(-1) %>% 
+    t() %>% 
+    as.data.frame()
+  
+  data <- data %>%
+    mutate(sample_id=row.names(data)) %>%
+    select(one_of(c("sample_id",genes)))
+  
+  # Filter and order the rows
+  data <- left_join(data,all.anno,by="sample_id") %>%
+    rename_("plot_id" = paste0(grouping,"_id"),
+            "plot_label" = paste0(grouping,"_label"),
+            "plot_color" = paste0(grouping,"_color")) %>%
+    filter(plot_id %in% clusters) %>%
+    left_join(cluster_order,by=c("plot_id"="clusters")) %>%
+    arrange(cluster_x) %>%
+    mutate(xpos=1:n()) %>%
+    select(-plot_id) %>%
+    rename(plot_id=cluster_x)
+  
+  return(data)
+}
