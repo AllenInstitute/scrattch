@@ -185,7 +185,7 @@ barcell_plot <- function(genes = c("Hspa8","Snap25","Gad2","Slc17a6"),
 #' 
 #' my_heatcell_plot_2 <- heatcell_plot(gene_fix, clust = cluster_fix, font=12)
 heatcell_plot <- function(genes = c("Hspa8","Snap25","Gad2","Slc17a6"),
-                          grouping = "final", clusters = 1:49,
+                          clusters = 1:49, grouping = "final",
                           data_source = "internal",
                           logscale = T, normalize_rows = F,
                           fontsize = 7, labelheight = 25,
