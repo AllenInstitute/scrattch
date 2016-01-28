@@ -23,9 +23,11 @@
 #' my_barcell_plot <- barcell_plot(my_genes,my_clusters,sort=T)
 #' 
 #' ggsave("plot_output.pdf",my_barcell_plot,height=0.2*length(my_genes)+2,width=4)
-barcell_plot <- function(genes=c("Hspa8","Snap25","Gad2","Slc17a6"),grouping="final",clusters=1:49,
-                         data_source="internal",sort=F,logscale=F,
-                         fontsize=7,labelheight=25) {
+barcell_plot <- function(genes = c("Hspa8","Snap25","Gad2","Slc17a6"),
+                         grouping = "final", clusters = 1:49,
+                         data_source = "internal",
+                         sort = F, logscale = F,
+                         fontsize = 7, labelheight = 25) {
   
   library(dplyr)
   library(ggplot2)
@@ -156,27 +158,36 @@ barcell_plot <- function(genes=c("Hspa8","Snap25","Gad2","Slc17a6"),grouping="fi
 #' Extension to user-supplied datasets will come soon.
 #' 
 #' @param genes A character vector containing gene symbols to be plotted
+#' @param grouping A character object containing the annotation to group data by
 #' @param clusters A numeric vector containing clusters to plot (for v1_anno, the range is 1:49)
-#' @param data_source A character object defining where the data is stored. Currently only works with "internal"
+#' @param data_source A character object defining where the data is stored. Can be a Sqlite3 database file or "internal".
 #' @param normalize_rows Logical object, determines if data are normalized to the maximum value for each gene. If FALSE, the heatmap is normalized to the maximum value across all genes.
 #' @param logscale Logical object, determines if data is log scaled before plotting.
 #' @param fontsize numeric object, the font size (in pts) used to make the plot.
 #' @param labelheight numeric object, Percent of the plot height that should be used for the labels (0 to 100).
+#' @param labeltype A character object, either "poly" or "square".
 #' 
 #' @return a ggplot2 plot object
 #' 
 #' @examples
 #' heatcell_plot()
 #' 
-#' my_genes <- c("Ercc6","Ercc8","Trp53","Pgbd5")
-#' my_clusters <- c(1,5,9,10,24,37)
-#' heatcell_plot <- manybar_plot(my_genes,my_clusters,norm=T,font=12)
+#' my_genes <- c("Ercc6", "Ercc8", "Trp53", "Pgbd5")
+#' my_clusters <- c(1, 5, 9, 10, 24, 37)
+#' my_heatcell_plot <- heatcell_plot(my_genes, my_clusters, norm=T, font=12)
 #' 
-#' ggsave("plot_output.pdf",my_manybar_plot,height=0.2*length(my_genes)+2,width=4)
+#' ggsave("plot_output.pdf", heatcell_plot, height = 0.2 * length(my_genes) + 2, width = 4)
+#' 
+#' gene_text <- "Slc17a6 gad2 tac1,RBP4"
+#' gene_fix <- fix_mouse_genes(split_cst(gene_text))
+#' cluster_text <- "18:22,3,8"
+#' cluster_fix <- chr_to_num(cluster_text)
+#' 
+#' my_heatcell_plot_2 <- heatcell_plot(gene_fix, clust = cluster_fix, font=12)
 heatcell_plot <- function(genes = c("Hspa8","Snap25","Gad2","Slc17a6"),
                           grouping = "final", clusters = 1:49,
                           data_source = "internal",
-                          sort = F, logscale = T, normalize_rows = F,
+                          logscale = T, normalize_rows = F,
                           fontsize = 7, labelheight = 25,
                           labeltype = "poly") {
   
@@ -215,7 +226,7 @@ heatcell_plot <- function(genes = c("Hspa8","Snap25","Gad2","Slc17a6"),
              x4 = x1)
   }
 
-poly.data <- poly.data %>%
+  poly.data <- poly.data %>%
     mutate(y4=length(genes)+1+labheight*0.1,
            y3=length(genes)+1+labheight*0.1,
            y2=length(genes)+1,
