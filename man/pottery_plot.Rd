@@ -5,8 +5,8 @@
 \title{Violin plots of gene expression for clusters}
 \usage{
 pottery_plot(genes = c("Hspa8", "Snap25", "Gad2", "Slc17a6"),
-  clusters = 1:49, data_source = "internal", logscale = F, fontsize = 7,
-  labelheight = 25)
+  grouping = "final", clusters = 1:49, data_source = "internal",
+  logscale = F, fontsize = 7, labelheight = 25)
 }
 \arguments{
 \item{genes}{A character vector containing gene symbols to be plotted}

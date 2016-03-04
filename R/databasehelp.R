@@ -147,6 +147,29 @@ check_db_structure <- function(db.file,verbose=T) {
   
 }
 
+#'Write SQLite3 Database
+#'
+#'This function will write anno, data, and desc tables to a SQLite3 database.
+#'
+#'It can also be used to overwrite any one table in the database for updates.
+#'
+#'@param desc a data.frame with two columns: base, which correspondes to the beginning of
+#'annotation columns; and label, which will be the label used to display related objects. Default: NULL
+#'@param anno a data.frame with annotation values. This table should always have a sample_id column
+#'that corresponds to the column names of the data table. Each annotation should have an _id, _label, and _color column.
+#'@param data a data.frame with data values. This first column should be called "gene", and each subsequent column
+#'should correspond to a single sample_id in the anno table. Default = NULL
+#'@param file a string specifying the location of the output database file. Required.
+#'@param overwrite a logical value indicating if existing tables in the database should be overwritten. Default = FALSE.
+#'
+#'@return Writes anno, desc, and data tables to the specified file.
+#'
+#'@examples
+#'rpkm <- v1_data
+#'anno <- v1_anno
+#'desc <- v1_desc
+#'
+#'write_database(desc = desc, anno = anno, data = rpkm, file = "v1.db", overwrite=F)
 write_database <- function(desc=NULL,anno=NULL,data=NULL,file = stop("'file' must be specified"),overwrite=TRUE) {
   library(DBI)
   library(RSQLite)

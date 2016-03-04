@@ -5,16 +5,18 @@
 \title{Heatmaps of gene expression of individual cells}
 \usage{
 heatcell_plot(genes = c("Hspa8", "Snap25", "Gad2", "Slc17a6"),
-  grouping = "final", clusters = 1:49, data_source = "internal",
-  sort = F, logscale = T, normalize_rows = F, fontsize = 7,
-  labelheight = 25)
+  clusters = 1:49, grouping = "final", data_source = "internal",
+  logscale = T, normalize_rows = F, fontsize = 7, labelheight = 25,
+  labeltype = "poly")
 }
 \arguments{
 \item{genes}{A character vector containing gene symbols to be plotted}
 
 \item{clusters}{A numeric vector containing clusters to plot (for v1_anno, the range is 1:49)}
 
-\item{data_source}{A character object defining where the data is stored. Currently only works with "internal"}
+\item{grouping}{A character object containing the annotation to group data by}
+
+\item{data_source}{A character object defining where the data is stored. Can be a Sqlite3 database file or "internal".}
 
 \item{logscale}{Logical object, determines if data is log scaled before plotting.}
 
@@ -23,6 +25,8 @@ heatcell_plot(genes = c("Hspa8", "Snap25", "Gad2", "Slc17a6"),
 \item{fontsize}{numeric object, the font size (in pts) used to make the plot.}
 
 \item{labelheight}{numeric object, Percent of the plot height that should be used for the labels (0 to 100).}
+
+\item{labeltype}{A character object, either "poly" or "square".}
 }
 \value{
 a ggplot2 plot object
@@ -35,10 +39,17 @@ Extension to user-supplied datasets will come soon.
 \examples{
 heatcell_plot()
 
-my_genes <- c("Ercc6","Ercc8","Trp53","Pgbd5")
-my_clusters <- c(1,5,9,10,24,37)
-heatcell_plot <- manybar_plot(my_genes,my_clusters,norm=T,font=12)
+my_genes <- c("Ercc6", "Ercc8", "Trp53", "Pgbd5")
+my_clusters <- c(1, 5, 9, 10, 24, 37)
+my_heatcell_plot <- heatcell_plot(my_genes, my_clusters, norm=T, font=12)
 
-ggsave("plot_output.pdf",my_manybar_plot,height=0.2*length(my_genes)+2,width=4)
+ggsave("plot_output.pdf", heatcell_plot, height = 0.2 * length(my_genes) + 2, width = 4)
+
+gene_text <- "Slc17a6 gad2 tac1,RBP4"
+gene_fix <- fix_mouse_genes(split_cst(gene_text))
+cluster_text <- "18:22,3,8"
+cluster_fix <- chr_to_num(cluster_text)
+
+my_heatcell_plot_2 <- heatcell_plot(gene_fix, clust = cluster_fix, font=12)
 }
 
