@@ -444,7 +444,7 @@ pottery_plot <- function(genes = c("Hspa8","Snap25","Gad2","Slc17a6"),
 #' my_clusters <- c(1,5,9,10,24,37)
 #' boxter_plot(my_genes,my_clusters,logscale=T,fontsize=14)
 boxter_plot <- function(genes=c("Hspa8","Snap25","Gad2","Slc17a6"),clusters=1:49,
-                        data_source="internal",
+                        grouping = "final",data_source="internal",
                         logscale=F,
                         fontsize=7,labelheight=25) {
   library(dplyr)
@@ -561,7 +561,7 @@ boxter_plot <- function(genes=c("Hspa8","Snap25","Gad2","Slc17a6"),clusters=1:49
 #' my_clusters <- c(1,5,9,10,24,37)
 #' heater_plot(my_genes,my_clusters,logscale=T,fontsize=14)
 heater_plot <- function(genes=c("Hspa8","Snap25","Gad2","Slc17a6"),clusters=1:49,
-                        calculation="mean",
+                        grouping = "final",calculation="mean",
                         data_source="internal",normalize_rows=FALSE,
                         logscale=T,fontsize=7,toplabel=T,toptext=T,labelheight=25,maxlabel=T,
                         maxval="auto",colorset=c("darkblue","dodgerblue","gray80","orange","orangered")) {
