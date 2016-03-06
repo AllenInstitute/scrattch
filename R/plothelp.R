@@ -1,3 +1,7 @@
+update_scrattch <- function() {
+  devtools::install_github("hypercompetent/scrattch",auth_token="ed22ec6b1d333fcb9d4d78a1e7ebd29ec72d0048")
+}
+
 #' Convert font sizes in pt to mm
 #' @param pt A numeric font size in pt.
 #' @return A numeric font size in mm.
