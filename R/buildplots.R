@@ -334,11 +334,11 @@ heatcell_plot <- function(genes = c("Hspa8","Snap25","Gad2","Slc17a6"),
 #' my_genes <- c("Ercc6","Ercc8","Trp53","Pgbd5")
 #' my_clusters <- c(1,5,9,10,24,37)
 #' pottery_plot(my_genes,my_clusters,logscale=T,fontsize=14)
-pottery_plot <- function(genes=c("Hspa8","Snap25","Gad2","Slc17a6"),
-                         grouping="final",clusters=1:49,
-                         data_source="internal",
-                         logscale=F,
-                         fontsize=7,labelheight=25) {
+pottery_plot <- function(genes = c("Hspa8","Snap25","Gad2","Slc17a6"),
+                         grouping = "final", clusters = 1:49,
+                         data_source = "internal",
+                         sort = F, logscale = F,
+                         fontsize = 7, labelheight = 25) {
   library(dplyr)
   library(ggplot2)
   
@@ -372,7 +372,7 @@ pottery_plot <- function(genes=c("Hspa8","Snap25","Gad2","Slc17a6"),
       data[gene] <- log10(data[gene]+1)/log10(max(data[gene])+1)*0.9 + i
     } else {
       data[gene] <- data[gene]/max(data[gene])*0.9 + i
-    }  
+    }
   }
   
   # Variance injection - geom_violin requires some variance, so I add a vanishingly small random number to each data value
@@ -455,22 +455,14 @@ boxter_plot <- function(genes=c("Hspa8","Snap25","Gad2","Slc17a6"),clusters=1:49
   genes <- rev(genes)
   
   if(data_source == "internal") {
-    data <- scrattch::v1_data
-    all.anno <- scrattch::v1_anno
     
-    data <- data %>%
-      filter(gene %in% genes)
+    data <- get_internal_data(genes,grouping,clusters) %>%
+      select(-xpos) %>% mutate(xpos = plot_id)
     
-    # Reformat the retrieved data
-    row.names(data) <- data[,1]
-    data <- data %>% 
-      select(-1) %>% 
-      t() %>% 
-      as.data.frame()
+  } else {
     
-    data <- data %>%
-      mutate(sample_id=row.names(data)) %>%
-      select(one_of(c("sample_id",genes)))
+    data <- get_db_data(data_source,genes,grouping,clusters) %>%
+      select(-xpos) %>% mutate(xpos = plot_id)
     
   }
   
@@ -580,26 +572,15 @@ heater_plot <- function(genes=c("Hspa8","Snap25","Gad2","Slc17a6"),clusters=1:49
   genes <- rev(genes)
   
   if(data_source == "internal") {
-    data <- scrattch::v1_data
-    all.anno <- scrattch::v1_anno
     
-    data <- data %>%
-      filter(gene %in% genes)
+    data <- get_internal_data(genes,grouping,clusters) %>%
+      select(-xpos) %>% mutate(xpos = plot_id)
     
-    # Reformat the retrieved data
-    row.names(data) <- data[,1]
-    data <- data %>% 
-      select(-1) %>% 
-      t() %>% 
-      as.data.frame()
+  } else {
     
-    data <- data %>%
-      mutate(sample_id=row.names(data)) %>%
-      select(one_of(c("sample_id",genes)))
+    data <- get_db_data(data_source,genes,grouping,clusters) %>%
+      select(-xpos) %>% mutate(xpos = plot_id)
     
-    genes[grepl("^[0-9]",genes)] <- paste0("X",genes[grepl("^[0-9]",genes)])
-    
-    names(data)[2:length(data)] <- genes
   }
   
   #Calculate the height of the label:
