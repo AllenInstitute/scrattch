@@ -573,15 +573,17 @@ heater_plot <- function(genes=c("Hspa8","Snap25","Gad2","Slc17a6"),clusters=1:49
   
   if(data_source == "internal") {
     
-    data <- get_internal_data(genes,grouping,clusters) %>%
-      select(-xpos) %>% mutate(xpos = plot_id)
+    data <- get_internal_data(genes,grouping,clusters)
     
   } else {
     
-    data <- get_db_data(data_source,genes,grouping,clusters) %>%
-      select(-xpos) %>% mutate(xpos = plot_id)
+    data <- get_db_data(data_source,genes,grouping,clusters)
     
   }
+  
+  data <- data %>%
+    select(-xpos) %>% mutate(xpos = plot_id)
+  
   
   #Calculate the height of the label:
   labheight <- length(genes)*(labelheight/100)/(1-labelheight/100)
