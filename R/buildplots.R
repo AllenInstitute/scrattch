@@ -584,6 +584,7 @@ heater_plot <- function(genes=c("Hspa8","Snap25","Gad2","Slc17a6"),clusters=1:49
   data <- data %>%
     select(-xpos) %>% mutate(xpos = plot_id)
   
+  clusters <- unique(data$plot_id)
   
   #Calculate the height of the label:
   labheight <- length(genes)*(labelheight/100)/(1-labelheight/100)
