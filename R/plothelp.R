@@ -201,8 +201,7 @@ get_db_data <- function(data_source,genes,grouping,clusters) {
   library(DBI)
   library(RSQLite)
   
-  cluster_order <- data.frame(clusters=clusters) %>%
-    mutate(cluster_x=1:n())
+  cluster_order <- data.frame(clusters=clusters)
   
   con <- dbConnect(RSQLite::SQLite(),data_source)
   get <- "SELECT * FROM anno;"
@@ -229,7 +228,13 @@ get_db_data <- function(data_source,genes,grouping,clusters) {
     rename_("plot_id" = paste0(grouping,"_id"),
             "plot_label" = paste0(grouping,"_label"),
             "plot_color" = paste0(grouping,"_color")) %>%
-    filter(plot_id %in% clusters) %>%
+    filter(plot_id %in% clusters)
+  
+  cluster_order <- cluster_order %>%
+    filter(clusters %in% unique(data$plot_id)) %>%
+    mutate(cluster_x=1:n())
+  
+  data <- data %>%
     left_join(cluster_order,by=c("plot_id"="clusters")) %>%
     arrange(cluster_x) %>%
     mutate(xpos=1:n()) %>%
