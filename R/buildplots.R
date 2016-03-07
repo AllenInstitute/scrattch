@@ -479,8 +479,8 @@ boxter_plot <- function(genes=c("Hspa8","Snap25","Gad2","Slc17a6"),clusters=1:49
   
   # Filter and order the rows
   data <- left_join(data,all.anno,by="sample_id") %>%
-    filter(final_id %in% clusters) %>%
-    arrange(final_id)
+    filter(plot_id %in% clusters) %>%
+    arrange(plot_id)
   
   # Scale the datas
   for(i in 1:length(genes)) {
@@ -493,18 +493,18 @@ boxter_plot <- function(genes=c("Hspa8","Snap25","Gad2","Slc17a6"),clusters=1:49
   }
   
   cluster_positions <- data %>%
-    select(final_id) %>%
+    select(plot_id) %>%
     unique() %>%
     mutate(xpos=1:n())
   
-  data <- data %>% left_join(cluster_positions,by="final_id")
+  data <- data %>% left_join(cluster_positions,by="plot_id")
   
   cluster.data <- data %>%
-    select(final_label,final_color,final_id,xpos) %>%
-    group_by(final_label,final_color,final_id,xpos) %>%
+    select(final_label,final_color,plot_id,xpos) %>%
+    group_by(final_label,final_color,plot_id,xpos) %>%
     summarise(cn=n()) %>%
     as.data.frame(stringsAsFactors=F) %>%
-    arrange(final_id) %>%
+    arrange(plot_id) %>%
     mutate(labely=length(genes) + 1.1,
            cny=length(genes) + 0.9 + labheight)
   
@@ -568,7 +568,7 @@ heater_plot <- function(genes=c("Hspa8","Snap25","Gad2","Slc17a6"),clusters=1:49
   library(dplyr)
   library(ggplot2)
   
-  
+  plot_id <- paste0(grouping,"_id")
   genes <- rev(genes)
   
   if(data_source == "internal") {
@@ -589,24 +589,12 @@ heater_plot <- function(genes=c("Hspa8","Snap25","Gad2","Slc17a6"),clusters=1:49
   # Build the maximum value labels for the right edge
   max.rect <- data.frame(xmin=length(clusters)+0.5,xmax=length(clusters)+2,
                          ymin=1,ymax=length(genes) + 1 + labheight)
-  max.vals <- data %>% select(-sample_id) %>% summarise_each(funs(max)) %>% unlist()
+  max.vals <- data %>% select(one_of(genes)) %>% summarise_each(funs(max)) %>% unlist()
   max.labels <- data.frame(x=length(clusters)+0.5,y=1:length(genes)+0.5,
                            label=sci_label(max.vals))
   max.header <- data.frame(x=length(clusters)+1.5,y=length(genes)+1.1,label="Max data")
-  
-  # Filter and order the rows
-  data <- left_join(data,all.anno,by="sample_id") %>%
-    filter(final_id %in% clusters) %>%
-    arrange(final_id)
-  
-  cluster_positions <- data %>%
-    select(final_id) %>%
-    unique() %>%
-    mutate(xpos=1:n())
-  
-  data <- data %>% left_join(cluster_positions,by="final_id")
-  
-  heat_data <- cluster_positions
+
+  heat_data <- data %>% select(plot_id,xpos)
   
   # Scale the datas
   for(i in 1:length(genes)) {
@@ -624,13 +612,13 @@ heater_plot <- function(genes=c("Hspa8","Snap25","Gad2","Slc17a6"),clusters=1:49
     }
     
     gene_data <- data %>%
-      select(one_of("final_id",gene)) %>%
-      group_by(final_id) %>%
+      select(one_of(c("plot_id",gene))) %>%
+      group_by(plot_id) %>%
       summarize_(result = gene_func)
     names(gene_data)[2] <- gene
     
     heat_data <- heat_data %>%
-      left_join(gene_data,by="final_id")
+      left_join(gene_data,by="plot_id")
   }
   
   # Convert to colors
@@ -653,11 +641,11 @@ heater_plot <- function(genes=c("Hspa8","Snap25","Gad2","Slc17a6"),clusters=1:49
   }
   
   cluster.data <- data %>%
-    select(final_label,final_color,final_id,xpos) %>%
-    group_by(final_label,final_color,final_id,xpos) %>%
+    select(plot_label,plot_color,plot_id,xpos) %>%
+    group_by(plot_label,plot_color,plot_id,xpos) %>%
     summarise(cn=n()) %>%
     as.data.frame(stringsAsFactors=F) %>%
-    arrange(final_id) %>%
+    arrange(plot_id) %>%
     mutate(labely=length(genes) + 1.1,
            cny=length(genes) + 0.9 + labheight)
   
@@ -665,7 +653,7 @@ heater_plot <- function(genes=c("Hspa8","Snap25","Gad2","Slc17a6"),clusters=1:49
                           xmax=seq(1.5,length(clusters)+0.5,1),
                           ymin=length(genes) + 1,
                           ymax=length(genes) + 1 + labheight,
-                          color=cluster.data$final_color)
+                          color=cluster.data$plot_color)
   
   p <- ggplot(data) +
     scale_fill_identity() +
@@ -682,7 +670,7 @@ heater_plot <- function(genes=c("Hspa8","Snap25","Gad2","Slc17a6"),clusters=1:49
         geom_rect(data=xlab.rect,aes(xmin=xmin,ymin=ymin,xmax=xmax,ymax=ymax,fill=color))
       if(toptext) {
         p <- p +
-          geom_text(data=cluster.data,aes(y=labely,x=xpos,label=final_label),angle=90,hjust=0,vjust=0.35,size=pt2mm(fontsize)) +
+          geom_text(data=cluster.data,aes(y=labely,x=xpos,label=plot_label),angle=90,hjust=0,vjust=0.35,size=pt2mm(fontsize)) +
           geom_text(data=cluster.data,aes(y=cny,x=xpos,label=cn,size=40))
       }
     }
