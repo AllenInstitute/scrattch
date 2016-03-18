@@ -32,12 +32,14 @@ I also prefer that stringsAsFactors=F be specified as an option at the start of 
 ```{r, eval=FALSE}
 library(scrattch)
 library(dplyr)
+
 options(stringsAsFactors=F)
 ```
 
 ```{r, include=FALSE}
 library(scrattch)
 library(dplyr)
+
 options(stringsAsFactors=F)
 ```
 
@@ -110,6 +112,7 @@ This table can also be built in R, or tables with partial data can be supplement
 ```{r}
 partial.anno <- demo_anno
 names(partial.anno) <- c("sample_id","wgcna_label","cre_label","mapped_label")
+
 head(partial.anno)
 ```
 
@@ -168,7 +171,8 @@ anno <- anno %>%
   select(sample_id,
          wgcna_id,wgcna_label,wgcna_color,
          cre_id,cre_label,cre_color,
-         mapped_id,mapped_label,mapped_color)
+         mapped_id,mapped_label,mapped_color) %>%
+  mutate(mapped_label = as.character(mapped_label))
 
 head(anno)
 ```
