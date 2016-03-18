@@ -1,5 +1,5 @@
 ---
-title: "Heatmap Generator Database Guide"
+title: "scrattch Database Guide"
 author: "Lucas Gray"
 date: "Friday, May 18, 2016"
 output: html_document
@@ -21,7 +21,7 @@ Once you've built these 3 tables, you can use scrattch helper functions to write
 
 * [*Writing the Database*](#db_write_section) - initializing a database with write_database()
 * [*Updating a Database*](#db_update_section) - updating individual tables with write_database()
-* [*Check Database Structure*](#db_write_section) - checking the structure with check_db_structure()
+* [*Check Database Structure*](#db_check_section) - checking the structure with check_db_structure()
 
 To build or modify the database, you will need the DBI and RSQLite packages installed. These should be added as dependencies for scrattch.
 
@@ -155,12 +155,13 @@ mapped.anno <- partial.anno %>%
 mapped.anno
 ```
 
-Now, all of these values can be joined together with the original, partial annotations to build the final anno table:
+Now, all of these values can be joined together with the original, partial annotations to build the final anno table. Note that the mapped_label column has to now be converted to character from numeric so that it's used correctly by the functions:
 ```{r}
 anno <- partial.anno %>%
   left_join(wgcna.anno) %>%
   left_join(cre.anno) %>%
-  left_join(mapped.anno)
+  left_join(mapped.anno) %>%
+  mutate(mapped_label = as.character(mapped_label))
 
 head(anno)
 ```
@@ -171,13 +172,53 @@ anno <- anno %>%
   select(sample_id,
          wgcna_id,wgcna_label,wgcna_color,
          cre_id,cre_label,cre_color,
-         mapped_id,mapped_label,mapped_color) %>%
-  mutate(mapped_label = as.character(mapped_label))
+         mapped_id,mapped_label,mapped_color) 
 
 head(anno)
 ```
 
 The database now contains all three required tables, and should work with the scrattch plotting functions.
+
+[Back to Top](#top)
+
+
+-----
+
+### <a name="db_write_section"></a> Writing the Database
+
+Once you have all 3 required tables, you can use the convenient write_database() function provided by scrattch to build a database. We use a SQLite3 database because this makes accessing data from large datasets much faster than reading in an entire data set each time.
+
+```{r, eval=FALSE}
+write_database(desc = desc, anno = anno, data = rpkm, file = "demo.db")
+```
+
+This may take a few minutes depending in how much data is in the data table, as the table is indexed after writing for fast retrieval of rows using the "gene" column.
+
+[Back to Top](#top)
+
+-----
+
+### <a name="db_udpate_section"></a> Updating a Database
+
+Sometimes, you'll want to make a small change to the annotations or description tables without taking the time necessary to re-write and index the large data table. This can be accomplished using write_database as well by excluding arguments for the tables you don't want to update, and including the overwrite = T parameter:
+
+```{r, eval=FALSE}
+write_database(anno = new_anno, file = "demo.db", overwrite=T)
+```
+
+[Back to Top](#top)
+
+-----
+
+### <a name="db_check_section"></a> Check Database Structure
+
+Once you've built a database, you may want to check its structure. scrattch includes a function to do just that: check_db_structure().
+
+This function will make sure all of the cells in the data table have corresponding annotations in the anno table, that all of the annotations have the 3 required columns (id, label, and color), and that each item in the anno table is described in the desc table.
+
+```{r, eval=FALSE}
+check_db_structure("demo.db")
+```
 
 [Back to Top](#top)
 
