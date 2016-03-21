@@ -474,7 +474,7 @@ boxter_plot <- function(genes=c("Hspa8","Snap25","Gad2","Slc17a6"),clusters=1:49
   # Build the maximum value labels for the right edge
   max.rect <- data.frame(xmin=length(clusters)+0.5,xmax=length(clusters)+2,
                          ymin=1,ymax=length(genes)+ 1 + labheight)
-  max.vals <- data %>% select(-sample_id) %>% summarise_each(funs(max)) %>% unlist()
+  max.vals <- data %>% select(one_of(genes)) %>% summarise_each(funs(max)) %>% unlist()
   max.labels <- data.frame(x=length(clusters)+0.5,y=1:length(genes)+0.5,
                            label=sci_label(max.vals))
   max.header <- data.frame(x=length(clusters)+1.5,y=length(genes)+1,label="Max data")

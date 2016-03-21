@@ -1,5 +1,5 @@
 update_scrattch <- function() {
-  devtools::install_github("hypercompetent/scrattch",auth_token="ed22ec6b1d333fcb9d4d78a1e7ebd29ec72d0048")
+  devtools::install_github("hypercompetent/scrattch",auth_token="ed22ec6b1d333fcb9d4d78a1e7ebd29ec72d0048",build_vignettes = T)
 }
 
 #' Convert font sizes in pt to mm
@@ -198,44 +198,55 @@ get_internal_data <- function(genes,grouping,clusters) {
 }
 
 get_db_data <- function(data_source,genes,grouping,clusters) {
+  library(dplyr)
   library(DBI)
   library(RSQLite)
   
-  cluster_order <- data.frame(clusters=clusters)
-  
+  # Get annotations
   con <- dbConnect(RSQLite::SQLite(),data_source)
   get <- "SELECT * FROM anno;"
   res <- dbSendQuery(con,get)
   all.anno <- dbFetch(res,n=-1)
   dbClearResult(res)
-  getgenes <- paste("\"",genes,"\"",collapse=",",sep="")
-  get <- paste("SELECT * from data WHERE gene IN (",getgenes,")",sep="")
+  
+  # Rename based on grouping, and select annotations in the clusters
+  anno <- all.anno %>%
+    rename_("plot_id" = paste0(grouping,"_id"),
+            "plot_label" = paste0(grouping,"_label"),
+            "plot_color" = paste0(grouping,"_color")) %>%
+    filter(plot_id %in% clusters)
+  
+  # Get data for genes
+  getgenes <- chr_to_sql(genes)
+  get <- paste("SELECT * from data WHERE gene IN ",getgenes,sep="")
   res <- dbSendQuery(con,get)
   data <- dbFetch(res,n=-1)
   dbClearResult(res)
+  
+  # transpose genes table for joining to annotations
   row.names(data) <- data[,1]
   data <- data %>% 
     select(-1) %>% 
     t() %>% 
     as.data.frame()
   
+  # Filter data to only samples in the filtered annotations
   data <- data %>%
     mutate(sample_id=row.names(data)) %>%
+    filter(sample_id %in% anno$sample_id) %>%
     select(one_of(c("sample_id",genes)))
   
-  # Filter and order the rows
-  data <- left_join(data,all.anno,by="sample_id") %>%
-    rename_("plot_id" = paste0(grouping,"_id"),
-            "plot_label" = paste0(grouping,"_label"),
-            "plot_color" = paste0(grouping,"_color")) %>%
-    filter(plot_id %in% clusters)
+  # join data and annotations
+  data <- left_join(data,anno,by="sample_id")
   
-  cluster_order <- cluster_order %>%
+  # Set cluster order based on the input clusters
+  cluster_order <- data.frame(plot_id = clusters) %>%
     filter(clusters %in% unique(data$plot_id)) %>%
     mutate(cluster_x=1:n())
   
+  # sort data by input cluster order
   data <- data %>%
-    left_join(cluster_order,by=c("plot_id"="clusters")) %>%
+    left_join(cluster_order,by="plot_id") %>%
     arrange(cluster_x) %>%
     mutate(xpos=1:n()) %>%
     select(-plot_id) %>%
