@@ -1,7 +1,7 @@
 Package: scrattch
 Type: Package
 Title: Single Cell RNA Analysis for Transcriptomic Type Characterization
-Version: 0.0.103
+Version: 0.0.104
 Date: 2016-03-21
 Author: Lucas T. Gray, Vilas Menon, and Zizhen Yao
 Maintainer: Lucas Gray <lucasg@alleninstitute.org>

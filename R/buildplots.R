@@ -38,6 +38,10 @@ barcell_plot <- function(genes = c("Hspa8","Snap25","Gad2","Slc17a6"),
     
     data <- get_internal_data(genes,grouping,clusters)
     
+  } else if (is.list(data_source)) {
+    
+    data <- get_list_data(data_source,genes,grouping,clusters)
+    
   } else {
     
     data <- get_db_data(data_source,genes,grouping,clusters)
@@ -354,7 +358,7 @@ pottery_plot <- function(genes = c("Hspa8","Snap25","Gad2","Slc17a6"),
     
   }
   
-  clusters <- clusters[clusters %in% data$plot_id]
+#  clusters <- clusters[clusters %in% data$plot_id]
   
   #Calculate the height of the label:
   labheight <- length(genes)*(labelheight/100)/(1-labelheight/100)
@@ -391,6 +395,7 @@ pottery_plot <- function(genes = c("Hspa8","Snap25","Gad2","Slc17a6"),
            xpos=plot_id)
   
   hline.frame <- data.frame(y=seq(1,length(genes)+1,1))
+  
   xlab.rect <- data.frame(xmin=seq(0.5,length(clusters)-0.5,1),
                           xmax=seq(1.5,length(clusters)+0.5,1),
                           ymin=length(genes)+1,
@@ -500,6 +505,7 @@ boxter_plot <- function(genes=c("Hspa8","Snap25","Gad2","Slc17a6"),clusters=1:49
            cny=length(genes) + 0.9 + labheight)
   
   hline.frame <- data.frame(y=seq(1,length(genes)+1,1))
+  
   xlab.rect <- data.frame(xmin=seq(0.5,length(clusters)-0.5,1),
                           xmax=seq(1.5,length(clusters)+0.5,1),
                           ymin=length(genes)+1,
@@ -579,7 +585,7 @@ heater_plot <- function(genes=c("Hspa8","Snap25","Gad2","Slc17a6"),clusters=1:49
   data <- data %>%
     select(-xpos) %>% mutate(xpos = plot_id)
    
-  clusters <- clusters[clusters %in% unique(data$plot_id)]
+ # clusters <- clusters[clusters %in% unique(data$plot_id)]
   
   #Calculate the height of the label:
   labheight <- length(genes)*(labelheight/100)/(1-labelheight/100)
@@ -671,7 +677,7 @@ heater_plot <- function(genes=c("Hspa8","Snap25","Gad2","Slc17a6"),clusters=1:49
       if(toptext) {
         p <- p +
           geom_text(data=cluster.data,aes(y=labely,x=xpos,label=plot_label),angle=90,hjust=0,vjust=0.35,size=pt2mm(fontsize)) +
-          geom_text(data=cluster.data,aes(y=cny,x=xpos,label=cn,size=pt2mm(fontsize)))
+          geom_text(data=cluster.data,aes(y=cny,x=xpos,label=cn),size=pt2mm(fontsize))
       }
     }
     

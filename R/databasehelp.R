@@ -147,6 +147,136 @@ check_db_structure <- function(db.file,verbose=T) {
   
 }
 
+
+
+#'Check List structure
+#'
+#'This function will examine a list of tables to make sure it's consistent
+#'with the structure required for scrattch applications.
+#'
+#'@param list_data - a list object that contains data, anno, and desc tables.
+#'@param verbose a logical value indicating if errors should be displayed. If set to FALSE, all messages will be suppressed.
+#'
+#'@return A logical value indicating if the list data passes all required checks.
+#'
+#'@examples
+#'dataset_list <- list(data = v1_data, anno = v1_anno, desc = v1_desc)
+#'
+#'check_list_structure(dataset_list)
+#'
+#'check_db_structure(dataset_list,verbose=F)
+check_list_structure <- function(list_data,verbose=T) {
+  # 5 checks need to pass for the dataset to work with shiny
+  passed_checks <- 0
+  
+  # Check to see if the 3 tables are available.
+  db_tables <- list_data
+  
+  expected_tables <- c("desc","anno","data")
+  
+  for(table_name in expected_tables) {
+    if(table_name %in% names(db_tables)) {
+      if(verbose) { cat(paste0(table_name," table exists :)\n")) }
+      passed_checks <- passed_checks + 1
+    } else { 
+      if(verbose) { cat(paste0("no ",table_name," table! :'(\n!!This table is required for scrattch!!\n\n")) }
+    } 
+  }
+  
+  # If desc exists, read it to get the annotations we expect in anno.
+  if(sum(c("desc","anno") %in% names(db_tables)) == 2) {
+    desc <- db_tables$desc
+    
+    if(verbose) {
+      cat("Description table:\n")
+      print(desc)
+      cat("\n")
+    }
+    
+    expected_anno_columns <- c("sample_id",
+                               paste0(desc$base,"_id"),
+                               paste0(desc$base,"_label"),
+                               paste0(desc$base,"_color"))
+    
+    anno_columns <- names(db_tables$anno)
+    
+    if(sum(expected_anno_columns %in% anno_columns) == length(expected_anno_columns)) {
+      if(verbose) { cat("all described columns were found! :)\n") }
+      passed_checks <- passed_checks + 1
+    } else if (sum(expected_anno_columns %in% anno_columns) < length(expected_anno_columns)) {
+      if(verbose) { cat("some described columns were not found! :'(\n")
+        for(col_name in expected_anno_columns[!expected_anno_columns %in% anno_columns]) {
+          cat(paste0(col_name,"\n\n"))
+        }
+        cat("!!this will cause errors in scrattch!!\n\n")
+      }
+    }
+    
+    if(length(anno_columns) > length(expected_anno_columns)) {
+      if(verbose) {
+        cat("some annotations were not found in the desc table:\n")
+        for(col_name in anno_columns[!anno_columns %in% expected_anno_columns]) {
+          cat(paste0(col_name,"\n"))
+        }
+        cat("this will work with scrattch, but these columns may not be fully functional.\n\n")
+      }
+    }
+    
+  }
+  
+  # Check to see if all filenames in anno are found in rpkm (and vice-versa)
+  if(sum(c("anno","data") %in% names(db_tables)) == 2) {
+    
+    anno_filenames <- db_tables$anno$sample_id
+
+    if(verbose) { cat(paste0("found annotations for ",length(anno_filenames)," cells.\n")) }
+    
+    expected_rpkm_columns <- c("gene",anno_filenames)
+    
+    rpkm_columns <- names(db_tables$data)
+
+    if(verbose) { cat(paste0("found data for ",nrow(rpkm_columns) - 1," cells.\n")) }
+    
+    if(sum(expected_rpkm_columns %in% rpkm_columns) == length(expected_rpkm_columns)) {
+      if(verbose) { cat("all annotations have corresponding data! :)\n") }
+      passed_checks <- passed_checks + 1
+    } else if (sum(expected_rpkm_columns %in% rpkm_columns) < length(expected_rpkm_columns)) {
+      if(verbose) {
+        cat("some annotated cells don't have data! :'(\n")
+        for(col_name in expected_rpkm_columns[!expected_rpkm_columns %in% rpkm_columns]) {
+          cat(paste0(col_name,"\n"))
+        }
+        cat("!!this will cause errors in scrattch!!\n\n")
+      }
+    }
+    
+    if(length(rpkm_columns) > length(expected_rpkm_columns)) {
+      if(verbose) {
+        cat("some cells have data, but are not annotated:\n")
+        for(col_name in rpkm_columns[!rpkm_columns %in% expected_rpkm_columns]) {
+          cat(paste0(col_name,"\n"))
+        }
+        cat("this will work with the shiny app, but the data for these cells will be hidden.\n\n")
+        
+      }
+    }
+    
+  }
+  
+  if(passed_checks == 5) {
+    if(verbose) { cat("The dataset has passed all essential checks! HOORAY!!\n") 
+    } 
+    return(TRUE)
+  } else {
+    if(verbose) { cat("The dataset has some problems that will prevent it from working with scrattch.\n") 
+    } 
+    return(FALSE)
+    
+  }
+  
+}
+
+
 #'Write SQLite3 Database
 #'
 #'This function will write anno, data, and desc tables to a SQLite3 database.

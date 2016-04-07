@@ -100,10 +100,10 @@ split_cst <- function(in_string) {
 #' test <- c("hspa8","scnn1a","fhqwghads")
 #' title_case(test)
 title_case <- function(in_chr) {
-    lower <- tolower(in_chr)
-    s <- strsplit(lower, " ")
-    result <- paste(toupper(substring(s, 1,1)), substring(s, 2), sep="")
-    return(result)
+  lower <- tolower(in_chr)
+  s <- strsplit(lower, " ")
+  result <- paste(toupper(substring(s, 1,1)), substring(s, 2), sep="")
+  return(result)
 }
 
 #' Convert the case of Riken genes no matter input case
@@ -197,6 +197,46 @@ get_internal_data <- function(genes,grouping,clusters) {
   return(data)
 }
 
+get_list_data <- function(datalist,genes,grouping,clusters) {
+  print(1)
+  data <- datalist$data
+  all.anno <- datalist$anno
+  print(2)
+  cluster_order <- data.frame(clusters=clusters) %>%
+    mutate(cluster_x=1:n())
+  print(3)
+  anno <- all.anno %>%
+    rename_("plot_id" = paste0(grouping,"_id"),
+            "plot_label" = paste0(grouping,"_label"),
+            "plot_color" = paste0(grouping,"_color")) %>%
+    filter(plot_id %in% clusters) %>%
+    left_join(cluster_order,by=c("plot_id"="clusters"))
+  print(4)
+  data <- data %>%
+    filter(gene %in% genes) %>%
+    select(one_of(c("gene",anno$sample_id)))
+  print(5)
+  # Reformat the retrieved data
+  row.names(data) <- data[,1]
+  data <- data %>% 
+    select(-1) %>% 
+    t() %>% 
+    as.data.frame()
+  print(6)
+  data <- data %>%
+    mutate(sample_id=row.names(data)) %>%
+    select(one_of("sample_id",genes))
+  print(7)
+  # Filter and order the rows
+  data <- left_join(data,anno,by="sample_id") %>%
+    arrange(cluster_x) %>%
+    mutate(xpos=1:n()) %>%
+    select(-plot_id) %>%
+    rename(plot_id=cluster_x)
+  print(8)
+  return(data)
+}
+
 get_db_data <- function(data_source,genes,grouping,clusters) {
   library(dplyr)
   library(DBI)
@@ -217,8 +257,10 @@ get_db_data <- function(data_source,genes,grouping,clusters) {
     filter(plot_id %in% clusters)
   
   # Get data for genes
+#  getgenes <- chr_to_sql(toupper(genes))
+#  get <- paste("SELECT * FROM data WHERE upper(gene) IN ",getgenes,sep="")
   getgenes <- chr_to_sql(genes)
-  get <- paste("SELECT * from data WHERE gene IN ",getgenes,sep="")
+  get <- paste("SELECT * FROM data WHERE gene IN ",getgenes,sep="")
   res <- dbSendQuery(con,get)
   data <- dbFetch(res,n=-1)
   dbClearResult(res)
@@ -229,12 +271,14 @@ get_db_data <- function(data_source,genes,grouping,clusters) {
     select(-1) %>% 
     t() %>% 
     as.data.frame()
+  names(data) <- toupper(names(data))
   
   # Filter data to only samples in the filtered annotations
   data <- data %>%
     mutate(sample_id=row.names(data)) %>%
     filter(sample_id %in% anno$sample_id) %>%
-    select(one_of(c("sample_id",genes)))
+    select(one_of(c("sample_id",toupper(genes))))
+  names(data) <- c("sample_id",genes)
   
   # join data and annotations
   data <- left_join(data,anno,by="sample_id")
