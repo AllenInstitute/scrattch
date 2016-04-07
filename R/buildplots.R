@@ -346,6 +346,8 @@ pottery_plot <- function(genes = c("Hspa8","Snap25","Gad2","Slc17a6"),
   library(dplyr)
   library(ggplot2)
   
+  genes <- rev(genes)
+  
   if(data_source == "internal") {
     
     data <- get_internal_data(genes,grouping,clusters) %>%
