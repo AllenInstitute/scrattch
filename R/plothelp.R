@@ -179,8 +179,8 @@ get_internal_data <- function(genes,grouping,clusters) {
     mutate(sample_id=row.names(data)) %>%
     select(one_of(c("sample_id",genes)))
   
-  genes[genes == "9630013A20Rik"] <- "X9630013A20Rik"
-  names(data)[names(data) == "9630013A20Rik"] <- "X9630013A20Rik"
+  genes[grepl("^[0-9]",genes)] <- paste0("X",genes[grepl("^[0-9]",genes)])
+  names(data)[grepl("^[0-9]",names(data))] <- paste0("X",names(data)[grepl("^[0-9]",names(data))])
   
   # Filter and order the rows
   data <- left_join(data,all.anno,by="sample_id") %>%
