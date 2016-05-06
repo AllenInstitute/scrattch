@@ -147,6 +147,66 @@ check_db_structure <- function(db.file,verbose=T) {
   
 }
 
+#'Read a SQLite database into a list
+#'
+#'This function will read a scrattch SQLite database into memory as a list.
+#'
+#'Each table (desc, anno, and data) will be a data frame within the list.
+#'
+#'@param db.file - a character object specifying the location of the database
+#'@param genes - a character object with a list of genes to retrieve. NULL retrieves all genes. default = NULL
+#'@param group_by - a character object with the base of the annotation column to filter on if only specific groups should be selected. NULL retrieves all groups. default = NULL
+#'@param groups - a numeric object with the group indexes to be selected. NULL retrieves all groups. default = NULL
+#'
+#'@ return A list object containing data.frames for each table in the database, filtered according to genes, group_by, and groups if provided.
+#'
+db_to_list <- function(db.file,genes=NULL,group_by=NULL,groups=NULL) {
+  library(DBI)
+  library(RSQLite)
+  library(dplyr)
+  
+  con <- dbConnect(RSQLite::SQLite(),db.file)
+  
+  get <- paste("SELECT * FROM desc",sep="")
+  res <- dbSendQuery(con,get)
+  desc <- dbFetch(res,n=-1)
+  
+  get <- paste("SELECT * FROM anno",sep="")
+  res <- dbSendQuery(con,get)
+  anno <- dbFetch(res,n=-1)
+  
+  if(is.null(group_by) | is.null(groups)) {
+    get_samples <- "*"
+  } else {
+    group_id <- paste0(group_by,"_id")
+    anno <- anno[anno[,group_id] %in% groups,]
+    get_samples <- paste(c("gene",anno$sample_id),collapse=",")
+    
+  }
+  
+  if(is.null(genes)) {
+    get <- paste("SELECT ",get_samples," FROM data",sep="")
+    res <- dbSendQuery(con,get)
+    data <- dbFetch(res,n=-1)
+    dbClearResult(res)
+  } else {
+    get_genes <- chr_to_sql(genes)
+    get <- paste0("SELECT ",get_samples," FROM data WHERE gene IN ",get_genes)
+    res <- dbSendQuery(con,get)
+    data <- dbFetch(res,n=-1)
+    dbClearResult(res)
+  }
+  
+  data <- data %>%
+    select(one_of("gene",anno$sample_id))
+
+  dbDisconnect(con)
+  
+  results <- list(desc = desc, anno = anno, data = data)
+  
+  return(results)
+}
+
 
 
 #'Check List structure
