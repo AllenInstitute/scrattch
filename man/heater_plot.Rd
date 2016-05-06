@@ -5,10 +5,11 @@
 \title{Heatmaps of gene expression for clusters}
 \usage{
 heater_plot(genes = c("Hspa8", "Snap25", "Gad2", "Slc17a6"),
-  clusters = 1:49, calculation = "mean", data_source = "internal",
-  normalize_rows = FALSE, logscale = T, fontsize = 7, toplabel = T,
-  toptext = T, labelheight = 25, maxlabel = T, maxval = "auto",
-  colorset = c("darkblue", "dodgerblue", "gray80", "orange", "orangered"))
+  clusters = 1:49, grouping = "final", calculation = "mean",
+  data_source = "internal", normalize_rows = FALSE, logscale = T,
+  fontsize = 7, toplabel = T, toptext = T, labelheight = 25,
+  maxlabel = T, maxval = "auto", colorset = c("darkblue", "dodgerblue",
+  "gray80", "orange", "orangered"))
 }
 \arguments{
 \item{genes}{A character vector containing gene symbols to be plotted}

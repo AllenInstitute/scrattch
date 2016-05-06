@@ -158,7 +158,7 @@ check_db_structure <- function(db.file,verbose=T) {
 #'@param group_by - a character object with the base of the annotation column to filter on if only specific groups should be selected. NULL retrieves all groups. default = NULL
 #'@param groups - a numeric object with the group indexes to be selected. NULL retrieves all groups. default = NULL
 #'
-#'@ return A list object containing data.frames for each table in the database, filtered according to genes, group_by, and groups if provided.
+#'@return A list object containing data.frames for each table in the database, filtered according to genes, group_by, and groups if provided.
 #'
 db_to_list <- function(db.file,genes=NULL,group_by=NULL,groups=NULL) {
   library(DBI)
