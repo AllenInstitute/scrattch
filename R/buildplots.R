@@ -424,7 +424,7 @@ pottery_plot <- function(genes = c("Hspa8","Snap25","Gad2","Slc17a6"),
   # plot the violins for each gene
   for(i in 1:length(genes)) {
     p <- p + geom_violin(data=data,aes_string(x="xpos",y=genes[i],fill="plot_color"),scale="width",adjust=2)
-    p <- p + stat_summary(data=data,aes_string(x="xpos",y=genes[i]),fun.y="median",fun.ymin="median",fun.ymax="median",geom="point",size=1.3)
+    p <- p + stat_summary(data=data,aes_string(x="xpos",y=genes[i]),fun.y="median",fun.ymin="median",fun.ymax="median",geom="point",size=0.7)
   }
   
   return(p)

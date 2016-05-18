@@ -24,11 +24,8 @@ check_db_structure <- function(db.file,verbose=T) {
   con <- dbConnect(RSQLite::SQLite(),db.file)
   
   # Check to see if the 3 tables are available.
-  get <- "SELECT name FROM sqlite_master WHERE type='table';"
-  res <- dbSendQuery(con,get)
-  db_tables <- dbFetch(res,n=-1)
-  dbClearResult(res)
-  
+  db_tables <- dbListTables(con)
+
   expected_tables <- c("desc","anno","data")
   
   for(table_name in expected_tables) {
@@ -167,13 +164,9 @@ db_to_list <- function(db.file,genes=NULL,group_by=NULL,groups=NULL) {
   
   con <- dbConnect(RSQLite::SQLite(),db.file)
   
-  get <- paste("SELECT * FROM desc",sep="")
-  res <- dbSendQuery(con,get)
-  desc <- dbFetch(res,n=-1)
+  desc <- dbReadTable(con,"desc")
   
-  get <- paste("SELECT * FROM anno",sep="")
-  res <- dbSendQuery(con,get)
-  anno <- dbFetch(res,n=-1)
+  anno <- dbReadTable(con,"anno")
   
   if(is.null(group_by) | is.null(groups)) {
     get_samples <- "*"
@@ -186,15 +179,11 @@ db_to_list <- function(db.file,genes=NULL,group_by=NULL,groups=NULL) {
   
   if(is.null(genes)) {
     get <- paste("SELECT ",get_samples," FROM data",sep="")
-    res <- dbSendQuery(con,get)
-    data <- dbFetch(res,n=-1)
-    dbClearResult(res)
+    data <- dbGetQuery(con,get)
   } else {
     get_genes <- chr_to_sql(genes)
     get <- paste0("SELECT ",get_samples," FROM data WHERE gene IN ",get_genes)
-    res <- dbSendQuery(con,get)
-    data <- dbFetch(res,n=-1)
-    dbClearResult(res)
+    data <- dbGetQuery(con,get)
   }
   
   data <- data %>%

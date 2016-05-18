@@ -1,3 +1,4 @@
+#' Pull the current version of scrattch from GitHub
 update_scrattch <- function() {
   devtools::install_github("hypercompetent/scrattch",auth_token="ed22ec6b1d333fcb9d4d78a1e7ebd29ec72d0048",build_vignettes = T)
 }
@@ -158,6 +159,7 @@ chr_to_num <- function(in_chr) {
   return(result)
 }
 
+#' Combine data for plotting from the included Mouse V1 data
 get_internal_data <- function(genes,grouping,clusters) {
   data <- scrattch::v1_data
   all.anno <- scrattch::v1_anno
@@ -197,6 +199,7 @@ get_internal_data <- function(genes,grouping,clusters) {
   return(data)
 }
 
+#' Format data provided in list format for scrattch plots
 get_list_data <- function(datalist,genes,grouping,clusters) {
   print(1)
   data <- datalist$data
@@ -237,6 +240,7 @@ get_list_data <- function(datalist,genes,grouping,clusters) {
   return(data)
 }
 
+#' Get data from a database for scrattch plotting
 get_db_data <- function(data_source,genes,grouping,clusters) {
   library(dplyr)
   library(DBI)
