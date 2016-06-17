@@ -29,7 +29,7 @@ check_db_structure <- function(db.file,verbose=T) {
   expected_tables <- c("desc","anno","data")
   
   for(table_name in expected_tables) {
-    if(table_name %in% db_tables$name) {
+    if(table_name %in% db_tables) {
       if(verbose) { cat(paste0(table_name," table exists :)\n")) }
       passed_checks <- passed_checks + 1
     } else { 
@@ -38,7 +38,7 @@ check_db_structure <- function(db.file,verbose=T) {
   }
   
   # If desc exists, read it to get the annotations we expect in anno.
-  if(sum(c("desc","anno") %in% db_tables$name) == 2) {
+  if(sum(c("desc","anno") %in% db_tables) == 2) {
     get <- paste("SELECT * FROM desc",sep="")
     res <- dbSendQuery(con,get)
     desc <- dbFetch(res,n=-1)
@@ -84,7 +84,7 @@ check_db_structure <- function(db.file,verbose=T) {
   }
   
   # Check to see if all filenames in anno are found in rpkm (and vice-versa)
-  if(sum(c("anno","data") %in% db_tables$name) == 2) {
+  if(sum(c("anno","data") %in% db_tables) == 2) {
     
     get <- paste("SELECT sample_id FROM anno",sep="")
     res <- dbSendQuery(con,get)
