@@ -246,8 +246,9 @@ get_db_data <- function(data_source,genes,grouping,clusters) {
   library(DBI)
   library(RSQLite)
   
-  # Get annotations
   con <- dbConnect(RSQLite::SQLite(),data_source)
+  
+  # Get annotations
   get <- "SELECT * FROM anno;"
   res <- dbSendQuery(con,get)
   all.anno <- dbFetch(res,n=-1)
@@ -268,6 +269,8 @@ get_db_data <- function(data_source,genes,grouping,clusters) {
   res <- dbSendQuery(con,get)
   data <- dbFetch(res,n=-1)
   dbClearResult(res)
+  
+  dbDisconnect(con)
   
   # transpose genes table for joining to annotations
   row.names(data) <- data[,1]
