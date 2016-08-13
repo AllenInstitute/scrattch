@@ -247,8 +247,8 @@ build_header_labels <- function(data, ngenes, nsamples, nclust, labelheight = 25
   labheight <- ngenes*(labelheight/100)/(1-labelheight/100)
   
   if(labeltype == "simple") {
-    xlab.rect <- data.frame(xmin = 1:nclust,
-                            xmax = 1:nclust + 1,
+    xlab.rect <- data.frame(xmin = 1:nclust - 0.5,
+                            xmax = 1:nclust + 0.5,
                             ymin = ngenes + 1,
                             ymax = ngenes + 1 + labheight,
                             color = unique(data$plot_color),
