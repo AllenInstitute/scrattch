@@ -480,91 +480,110 @@ pottery_plot <- function(genes = c("Hspa8","Snap25","Gad2","Slc17a6"),
 #' my_genes <- c("Ercc6","Ercc8","Trp53","Pgbd5")
 #' my_clusters <- c(1,5,9,10,24,37)
 #' boxter_plot(my_genes,my_clusters,logscale=T,fontsize=14)
-boxter_plot <- function(genes=c("Hspa8","Snap25","Gad2","Slc17a6"),clusters=1:49,
-                        grouping = "final",data_source="internal",
-                        logscale=F,
-                        fontsize=7,labelheight=25) {
+boxter_plot <- function(genes = c("Hspa8","Snap25","Gad2","Slc17a6"),
+                         grouping = "final", clusters = 1:49,
+                         data_source = "internal",
+                         sort = F, logscale = F,
+                         fontsize = 7, labelheight = 25) {
   library(dplyr)
   library(ggplot2)
   
-  plot_id <- paste0(grouping,"_id")
   genes <- rev(genes)
   
   if(data_source == "internal") {
     
-    data <- get_internal_data(genes,grouping,clusters)
+    data <- get_internal_data(genes,grouping,clusters) %>%
+      select(-xpos) %>% mutate(xpos = plot_id)
     
   } else {
     
-    data <- get_db_data(data_source,genes,grouping,clusters)
+    data <- get_db_data(data_source,genes,grouping,clusters) %>%
+      select(-xpos) %>% mutate(xpos = plot_id)
     
   }
   
-  data <- data %>%
-    select(-xpos) %>%
-    mutate(xpos = plot_id)
+  ngenes <- length(genes)
+  nclust <- length(unique(data$plot_id))
+  nsamples <- nrow(data)
   
-  #Calculate the height of the label:
-  labheight <- length(genes)*(labelheight/100)/(1-labelheight/100)
+  # Compute maximum values before scaling to plot space
+  max_vals <- data %>% 
+    select(one_of(genes)) %>% 
+    summarise_each(funs(max)) %>% 
+    unlist()
   
-  # Build the maximum value labels for the right edge
-  max.rect <- data.frame(xmin=length(clusters)+0.5,xmax=length(clusters)+2,
-                         ymin=1,ymax=length(genes)+ 1 + labheight)
-  max.vals <- data %>% select(one_of(genes)) %>% summarise_each(funs(max)) %>% unlist()
-  max.labels <- data.frame(x=length(clusters)+0.5,y=1:length(genes)+0.5,
-                           label=sci_label(max.vals))
-  max.header <- data.frame(x=length(clusters)+1.5,y=length(genes)+1,label="Max data")
-  
-  # Scale the datas
+  # Scale the data between i and i + 0.9
   for(i in 1:length(genes)) {
     gene <- genes[i]
+    gene_max <- max_vals[i]
     if(logscale) {
-      data[gene] <- log10(data[gene]+1)/log10(max(data[gene])+1)*0.9 + i
+      data[gene] <- log10(data[gene] + 1) / log10(gene_max + 1) * 0.9 + i
     } else {
-      data[gene] <- data[gene]/max(data[gene])*0.9 + i
-    }  
+      data[gene] <- data[gene] / gene_max * 0.9 + i
+    }
   }
   
-  cluster.data <- data %>%
-    select(plot_label,plot_color,plot_id,xpos) %>%
-    group_by(plot_label,plot_color,plot_id,xpos) %>%
+  header_labels <- build_header_labels(data = data, ngenes = ngenes, nsamples = 1, nclust = nclust, labelheight = labelheight, labeltype = "simple")
+  
+  # Build the maximum value labels for the right edge
+  max_labels <- data.frame(x = (nclust + 0.5) * 1.01,
+                           y = 1:ngenes + 0.5,
+                           label = sci_label(max_vals) )
+  max_header <- data.frame(x = (nclust + 0.5) * 1.01,
+                           y = ngenes + 1,
+                           label = "Max value")
+  
+  cluster_data <- data %>%
+    group_by(plot_label,plot_color,plot_id) %>%
     summarise(cn=n()) %>%
     as.data.frame(stringsAsFactors=F) %>%
     arrange(plot_id) %>%
-    mutate(labely=length(genes) + 1.1,
-           cny=length(genes) + 0.9 + labheight)
+    mutate(labely = ngenes + 1.1,
+           cny = max(header_labels$ymax) - 0.1,
+           xpos = plot_id)
   
-  hline.frame <- data.frame(y=seq(1,length(genes)+1,1))
-  
-  xlab.rect <- data.frame(xmin=seq(0.5,length(clusters)-0.5,1),
-                          xmax=seq(1.5,length(clusters)+0.5,1),
-                          ymin=length(genes)+1,
-                          ymax=length(genes)+1+labheight,
-                          color=cluster.data$plot_color)
-  
-  p <- ggplot(data) +
+  # Plot setup
+  p <- ggplot() +
     scale_fill_identity() +
-    geom_hline(data=hline.frame,aes(yintercept=y),size=0.2) +
-    geom_rect(data=xlab.rect,aes(xmin=xmin,ymin=ymin,xmax=xmax,ymax=ymax,fill=color)) +
-    geom_text(data=cluster.data,aes(y=labely,x=xpos,label=plot_label),angle=90,hjust=0,vjust=0.35,size=pt2mm(fontsize)) +
-    geom_text(data=cluster.data,aes(y=cny,x=xpos,label=cn),size=pt2mm(fontsize)) +
-    geom_rect(data=max.rect,aes(xmin=xmin,xmax=xmax,ymin=ymin,ymax=ymax,fill="white")) +
-    geom_text(data=max.header,aes(x=x,y=y,label=label),angle=90,hjust=0,vjust=0.35,size=pt2mm(fontsize)) +
-    geom_text(data=max.labels,aes(x=x,y=y,label=label),hjust=0,vjust=0.35,size=pt2mm(fontsize)) +
-    scale_y_continuous("",breaks=1:length(genes)+0.45,labels=genes,expand=c(0,0)) +
-    scale_x_continuous("",expand=c(0,0)) +
+    scale_y_continuous("", breaks = 1:length(genes) + 0.45, labels = genes, expand = c(0, 0)) +
+    scale_x_continuous("", expand = c(0, 0)) +
     theme_classic(fontsize) +
-    theme(axis.text = element_text(size=rel(1)),
+    theme(axis.text = element_text(size = rel(1)),
           axis.text.x = element_blank(),
           axis.ticks.x = element_blank(),
-          legend.position = "none")
+          legend.position = "none") +
+    geom_hline(aes(yintercept = 1:(ngenes)), size = 0.2)
   
-  # plot the boxplots for each gene
+  # plot the violins for each gene
   for(i in 1:length(genes)) {
-    p <- p + geom_boxplot(data=data,aes_string(x="xpos",y=genes[i],fill="plot_color"))
+    p <- p + 
+      geom_boxplot(data = data,
+                  aes_string(x = "xpos", y = genes[i], fill = "plot_color"))
+
   }
   
-  return(p)
+  # Cluster labels
+  p <- p +
+    geom_rect(data = header_labels, 
+              aes(xmin = xmin, ymin = ymin, xmax = xmax, ymax = ymax, fill = color)) +
+    geom_text(data = header_labels,
+              aes(x = (xmin + xmax) / 2, y = ymin + 0.05, label = label),
+              angle = 90, vjust = 0.35, hjust = 0, size = pt2mm(fontsize)) +
+    # Cluster counts
+    geom_text(data = cluster_data,
+              aes(y = cny, x = xpos,label = cn),
+              size = pt2mm(fontsize)) +
+    # Maximum value labels on right side of plot
+    geom_rect(aes(xmin = nclust + 0.5, xmax = (nclust + 0.5)*1.05, ymin = 1, ymax = max(header_labels$ymax)),
+              fill = "white") +
+    geom_text(data = max_header,
+              aes(x = x, y = y, label = label),
+              angle = 90, hjust = 0, vjust = 0.35, size = pt2mm(fontsize)) +
+    geom_text(data = max_labels,
+              aes(x = x, y = y, label = label),
+              hjust = 0, vjust = 0.35, size = pt2mm(fontsize), parse = TRUE)
+  
+  p
 }
 
 
@@ -594,48 +613,37 @@ boxter_plot <- function(genes=c("Hspa8","Snap25","Gad2","Slc17a6"),clusters=1:49
 heater_plot <- function(genes=c("Hspa8","Snap25","Gad2","Slc17a6"),clusters=1:49,
                         grouping = "final",calculation="mean",
                         data_source="internal",normalize_rows=FALSE,
-                        logscale=T,fontsize=7,toplabel=T,toptext=T,labelheight=25,maxlabel=T,
+                        logscale=T,fontsize=7,labelheight=25,
                         maxval="auto",colorset=c("darkblue","dodgerblue","gray80","orange","orangered")) {
   library(dplyr)
   library(ggplot2)
   
-  plot_id <- paste0(grouping,"_id")
   genes <- rev(genes)
   
   if(data_source == "internal") {
     
-    data <- get_internal_data(genes,grouping,clusters)
+    data <- get_internal_data(genes,grouping,clusters) %>%
+      select(-xpos) %>% mutate(xpos = plot_id)
     
   } else {
     
-    data <- get_db_data(data_source,genes,grouping,clusters)
+    data <- get_db_data(data_source,genes,grouping,clusters) %>%
+      select(-xpos) %>% mutate(xpos = plot_id)
     
   }
-   
-  data <- data %>%
-    select(-xpos) %>% mutate(xpos = plot_id)
-   
- # clusters <- clusters[clusters %in% unique(data$plot_id)]
   
-  #Calculate the height of the label:
-  labheight <- length(genes)*(labelheight/100)/(1-labelheight/100)
+  ngenes <- length(genes)
+  nclust <- length(unique(data$plot_id))
+  nsamples <- nrow(data)
   
-  # Build the maximum value labels for the right edge
-  max.rect <- data.frame(xmin=length(clusters)+0.5,xmax=length(clusters)+2,
-                         ymin=1,ymax=length(genes) + 1 + labheight)
-  max.vals <- data %>% select(one_of(genes)) %>% summarise_each(funs(max)) %>% unlist()
-  max.labels <- data.frame(x=length(clusters)+0.5,y=1:length(genes)+0.5,
-                           label=sci_label(max.vals))
-  max.header <- data.frame(x=length(clusters)+1.5,y=length(genes)+1.1,label="Max data")
-
+  header_labels <- build_header_labels(data = data, ngenes = ngenes, nsamples = 1, nclust = nclust, labelheight = labelheight, labeltype = "simple")
+  
   heat_data <- data %>% select(plot_id,xpos)
   
   # Scale the datas
   for(i in 1:length(genes)) {
     gene <- genes[i]
-    if(logscale) {
-      data[gene] <- log10(data[gene] + 1)
-    }
+
     
     if(calculation == "mean") {
       gene_func <- paste0("mean(",gene,")")
@@ -655,7 +663,30 @@ heater_plot <- function(genes=c("Hspa8","Snap25","Gad2","Slc17a6"),clusters=1:49
     
     heat_data <- heat_data %>%
       left_join(gene_data,by="plot_id")
+    
+    
   }
+  
+  heat_data <- unique(heat_data)
+  
+  # Build the maximum value labels for the right edge
+  
+  max_vals <- heat_data %>% 
+    select(one_of(genes)) %>% 
+    summarise_each(funs(max)) %>% 
+    unlist()
+  
+  max_labels <- data.frame(x = (nclust + 0.5) * 1.01,
+                           y = 1:ngenes + 0.5,
+                           label = sci_label(max_vals) )
+  max_header <- data.frame(x = (nclust + 0.5) * 1.01,
+                           y = ngenes + 1,
+                           label = "Max value")
+  
+  if(logscale) {
+    heat_data[genes] <- log10(heat_data[genes] + 1)
+  }
+  
   
   # Convert to colors
   heat_colors <- colorRampPalette(colorset)(1001)
@@ -676,53 +707,53 @@ heater_plot <- function(genes=c("Hspa8","Snap25","Gad2","Slc17a6"),clusters=1:49
     }
   }
   
-  cluster.data <- data %>%
-    select(plot_label,plot_color,plot_id,xpos) %>%
-    group_by(plot_label,plot_color,plot_id,xpos) %>%
+  cluster_data <- data %>%
+    group_by(plot_label,plot_color,plot_id) %>%
     summarise(cn=n()) %>%
     as.data.frame(stringsAsFactors=F) %>%
     arrange(plot_id) %>%
-    mutate(labely=length(genes) + 1.1,
-           cny=length(genes) + 0.9 + labheight)
-  
-  xlab.rect <- data.frame(xmin=seq(0.5,length(clusters)-0.5,1),
-                          xmax=seq(1.5,length(clusters)+0.5,1),
-                          ymin=length(genes) + 1,
-                          ymax=length(genes) + 1 + labheight,
-                          color=cluster.data$plot_color)
-  
-  p <- ggplot(data) +
+    mutate(labely = ngenes + 1.1,
+           cny = max(header_labels$ymax) - 0.1,
+           xpos = plot_id)
+
+  # Plot Setup  
+  p <- ggplot() +
     scale_fill_identity() +
-    scale_y_continuous("",breaks=1:length(genes)+0.5,labels=genes,expand=c(0,0)) +
-    scale_x_continuous("",expand=c(0,0)) +
+    scale_y_continuous("", breaks = 1:length(genes) + 0.5, labels = genes, expand = c(0, 0)) +
+    scale_x_continuous("", expand = c(0, 0)) +
     theme_classic(fontsize) +
-    theme(axis.text = element_text(size=rel(1)),
+    theme(axis.text = element_text(size = rel(1)),
           axis.text.x = element_blank(),
           axis.ticks.x = element_blank(),
           legend.position = "none")
   
-    if(toplabel) {
-      p <- p +
-        geom_rect(data=xlab.rect,aes(xmin=xmin,ymin=ymin,xmax=xmax,ymax=ymax,fill=color))
-      if(toptext) {
-        p <- p +
-          geom_text(data=cluster.data,aes(y=labely,x=xpos,label=plot_label),angle=90,hjust=0,vjust=0.35,size=pt2mm(fontsize)) +
-          geom_text(data=cluster.data,aes(y=cny,x=xpos,label=cn),size=pt2mm(fontsize))
-      }
-    }
-    
-    if(maxlabel) {
-      p <- p +
-        geom_rect(data=max.rect,aes(xmin=xmin,xmax=xmax,ymin=ymin,ymax=ymax,fill="white")) +
-        geom_text(data=max.header,aes(x=x,y=y,label=label),angle=90,hjust=0,vjust=0.35,size=pt2mm(fontsize)) +
-        geom_text(data=max.labels,aes(x=x,y=y,label=label),hjust=0,vjust=0.35,size=pt2mm(fontsize))
-    }
-    
-  
   # plot the heatmap for each gene
   for(i in 1:length(genes)) {
-    p <- p + geom_rect(data=heat_data,aes_string(xmin="xpos-0.5",xmax="xpos + 0.5",ymin=i,ymax=i+1,fill=genes[i]))
+    p <- p + 
+      geom_rect(data = heat_data,
+                aes_string(xmin = "xpos - 0.5", xmax = "xpos + 0.5", ymin = i, ymax = i + 1, fill = genes[i]))
   }
+  
+  # Cluster labels
+  p <- p +
+    geom_rect(data = header_labels, 
+              aes(xmin = xmin, ymin = ymin, xmax = xmax, ymax = ymax, fill = color)) +
+    geom_text(data = header_labels,
+              aes(x = (xmin + xmax) / 2, y = ymin + 0.05, label = label),
+              angle = 90, vjust = 0.35, hjust = 0, size = pt2mm(fontsize)) +
+    # Cluster counts
+    geom_text(data = cluster_data,
+              aes(y = cny, x = xpos,label = cn),
+              size = pt2mm(fontsize)) +
+    # Maximum value labels on right side of plot
+    geom_rect(aes(xmin = nclust + 0.5, xmax = (nclust + 0.5)*1.05, ymin = 1, ymax = max(header_labels$ymax)),
+              fill = "white") +
+    geom_text(data = max_header,
+              aes(x = x, y = y, label = label),
+              angle = 90, hjust = 0, vjust = 0.35, size = pt2mm(fontsize)) +
+    geom_text(data = max_labels,
+              aes(x = x, y = y, label = label),
+              hjust = 0, vjust = 0.35, size = pt2mm(fontsize), parse = TRUE)
   
   return(p)
 }
