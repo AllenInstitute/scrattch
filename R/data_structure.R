@@ -157,14 +157,22 @@ check_db_structure <- function(db.file,verbose=T) {
 #'
 #'@return A list object containing data.frames for each table in the database, filtered according to genes, group_by, and groups if provided.
 #'
-db_to_list <- function(db.file,genes=NULL,group_by=NULL,groups=NULL) {
+db_to_list <- function(db.file,get_tables=NULL,genes=NULL,group_by=NULL,groups=NULL) {
   library(DBI)
   library(RSQLite)
   library(dplyr)
   
   con <- dbConnect(RSQLite::SQLite(),db.file)
   
-  desc <- dbReadTable(con,"desc")
+  out_list <- list()
+  
+  if(is.null(get_tables) | "desc" %in% get_tables) {
+  
+    desc <- dbReadTable(con,"desc")
+    
+    out_list[["desc"]] <- desc
+    
+  }
   
   anno <- dbReadTable(con,"anno")
   
@@ -177,6 +185,14 @@ db_to_list <- function(db.file,genes=NULL,group_by=NULL,groups=NULL) {
     
   }
   
+  if(is.null(get_tables) | "anno" %in% get_tables) {
+    
+    out_list[["anno"]] <- anno 
+    
+  }
+  
+  if(is.null(get_tables) | "data" %in% get_tables) {
+  
   if(is.null(genes)) {
     get <- paste("SELECT ",get_samples," FROM data",sep="")
     data <- dbGetQuery(con,get)
@@ -188,12 +204,13 @@ db_to_list <- function(db.file,genes=NULL,group_by=NULL,groups=NULL) {
   
   data <- data %>%
     select(one_of("gene",anno$sample_id))
-
+    
+    out_list[["data"]] <- data
+  }
+  
   dbDisconnect(con)
   
-  results <- list(desc = desc, anno = anno, data = data)
-  
-  return(results)
+  return(out_list)
 }
 
 
