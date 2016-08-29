@@ -277,3 +277,55 @@ build_header_labels <- function(data, ngenes, nsamples, nclust, labelheight = 25
 
   xlab.rect  
 }
+
+#' Covert hclust objects to segments for use in ggplots
+#' 
+hclust_to_seg <- function(hc, tree.dir = "down", dir.lims = c(0,1)) {
+  
+  require(ggdendro)
+  require(dplyr)
+  
+  hc.dendro <- as.dendrogram(hc)
+  hc.segs <- as.data.frame(segment(dendro_data(hc.dendro)))
+  
+  ymin = min(dir.lims)
+  ymax = max(dir.lims)
+  
+  yheight = ymax - ymin
+  
+  norm.segs <- hc.segs %>%
+    mutate(y = (y/max(y))*yheight + ymin) %>%
+    mutate(yend = (yend/max(yend))*yheight + ymin)
+  
+  if(tree.dir == "down") {
+    
+    plot.segs <- norm.segs
+    
+  } else if(tree.dir == "up") {
+    
+    ycenter = (ymin + ymax) / 2
+    
+    plot.segs <- norm.segs %>%
+      mutate(y = ycenter + (ycenter - y),
+             yend = ycenter + (ycenter - yend))
+    
+  } else if(tree.dir == "left") {
+    
+    plot.segs <- norm.segs
+    names(plot.segs) <- c("y","x","yend","xend")
+    
+  } else if(tree.dir == "right") {
+    xcenter = (ymin + ymax) / 2
+    
+    plot.segs <- norm.segs
+    names(plot.segs) <- c("y","x","yend","xend")
+    
+    plot.segs <- plot.segs %>%
+      mutate(x = xcenter + (xcenter - x),
+             xend = xcenter + (xcenter - xend))
+    
+  }
+  
+  plot.segs
+  
+}
