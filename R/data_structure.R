@@ -374,15 +374,19 @@ write_database <- function(desc=NULL,anno=NULL,data=NULL,file = stop("'file' mus
   con <- dbConnect(RSQLite::SQLite(),file)
   
   if(!is.null(desc)) {
+    cat("Writing desc table\n")
     dbWriteTable(con,"desc",desc,row.names=F,overwrite=overwrite)
   }
   
   if(!is.null(anno)) {
+    cat("Writing anno table\n")
     dbWriteTable(con,"anno",anno,row.names=F,overwrite=overwrite)
   }
   
   if(!is.null(data)) {
+    cat("Writing data table\n")
     dbWriteTable(con,"data",data,row.names=F,overwrite=overwrite)
+    cat("Indexing data table\n")
     idx <- "CREATE INDEX idx ON data (gene)"
     res <- dbSendQuery(con,idx)
     dbClearResult(res)
