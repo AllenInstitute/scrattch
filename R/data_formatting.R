@@ -38,6 +38,8 @@ get_internal_data <- function(genes,grouping,clusters) {
   return(data)
 }
 
+
+
 #' Format data provided in list format for scrattch plots
 get_list_data <- function(datalist,genes,grouping,clusters) {
   print(1)
@@ -79,11 +81,152 @@ get_list_data <- function(datalist,genes,grouping,clusters) {
   return(data)
 }
 
-#' Get data from a database for scrattch plotting
+#' Get data from a SQLite3 database for scrattch plotting
 get_db_data <- function(data_source,genes,grouping,clusters) {
   library(dplyr)
   library(DBI)
   library(RSQLite)
+  
+  if(file.exists(data_source)) {
+  con <- dbConnect(RSQLite::SQLite(),data_source)
+  
+  # Get annotations
+  get <- "SELECT * FROM anno;"
+  res <- dbSendQuery(con,get)
+  all.anno <- dbFetch(res,n=-1)
+  dbClearResult(res)
+  
+  # Rename based on grouping, and select annotations in the clusters
+  anno <- all.anno %>%
+    rename_("plot_id" = paste0(grouping,"_id"),
+            "plot_label" = paste0(grouping,"_label"),
+            "plot_color" = paste0(grouping,"_color")) %>%
+    filter(plot_id %in% clusters)
+  
+  # Get data for genes
+  #  getgenes <- chr_to_sql(toupper(genes))
+  #  get <- paste("SELECT * FROM data WHERE upper(gene) IN ",getgenes,sep="")
+  getgenes <- chr_to_sql(genes)
+  get <- paste("SELECT * FROM data WHERE gene IN ",getgenes,sep="")
+  res <- dbSendQuery(con,get)
+  data <- dbFetch(res,n=-1)
+  dbClearResult(res)
+  
+  dbDisconnect(con)
+  
+  # transpose genes table for joining to annotations
+  row.names(data) <- data[,1]
+  data <- data %>% 
+    select(-1) %>% 
+    t() %>% 
+    as.data.frame()
+  names(data) <- toupper(names(data))
+  
+  # Filter data to only samples in the filtered annotations
+  data <- data %>%
+    mutate(sample_id=row.names(data)) %>%
+    filter(sample_id %in% anno$sample_id) %>%
+    select(one_of(c("sample_id",toupper(genes))))
+  names(data) <- c("sample_id",genes)
+  
+  # join data and annotations
+  data <- left_join(data,anno,by="sample_id")
+  
+  # Set cluster order based on the input clusters
+  cluster_order <- data.frame(plot_id = clusters) %>%
+    filter(clusters %in% unique(data$plot_id)) %>%
+    mutate(cluster_x=1:n())
+  
+  # sort data by input cluster order
+  data <- data %>%
+    left_join(cluster_order,by="plot_id") %>%
+    arrange(cluster_x) %>%
+    mutate(xpos=1:n()) %>%
+    select(-plot_id) %>%
+    rename_("plot_id" = "cluster_x")
+  
+  return(data)
+  } else {
+    cat("Database file not found!\n")
+  }
+}
+
+
+#' Get data from a MySQL database for scrattch plotting
+get_mysql_data <- function(host, dbname, username, password, genes, grouping, clusters) {
+  library(dplyr)
+  library(DBI)
+  library(RMySQL)
+  
+  con <- dbConnect(RSQLite::MySQL(), host = host,
+                   dbname = dbname, 
+                   username = username, password = password)
+  
+  # Get annotations
+  get <- "SELECT * FROM anno;"
+  res <- dbSendQuery(con,get)
+  all.anno <- dbFetch(res,n=-1)
+  dbClearResult(res)
+  
+  # Rename based on grouping, and select annotations in the clusters
+  anno <- all.anno %>%
+    rename_("plot_id" = paste0(grouping,"_id"),
+            "plot_label" = paste0(grouping,"_label"),
+            "plot_color" = paste0(grouping,"_color")) %>%
+    filter(plot_id %in% clusters)
+  
+  # Get data for genes
+  #  getgenes <- chr_to_sql(toupper(genes))
+  #  get <- paste("SELECT * FROM data WHERE upper(gene) IN ",getgenes,sep="")
+  getgenes <- chr_to_sql(genes)
+  get <- paste("SELECT * FROM data WHERE gene IN ",getgenes,sep="")
+  res <- dbSendQuery(con,get)
+  data <- dbFetch(res,n=-1)
+  dbClearResult(res)
+  
+  dbDisconnect(con)
+  
+  # transpose genes table for joining to annotations
+  row.names(data) <- data[,1]
+  data <- data %>% 
+    select(-1) %>% 
+    t() %>% 
+    as.data.frame()
+  names(data) <- toupper(names(data))
+  
+  # Filter data to only samples in the filtered annotations
+  data <- data %>%
+    mutate(sample_id=row.names(data)) %>%
+    filter(sample_id %in% anno$sample_id) %>%
+    select(one_of(c("sample_id",toupper(genes))))
+  names(data) <- c("sample_id",genes)
+  
+  # join data and annotations
+  data <- left_join(data,anno,by="sample_id")
+  
+  # Set cluster order based on the input clusters
+  cluster_order <- data.frame(plot_id = clusters) %>%
+    filter(clusters %in% unique(data$plot_id)) %>%
+    mutate(cluster_x=1:n())
+  
+  # sort data by input cluster order
+  data <- data %>%
+    left_join(cluster_order,by="plot_id") %>%
+    arrange(cluster_x) %>%
+    mutate(xpos=1:n()) %>%
+    select(-plot_id) %>%
+    rename_("plot_id" = "cluster_x")
+  
+  return(data)
+}
+
+
+#' Experimental data retrieval from a restructured SQLite3 database
+get_db_data_2 <- function(data_source,genes,grouping,clusters) {
+  library(dplyr)
+  library(DBI)
+  library(RSQLite)
+  library(reshape2)
   
   con <- dbConnect(RSQLite::SQLite(),data_source)
   
@@ -110,6 +253,8 @@ get_db_data <- function(data_source,genes,grouping,clusters) {
   dbClearResult(res)
   
   dbDisconnect(con)
+  
+  data <- dcast(data, gene ~ sample_id)
   
   # transpose genes table for joining to annotations
   row.names(data) <- data[,1]
