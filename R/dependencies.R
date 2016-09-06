@@ -7,3 +7,8 @@ install_bioconductor_dependencies <- function() {
   source("https://bioconductor.org/biocLite.R")
   biocLite("WGCNA")
 }
+
+install_GEO_deps <- function() {
+  source("https://bioconductor.org/biocLite.R")
+  biocLite(c("Biobase","GEOquery"))
+}
