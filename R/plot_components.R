@@ -25,7 +25,7 @@ pt2mm <- function(pt) {
 #' sci_label(my_numbers)
 #' 
 #' sci_label(my_numbers,sig_figs=3)
-sci_label <- function(in_num, sig_figs = 2) {
+sci_label <- function(in_num, sig_figs = 2, type = "plot") {
   labels <- character()
   for(i in 1:length(in_num)) {
     x <- in_num[i]
@@ -40,9 +40,17 @@ sci_label <- function(in_num, sig_figs = 2) {
       first <- round(x / (10 ^ floor(log10(x))), sig_figs - 1)
     }
     if(x == 0) {
-      label <- paste0(first, "%*%10^0" )
+      if(type == "plot") {
+        label <- paste0(first, "%*%10^0" )
+      } else if(type == "datatable") {
+        label <- paste0(first, "\u271510<sup>0</sup>" )
+      }
     } else {
-      label <- paste0(first, "%*%10^", floor(log10(x)))
+      if(type == "plot") {
+        label <- paste0(first, "%*%10^", floor(log10(x)))
+      } else if(type == "datatable") {
+        label <- paste0(first, "\u271510<sup>", floor(log10(x)),"</sup>")
+      }
     }
     labels <- c(labels, label)
   }
