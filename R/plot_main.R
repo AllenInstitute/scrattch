@@ -52,6 +52,8 @@ sample_bar_plot <- function(genes = c("Hspa8","Snap25","Gad2","Slc17a6"),
     
   }
   
+  genes <- sub("-",".",genes)
+  
   # Calculate the number of genes and clusters for use as plot dimensions
   ngenes <- length(genes)
   nclust <- length(unique(data$plot_id))
@@ -233,6 +235,8 @@ sample_heatmap_plot <- function(genes = c("Hspa8","Snap25","Gad2","Slc17a6"),
     
   }
   
+  genes <- sub("-",".",genes)
+  
   # Calculate the number of genes and clusters for use as plot dimensions
   ngenes <- length(genes)
   nclust <- length(unique(data$plot_id))
@@ -366,6 +370,8 @@ group_violin_plot <- function(genes = c("Hspa8","Snap25","Gad2","Slc17a6"),
       select(-xpos) %>% mutate(xpos = plot_id)
     
   }
+  
+  genes <- sub("-",".",genes)
   
   ngenes <- length(genes)
   nclust <- length(unique(data$plot_id))
@@ -502,6 +508,8 @@ group_box_plot <- function(genes = c("Hspa8","Snap25","Gad2","Slc17a6"),
     
   }
   
+  genes <- sub("-",".",genes)
+  
   ngenes <- length(genes)
   nclust <- length(unique(data$plot_id))
   nsamples <- nrow(data)
@@ -631,6 +639,8 @@ group_heatmap_plot <- function(genes=c("Hspa8","Snap25","Gad2","Slc17a6"),cluste
       select(-xpos) %>% mutate(xpos = plot_id)
     
   }
+  
+  genes <- sub("-",".",genes)
   
   ngenes <- length(genes)
   nclust <- length(unique(data$plot_id))

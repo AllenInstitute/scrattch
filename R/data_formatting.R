@@ -9,8 +9,10 @@ get_internal_data <- function(genes,grouping,clusters) {
   data <- data %>%
     filter(gene %in% genes)
   
+  genes <- sub("-",".",genes)
+  
   # Reformat the retrieved data
-  row.names(data) <- data[,1]
+  row.names(data) <- sub("-",".",data[,1])
   data <- data %>% 
     select(-1) %>% 
     t() %>% 
@@ -114,8 +116,10 @@ get_db_data <- function(data_source,genes,grouping,clusters) {
   
   dbDisconnect(con)
   
+  genes <- sub("-",".",genes)
+  
   # transpose genes table for joining to annotations
-  row.names(data) <- data[,1]
+  row.names(data) <- sub("-",".",data[,1])
   data <- data %>% 
     select(-1) %>% 
     t() %>% 
@@ -289,3 +293,6 @@ get_db_data_2 <- function(data_source,genes,grouping,clusters) {
   
   return(data)
 }
+
+
+
