@@ -23,8 +23,8 @@
 #' my_barcell_plot <- barcell_plot(my_genes,my_clusters,sort=T)
 #' 
 #' ggsave("plot_output.pdf",my_barcell_plot,height=0.2*length(my_genes)+2,width=4)
-sample_bar_plot <- function(genes = c("Hspa8","Snap25","Gad2","Slc17a6"),
-                         grouping = "final", clusters = 1:49,
+sample_bar_plot <- function(genes = c("Hspa8","Snap25","Gad2","Vip"),
+                         grouping = "final", clusters = 1:10,
                          data_source = "internal",
                          sort = F, logscale = F,
                          fontsize = 7, labelheight = 25, labeltype = "angle",
@@ -213,8 +213,8 @@ sample_bar_plot <- function(genes = c("Hspa8","Snap25","Gad2","Slc17a6"),
 #' cluster_fix <- chr_to_num(cluster_text)
 #' 
 #' my_heatcell_plot_2 <- heatcell_plot(gene_fix, clust = cluster_fix, font=12)
-sample_heatmap_plot <- function(genes = c("Hspa8","Snap25","Gad2","Slc17a6"),
-                          clusters = 1:49, grouping = "final",
+sample_heatmap_plot <- function(genes = c("Hspa8","Snap25","Gad2","Vip"),
+                          clusters = 1:10, grouping = "final",
                           data_source = "internal",
                           logscale = T, normalize_rows = F,
                           fontsize = 7, labelheight = 25,
@@ -349,8 +349,8 @@ sample_heatmap_plot <- function(genes = c("Hspa8","Snap25","Gad2","Slc17a6"),
 #' my_genes <- c("Ercc6","Ercc8","Trp53","Pgbd5")
 #' my_clusters <- c(1,5,9,10,24,37)
 #' pottery_plot(my_genes,my_clusters,logscale=T,fontsize=14)
-group_violin_plot <- function(genes = c("Hspa8","Snap25","Gad2","Slc17a6"),
-                         grouping = "final", clusters = 1:49,
+group_violin_plot <- function(genes = c("Hspa8","Snap25","Gad2","Vip"),
+                         grouping = "final", clusters = 1:10,
                          data_source = "internal",
                          sort = F, logscale = F,
                          fontsize = 7, labelheight = 25) {
@@ -486,8 +486,8 @@ group_violin_plot <- function(genes = c("Hspa8","Snap25","Gad2","Slc17a6"),
 #' my_genes <- c("Ercc6","Ercc8","Trp53","Pgbd5")
 #' my_clusters <- c(1,5,9,10,24,37)
 #' boxter_plot(my_genes,my_clusters,logscale=T,fontsize=14)
-group_box_plot <- function(genes = c("Hspa8","Snap25","Gad2","Slc17a6"),
-                         grouping = "final", clusters = 1:49,
+group_box_plot <- function(genes = c("Hspa8","Snap25","Gad2","Vip"),
+                         grouping = "final", clusters = 1:10,
                          data_source = "internal",
                          sort = F, logscale = F,
                          fontsize = 7, labelheight = 25) {
@@ -618,7 +618,7 @@ group_box_plot <- function(genes = c("Hspa8","Snap25","Gad2","Slc17a6"),
 #' my_genes <- c("Ercc6","Ercc8","Trp53","Pgbd5")
 #' my_clusters <- c(1,5,9,10,24,37)
 #' heater_plot(my_genes,my_clusters,logscale=T,fontsize=14)
-group_heatmap_plot <- function(genes=c("Hspa8","Snap25","Gad2","Slc17a6"),clusters=1:49,
+group_heatmap_plot <- function(genes=c("Hspa8","Snap25","Gad2","Vip"),clusters=1:10,
                         grouping = "final",calculation="mean",
                         data_source="internal",normalize_rows=FALSE,
                         logscale=T,fontsize=7,labelheight=25,
