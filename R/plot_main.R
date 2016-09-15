@@ -780,6 +780,7 @@ group_river_plot <- function(data_source,
                              group4_filter = NULL) {
   
   library(networkD3)
+  library(dplyr)
   
   nodes <- data.frame(name = character(),
                       color = character())
@@ -788,7 +789,7 @@ group_river_plot <- function(data_source,
                       target = numeric(),
                       value = numeric())
   
-  anno <- db_to_list(db,get_tables = "anno")$anno
+  anno <- db_to_list(data_source,get_tables = "anno")$anno
   
   # Filtering annotations
   if(!is.null(group1_filter)) {
@@ -823,9 +824,10 @@ group_river_plot <- function(data_source,
       select(one_of(anno_id,anno_label,anno_color)) %>%
       unique() %>%
       arrange_(anno_id) %>%
-      select(-one_of(anno_id))
+      select(-one_of(anno_id)) %>%
+      mutate(group = base)
     
-    names(group_nodes) <- c("name","color")
+    names(group_nodes) <- c("name","color","group")
     
     nodes <- rbind(nodes,group_nodes)
   }
@@ -840,9 +842,10 @@ group_river_plot <- function(data_source,
       select(one_of(anno_id,anno_label,anno_color)) %>%
       unique() %>%
       arrange_(anno_id) %>%
-      select(-one_of(anno_id))
+      select(-one_of(anno_id)) %>%
+      mutate(group = base)
     
-    names(group_nodes) <- c("name","color")
+    names(group_nodes) <- c("name","color","group")
     
     nodes <- rbind(nodes,group_nodes)
   }
@@ -857,9 +860,10 @@ group_river_plot <- function(data_source,
       select(one_of(anno_id,anno_label,anno_color)) %>%
       unique() %>%
       arrange_(anno_id) %>%
-      select(-one_of(anno_id))
+      select(-one_of(anno_id)) %>%
+      mutate(group = base)
     
-    names(group_nodes) <- c("name","color")
+    names(group_nodes) <- c("name","color","group")
     
     nodes <- rbind(nodes,group_nodes)
   }
@@ -874,9 +878,10 @@ group_river_plot <- function(data_source,
       select(one_of(anno_id,anno_label,anno_color)) %>%
       unique() %>%
       arrange_(anno_id) %>%
-      select(-one_of(anno_id))
+      select(-one_of(anno_id)) %>%
+      mutate(group = base)
     
-    names(group_nodes) <- c("name","color")
+    names(group_nodes) <- c("name","color","group")
     
     nodes <- rbind(nodes,group_nodes)
   }
@@ -896,11 +901,11 @@ group_river_plot <- function(data_source,
     group_links <- anno %>%
       group_by_(source_label,target_label) %>%
       summarise(value = n())
-    names(group_links) <- c("source_label","target_label","value")
+    names(group_links) <- c("source_lab","target_lab","value")
     group_links <- group_links %>%
       rowwise() %>%
-      mutate(source = nodes$id[nodes$name == source_label],
-             target = nodes$id[nodes$name == target_label]) %>%
+      mutate(source = nodes$id[nodes$group == source_base & nodes$name == source_lab],
+             target = nodes$id[nodes$group == target_base & nodes$name == target_lab]) %>%
       select(source,target,value)
     
     links <- rbind(links, group_links)
@@ -915,11 +920,11 @@ group_river_plot <- function(data_source,
     group_links <- anno %>%
       group_by_(source_label,target_label) %>%
       summarise(value = n())
-    names(group_links) <- c("source_label","target_label","value")
+    names(group_links) <- c("source_lab","target_lab","value")
     group_links <- group_links %>%
       rowwise() %>%
-      mutate(source = nodes$id[nodes$name == source_label],
-             target = nodes$id[nodes$name == target_label]) %>%
+      mutate(source = nodes$id[nodes$group == source_base & nodes$name == source_lab],
+             target = nodes$id[nodes$group == target_base & nodes$name == target_lab]) %>%
       select(source,target,value)
     
     links <- rbind(links, group_links)
@@ -934,11 +939,11 @@ group_river_plot <- function(data_source,
     group_links <- anno %>%
       group_by_(source_label,target_label) %>%
       summarise(value = n())
-    names(group_links) <- c("source_label","target_label","value")
+    names(group_links) <- c("source_lab","target_lab","value")
     group_links <- group_links %>%
       rowwise() %>%
-      mutate(source = nodes$id[nodes$name == source_label],
-             target = nodes$id[nodes$name == target_label]) %>%
+      mutate(source = nodes$id[nodes$group == source_base & nodes$name == source_lab],
+             target = nodes$id[nodes$group == target_base & nodes$name == target_lab]) %>%
       select(source,target,value)
     
     links <- rbind(links, group_links)
