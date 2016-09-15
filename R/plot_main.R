@@ -109,7 +109,7 @@ sample_bar_plot <- function(genes = c("Hspa8","Snap25","Gad2","Vip"),
 
   # The background of the plot is a rectangular object.
   background_data <- data.frame(xmin = 0, 
-                                xmax = nsamples + 1, 
+                                xmax = nsamples, 
                                 ymin = 1, 
                                 ymax = ngenes + 1, 
                                 fill = bgcolor)
