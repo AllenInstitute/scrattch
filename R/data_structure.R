@@ -162,7 +162,7 @@ db_to_list <- function(db.file,get_tables=NULL,genes=NULL,group_by=NULL,groups=N
   library(RSQLite)
   library(dplyr)
   
-  if(file.exists(data_source)) {
+  if(file.exists(db.file)) {
     
   con <- dbConnect(RSQLite::SQLite(),db.file)
   
