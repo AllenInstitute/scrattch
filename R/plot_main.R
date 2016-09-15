@@ -96,7 +96,7 @@ sample_bar_plot <- function(genes = c("Hspa8","Snap25","Gad2","Vip"),
   # Calculate segments for cluster sepration lines
   segment_lines <- data %>%
     group_by(plot_id) %>%
-    summarise(x = max(xpos) + 1 )
+    summarise(x = max(xpos) )
 
   # Build the maximum value labels for the right edge
   max_labels <- data.frame(x = nsamples * 1.01,
