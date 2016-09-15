@@ -200,7 +200,7 @@ build_header_polygons <- function(data, ngenes, nsamples, nclust, labelheight = 
   ## Note on plot dimensions
   # The range of the plot area (not including labels) will be
   # y-axis: 1:(ngenes + 1)
-  # x-axis: 1:(nsamples + 1)
+  # x-axis: 0:(nsamples)
   
   # Calculate the height of the label in plot dimensions:
   labheight <- ngenes*(labelheight/100)/(1-labelheight/100)
@@ -212,10 +212,10 @@ build_header_polygons <- function(data, ngenes, nsamples, nclust, labelheight = 
   poly.data <- data %>% 
     group_by(plot_id) %>%
     summarise(color = plot_color[1],
-              x1 = max(xpos) + 1,
-              x2 = min(xpos)) %>%
-    mutate(x3 = (nsamples + 1) * (1:nclust - 1) / nclust,
-           x4 = (nsamples + 1) * (1:nclust) / nclust,
+              x1 = max(xpos),
+              x2 = min(xpos) - 1) %>%
+    mutate(x3 = (nsamples) * (1:nclust - 1) / nclust,
+           x4 = (nsamples) * (1:nclust) / nclust,
            # ngenes + 1 is the top of the plot body
            y1 = ngenes + 1,
            y2 = ngenes + 1,
@@ -257,7 +257,7 @@ build_header_labels <- function(data, ngenes, nsamples, nclust, labelheight = 25
   ## Note on plot dimensions
   # The range of the plot area (not including labels) will be
   # y-axis: 1:(ngenes + 1)
-  # x-axis: 1:(nsamples + 1) (for cell-based plots)
+  # x-axis: 0:(nsamples) (for cell-based plots)
   # x-axis: 1:(nclust + 1) (for cluster-based plots)
   
   labheight <- ngenes*(labelheight/100)/(1-labelheight/100)
@@ -272,8 +272,8 @@ build_header_labels <- function(data, ngenes, nsamples, nclust, labelheight = 25
   }
   
   if(labeltype == "angle") {
-    xlab.rect <- data.frame(xmin = (nsamples + 1) * (1:nclust - 1) / nclust,
-                            xmax = (nsamples + 1) * (1:nclust) / nclust,
+    xlab.rect <- data.frame(xmin = (nsamples) * (1:nclust - 1) / nclust,
+                            xmax = (nsamples) * (1:nclust) / nclust,
                             # 10% of the label height is reserved for angled polygons
                             ymin = ngenes + 1 + labheight*0.1,
                             ymax = ngenes + 1 + labheight,
@@ -283,8 +283,8 @@ build_header_labels <- function(data, ngenes, nsamples, nclust, labelheight = 25
   if(labeltype == "square") {
     xlab.rect <- data %>% 
       group_by(plot_id) %>%
-      summarise(xmin = min(xpos),
-                xmax = max(xpos) + 1,
+      summarise(xmin = min(xpos) - 1,
+                xmax = max(xpos),
                 ymin = ngenes + 1 + labheight * 0.1,
                 ymax = ngenes + 1 + labheight,
                 color = plot_color[1],
