@@ -768,6 +768,196 @@ group_heatmap_plot <- function(genes=c("Hspa8","Snap25","Gad2","Vip"),clusters=1
   return(p)
 }
 
+#' Build Sankey Plots for up to four annotations
+group_river_plot <- function(data_source, 
+                             group1 = NULL, 
+                             group1_filter = NULL,
+                             group2 = NULL, 
+                             group2_filter = NULL,
+                             group3 = NULL, 
+                             group3_filter = NULL,
+                             group4 = NULL, 
+                             group4_filter = NULL) {
+  
+  library(networkD3)
+  
+  nodes <- data.frame(name = character(),
+                      color = character())
+  
+  links <- data.frame(source = numeric(),
+                      target = numeric(),
+                      value = numeric())
+  
+  anno <- db_to_list(db,get_tables = "anno")$anno
+  
+  # Filtering annotations
+  if(!is.null(group1_filter)) {
+    filt <- paste0(group1,"_id %in% ",group1_filter)
+    anno <- anno %>%
+      filter_(filt)
+  }
+  if(!is.null(group2_filter)) {
+    filt <- paste0(group2,"_id %in% ",group2_filter)
+    anno <- anno %>%
+      filter_(filt)
+  }
+  if(!is.null(group3_filter)) {
+    filt <- paste0(group3,"_id %in% ",group3_filter)
+    anno <- anno %>%
+      filter_(filt)
+  }
+  if(!is.null(group4_filter)) {
+    filt <- paste0(group4,"_id %in% ",group4_filter)
+    anno <- anno %>%
+      filter_(filt)
+  }
+  
+  # Add nodes to nodes table
+  if(!is.null(group1)) {
+    base <- group1
+    anno_id <- paste0(base,"_id")
+    anno_label <- paste0(base,"_label")
+    anno_color <- paste0(base,"_color")
+    
+    group_nodes <- anno %>%
+      select(one_of(anno_id,anno_label,anno_color)) %>%
+      unique() %>%
+      arrange_(anno_id) %>%
+      select(-one_of(anno_id))
+    
+    names(group_nodes) <- c("name","color")
+    
+    nodes <- rbind(nodes,group_nodes)
+  }
+  
+  if(!is.null(group2)) {
+    base <- group2
+    anno_id <- paste0(base,"_id")
+    anno_label <- paste0(base,"_label")
+    anno_color <- paste0(base,"_color")
+    
+    group_nodes <- anno %>%
+      select(one_of(anno_id,anno_label,anno_color)) %>%
+      unique() %>%
+      arrange_(anno_id) %>%
+      select(-one_of(anno_id))
+    
+    names(group_nodes) <- c("name","color")
+    
+    nodes <- rbind(nodes,group_nodes)
+  }
+  
+  if(!is.null(group3)) {
+    base <- group3
+    anno_id <- paste0(base,"_id")
+    anno_label <- paste0(base,"_label")
+    anno_color <- paste0(base,"_color")
+    
+    group_nodes <- anno %>%
+      select(one_of(anno_id,anno_label,anno_color)) %>%
+      unique() %>%
+      arrange_(anno_id) %>%
+      select(-one_of(anno_id))
+    
+    names(group_nodes) <- c("name","color")
+    
+    nodes <- rbind(nodes,group_nodes)
+  }
+  
+  if(!is.null(group4)) {
+    base <- group4
+    anno_id <- paste0(base,"_id")
+    anno_label <- paste0(base,"_label")
+    anno_color <- paste0(base,"_color")
+    
+    group_nodes <- anno %>%
+      select(one_of(anno_id,anno_label,anno_color)) %>%
+      unique() %>%
+      arrange_(anno_id) %>%
+      select(-one_of(anno_id))
+    
+    names(group_nodes) <- c("name","color")
+    
+    nodes <- rbind(nodes,group_nodes)
+  }
+  
+  # Add ID column
+  nodes <- nodes %>%
+    mutate(id = 1:nrow(nodes) - 1)
+  
+  # Add Edges to the edges table
+  if(!is.null(group1) & !is.null(group2)) {
+    source_base <- group1
+    target_base <- group2
+    
+    source_label <- paste0(source_base,"_label")
+    target_label <- paste0(target_base,"_label")
+    
+    group_links <- anno %>%
+      group_by_(source_label,target_label) %>%
+      summarise(value = n())
+    names(group_links) <- c("source_label","target_label","value")
+    group_links <- group_links %>%
+      rowwise() %>%
+      mutate(source = nodes$id[nodes$name == source_label],
+             target = nodes$id[nodes$name == target_label]) %>%
+      select(source,target,value)
+    
+    links <- rbind(links, group_links)
+  }
+  if(!is.null(group2) & !is.null(group3)) {
+    source_base <- group2
+    target_base <- group3
+    
+    source_label <- paste0(source_base,"_label")
+    target_label <- paste0(target_base,"_label")
+    
+    group_links <- anno %>%
+      group_by_(source_label,target_label) %>%
+      summarise(value = n())
+    names(group_links) <- c("source_label","target_label","value")
+    group_links <- group_links %>%
+      rowwise() %>%
+      mutate(source = nodes$id[nodes$name == source_label],
+             target = nodes$id[nodes$name == target_label]) %>%
+      select(source,target,value)
+    
+    links <- rbind(links, group_links)
+  }
+  if(!is.null(group3) & !is.null(group4)) {
+    source_base <- group3
+    target_base <- group4
+    
+    source_label <- paste0(source_base,"_label")
+    target_label <- paste0(target_base,"_label")
+    
+    group_links <- anno %>%
+      group_by_(source_label,target_label) %>%
+      summarise(value = n())
+    names(group_links) <- c("source_label","target_label","value")
+    group_links <- group_links %>%
+      rowwise() %>%
+      mutate(source = nodes$id[nodes$name == source_label],
+             target = nodes$id[nodes$name == target_label]) %>%
+      select(source,target,value)
+    
+    links <- rbind(links, group_links)
+  }
+  
+  # build JavaScript object for colors
+  
+  d3.colors <- paste0("d3.scale.ordinal().domain([\"",paste(nodes$id,collapse="\",\""),"\"]).range([\"",paste(nodes$color,collapse="\",\""),"\"]);")
+  
+  # Return the plot
+  sankeyNetwork(Links = links, Nodes = nodes, Source = 'source',
+                Target = 'target', Value = 'value', NodeID = 'name',
+                NodeGroup = 'name', colourScale = JS(d3.colors),
+                fontSize = 12)
+  
+}
+
+
+
 ### Legacy function names
 barcell_plot <- sample_bar_plot
 heatcell_plot <- sample_heatmap_plot
