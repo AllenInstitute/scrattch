@@ -167,7 +167,7 @@ sample_bar_plot <- function(genes = c("Hspa8","Snap25","Gad2","Vip"),
                  aes(x = xmax, xend = xmax, y = ymin, yend = ymax),
                  size = 0.2) +
     # Maximum value labels at the right edge of the plot
-    geom_rect(aes(xmin = nsamples + 1, xmax = (nsamples + 1)*1.05, ymin = 1, ymax = max(header_labels$ymax)), 
+    geom_rect(aes(xmin = nsamples + 1, xmax = (nsamples + 1)*1.15, ymin = 1, ymax = max(header_labels$ymax)), 
               fill = "#FFFFFF") +
     geom_text(data = max_header,
               aes(x = x, y = y, label = label),
@@ -314,7 +314,7 @@ sample_heatmap_plot <- function(genes = c("Hspa8","Snap25","Gad2","Vip"),
     geom_polygon(data = header_polygons,
                  aes(x = poly.x, y = poly.y, fill = color, group = id)) +
     # Maximum value labels at the right edge of the plot
-    geom_rect(aes(xmin = nsamples + 1, xmax = (nsamples + 1)*1.05, ymin = 1, ymax = max(header_labels$ymax)), 
+    geom_rect(aes(xmin = nsamples + 1, xmax = (nsamples + 1)*1.15, ymin = 1, ymax = max(header_labels$ymax)), 
               fill = "#FFFFFF") +
     geom_text(data = max_header,
               aes(x = x, y = y, label = label),
@@ -452,7 +452,7 @@ group_violin_plot <- function(genes = c("Hspa8","Snap25","Gad2","Vip"),
               aes(y = cny, x = xpos,label = cn),
               size = pt2mm(fontsize)) +
     # Maximum value labels on right side of plot
-    geom_rect(aes(xmin = nclust + 0.5, xmax = (nclust + 0.5)*1.05, ymin = 1, ymax = max(header_labels$ymax)),
+    geom_rect(aes(xmin = nclust + 0.5, xmax = (nclust + 0.5)*1.15, ymin = 1, ymax = max(header_labels$ymax)),
               fill = "white") +
     geom_text(data = max_header,
               aes(x = x, y = y, label = label),
@@ -582,7 +582,7 @@ group_box_plot <- function(genes = c("Hspa8","Snap25","Gad2","Vip"),
               aes(y = cny, x = xpos,label = cn),
               size = pt2mm(fontsize)) +
     # Maximum value labels on right side of plot
-    geom_rect(aes(xmin = nclust + 0.5, xmax = (nclust + 0.5)*1.05, ymin = 1, ymax = max(header_labels$ymax)),
+    geom_rect(aes(xmin = nclust + 0.5, xmax = (nclust + 0.5)*1.15, ymin = 1, ymax = max(header_labels$ymax)),
               fill = "white") +
     geom_text(data = max_header,
               aes(x = x, y = y, label = label),
@@ -756,7 +756,7 @@ group_heatmap_plot <- function(genes=c("Hspa8","Snap25","Gad2","Vip"),clusters=1
               aes(y = cny, x = xpos,label = cn),
               size = pt2mm(fontsize)) +
     # Maximum value labels on right side of plot
-    geom_rect(aes(xmin = nclust + 0.5, xmax = (nclust + 0.5)*1.05, ymin = 1, ymax = max(header_labels$ymax)),
+    geom_rect(aes(xmin = nclust + 0.5, xmax = (nclust + 0.5)*1.15, ymin = 1, ymax = max(header_labels$ymax)),
               fill = "white") +
     geom_text(data = max_header,
               aes(x = x, y = y, label = label),
