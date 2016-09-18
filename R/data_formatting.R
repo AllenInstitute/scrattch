@@ -43,43 +43,32 @@ get_internal_data <- function(genes,grouping,clusters) {
 
 
 #' Format data provided in list format for scrattch plots
+#' 
+#' Currently only compatible with data from feather_to_list()
 get_list_data <- function(datalist,genes,grouping,clusters) {
-  print(1)
-  data <- datalist$data
-  all.anno <- datalist$anno
-  print(2)
-  cluster_order <- data.frame(clusters=clusters) %>%
-    mutate(cluster_x=1:n())
-  print(3)
-  anno <- all.anno %>%
+  
+  library(dplyr)
+  
+  gene.data <- datalist$data %>%
+    select(one_of(genes))
+    
+  all.anno <- datalist$anno %>%
     rename_("plot_id" = paste0(grouping,"_id"),
             "plot_label" = paste0(grouping,"_label"),
-            "plot_color" = paste0(grouping,"_color")) %>%
-    filter(plot_id %in% clusters) %>%
-    left_join(cluster_order,by=c("plot_id"="clusters"))
-  print(4)
-  data <- data %>%
-    filter(gene %in% genes) %>%
-    select(one_of(c("gene",anno$sample_id)))
-  print(5)
-  # Reformat the retrieved data
-  row.names(data) <- data[,1]
-  data <- data %>% 
-    select(-1) %>% 
-    t() %>% 
-    as.data.frame()
-  print(6)
-  data <- data %>%
-    mutate(sample_id=row.names(data)) %>%
-    select(one_of("sample_id",genes))
-  print(7)
+            "plot_color" = paste0(grouping,"_color"))
+  
+  cluster_order <- data.frame(clusters=clusters) %>%
+    mutate(cluster_x=1:n())
+  
   # Filter and order the rows
-  data <- left_join(data,anno,by="sample_id") %>%
+  data <- cbind(all.anno,gene.data) %>%
+    filter(plot_id %in% clusters) %>%
+    left_join(cluster_order,by=c("plot_id"="clusters")) %>%
     arrange(cluster_x) %>%
     mutate(xpos=1:n()) %>%
     select(-plot_id) %>%
     rename(plot_id=cluster_x)
-  print(8)
+  
   return(data)
 }
 
