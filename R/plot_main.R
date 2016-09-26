@@ -413,14 +413,15 @@ group_violin_plot <- function(genes = c("Hspa8","Snap25","Gad2","Vip"),
                            label = "Max value")
   max_width <- nclust*(max_width/100)/(1-max_width/100)
   
+  label_y_size <- max(header_labels$ymax) - min(header_labels$ymin)
   
   cluster_data <- data %>%
     group_by(plot_label,plot_color,plot_id) %>%
     summarise(cn=n()) %>%
     as.data.frame(stringsAsFactors=F) %>%
     arrange(plot_id) %>%
-    mutate(labely = ngenes + 1.1,
-           cny = max(header_labels$ymax) - 0.1,
+    mutate(labely = ngenes + label_y_size*0.05,
+           cny = max(header_labels$ymax) - 0.1*label_y_size,
            xpos = plot_id)
   
   # Plot setup
@@ -549,14 +550,15 @@ group_box_plot <- function(genes = c("Hspa8","Snap25","Gad2","Vip"),
                            label = "Max value")
   max_width <- nclust*(max_width/100)/(1-max_width/100)
   
+  label_y_size <- max(header_labels$ymax) - min(header_labels$ymin)
   
   cluster_data <- data %>%
     group_by(plot_label,plot_color,plot_id) %>%
     summarise(cn=n()) %>%
     as.data.frame(stringsAsFactors=F) %>%
     arrange(plot_id) %>%
-    mutate(labely = ngenes + 1.1,
-           cny = max(header_labels$ymax) - 0.1,
+    mutate(labely = ngenes + label_y_size*0.05,
+           cny = max(header_labels$ymax) - 0.1*label_y_size,
            xpos = plot_id)
   
   # Plot setup
@@ -729,13 +731,15 @@ group_heatmap_plot <- function(genes=c("Hspa8","Snap25","Gad2","Vip"),clusters=1
     }
   }
   
+  label_y_size <- max(header_labels$ymax) - min(header_labels$ymin)
+  
   cluster_data <- data %>%
     group_by(plot_label,plot_color,plot_id) %>%
     summarise(cn=n()) %>%
     as.data.frame(stringsAsFactors=F) %>%
     arrange(plot_id) %>%
-    mutate(labely = ngenes + 1.1,
-           cny = max(header_labels$ymax) - 0.1,
+    mutate(labely = ngenes + label_y_size*0.05,
+           cny = max(header_labels$ymax) - 0.1*label_y_size,
            xpos = plot_id)
 
   # Plot Setup  
