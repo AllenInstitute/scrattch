@@ -61,7 +61,7 @@ get_list_data <- function(datalist,genes,grouping,clusters) {
     mutate(cluster_x=1:n())
   
   # Filter and order the rows
-  data <- cbind(all.anno,gene.data) %>%
+  data <- left_join(all.anno,gene.data) %>%
     filter(plot_id %in% clusters) %>%
     left_join(cluster_order,by=c("plot_id"="clusters")) %>%
     arrange(cluster_x) %>%
