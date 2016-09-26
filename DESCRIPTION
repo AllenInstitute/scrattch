@@ -1,8 +1,8 @@
 Package: scrattch
 Type: Package
 Title: Single Cell RNA Analysis for Transcriptomic Type Characterization
-Version: 0.0.204
-Date: 2016-09-14
+Version: 0.0.206
+Date: 2016-09-26
 Author: Lucas T. Gray
 Maintainer: Lucas Gray <lucasg@alleninstitute.org>
 Description: Cell type analysis, built from scrattch.
@@ -16,7 +16,8 @@ Imports:
     DBI (>= 0.3.1),
     RSQLite (>= 1.0.0),
     dendextend (>= 1.2.0),
-    networkD3 (>= 0.2.13)
+    networkD3 (>= 0.2.13),
+    feather (>= 0.3.0)
 RoxygenNote: 5.0.1
 Suggests: knitr,
     rmarkdown
