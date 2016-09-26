@@ -63,9 +63,10 @@ feather_to_list <- function(filebase = NULL, oldformat = F) {
   
   cat("Splitting main table to anno and data\n")
   anno_cols <- c("sample_id", paste0(rep(desc$base,each=3),c("_id","_label","_color")))
+  data_cols <- names(main)[!names(main) %in% anno_cols]
   
   anno <- main[,anno_cols]
-  data <- main[,!names(main) %in% anno_cols]
+  data <- main[,data_cols]
   
   # Remove any remaining non-numeric columns
   data <- data[,unlist(lapply(data,is.numeric))]
