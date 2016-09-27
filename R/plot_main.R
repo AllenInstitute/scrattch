@@ -46,11 +46,18 @@ sample_bar_plot <- function(genes = c("Hspa8","Snap25","Gad2","Vip"),
     # get_list_data() from data_formatting.R
     data <- get_list_data(data_source,genes,grouping,clusters)
     
-  } else {
+  } else if (grepl("\\.db$",data_source)) {
     
     # get_db_data() from data_formatting.R
     data <- get_db_data(data_source,genes,grouping,clusters)
     
+  } else if (file.exists(paste0(data_source,"/anno.feather"))) {
+    
+    # get_feather_data() from data_formatting.R
+    data <- get_feather_data(data_source,genes,grouping,clusters)
+    
+  } else {
+    stop("Cannot identify data_source.")
   }
   
   genes <- sub("-",".",genes)
@@ -229,12 +236,26 @@ sample_heatmap_plot <- function(genes = c("Hspa8","Snap25","Gad2","Vip"),
   
   if(data_source == "internal") {
     
+    # get_internal_data() from data_formatting.R
     data <- get_internal_data(genes,grouping,clusters)
     
-  } else {
+  } else if (is.list(data_source)) {
     
+    # get_list_data() from data_formatting.R
+    data <- get_list_data(data_source,genes,grouping,clusters)
+    
+  } else if (grepl("\\.db$",data_source)) {
+    
+    # get_db_data() from data_formatting.R
     data <- get_db_data(data_source,genes,grouping,clusters)
     
+  } else if (file.exists(paste0(data_source,"/anno.feather"))) {
+    
+    # get_feather_data() from data_formatting.R
+    data <- get_feather_data(data_source,genes,grouping,clusters)
+    
+  } else {
+    stop("Cannot identify data_source.")
   }
   
   genes <- sub("-",".",genes)
@@ -365,15 +386,31 @@ group_violin_plot <- function(genes = c("Hspa8","Snap25","Gad2","Vip"),
   
   if(data_source == "internal") {
     
-    data <- get_internal_data(genes,grouping,clusters) %>%
-      select(-xpos) %>% mutate(xpos = plot_id)
+    # get_internal_data() from data_formatting.R
+    data <- get_internal_data(genes,grouping,clusters)
+    
+  } else if (is.list(data_source)) {
+    
+    # get_list_data() from data_formatting.R
+    data <- get_list_data(data_source,genes,grouping,clusters)
+    
+  } else if (grepl("\\.db$",data_source)) {
+    
+    # get_db_data() from data_formatting.R
+    data <- get_db_data(data_source,genes,grouping,clusters)
+    
+  } else if (file.exists(paste0(data_source,"/anno.feather"))) {
+    
+    # get_feather_data() from data_formatting.R
+    data <- get_feather_data(data_source,genes,grouping,clusters)
     
   } else {
-    
-    data <- get_db_data(data_source,genes,grouping,clusters) %>%
-      select(-xpos) %>% mutate(xpos = plot_id)
-    
+    stop("Cannot identify data_source.")
   }
+  
+  data <- data %>%
+    select(-xpos) %>%
+    mutate(xpos = plot_id)
   
   genes <- sub("-",".",genes)
   
@@ -506,15 +543,31 @@ group_box_plot <- function(genes = c("Hspa8","Snap25","Gad2","Vip"),
   
   if(data_source == "internal") {
     
-    data <- get_internal_data(genes,grouping,clusters) %>%
-      select(-xpos) %>% mutate(xpos = plot_id)
+    # get_internal_data() from data_formatting.R
+    data <- get_internal_data(genes,grouping,clusters)
+    
+  } else if (is.list(data_source)) {
+    
+    # get_list_data() from data_formatting.R
+    data <- get_list_data(data_source,genes,grouping,clusters)
+    
+  } else if (grepl("\\.db$",data_source)) {
+    
+    # get_db_data() from data_formatting.R
+    data <- get_db_data(data_source,genes,grouping,clusters)
+    
+  } else if (file.exists(paste0(data_source,"/anno.feather"))) {
+    
+    # get_feather_data() from data_formatting.R
+    data <- get_feather_data(data_source,genes,grouping,clusters)
     
   } else {
-    
-    data <- get_db_data(data_source,genes,grouping,clusters) %>%
-      select(-xpos) %>% mutate(xpos = plot_id)
-    
+    stop("Cannot identify data_source.")
   }
+  
+  data <- data %>%
+    select(-xpos) %>%
+    mutate(xpos = plot_id)
   
   genes <- sub("-",".",genes)
   
@@ -642,15 +695,31 @@ group_heatmap_plot <- function(genes=c("Hspa8","Snap25","Gad2","Vip"),clusters=1
   
   if(data_source == "internal") {
     
-    data <- get_internal_data(genes,grouping,clusters) %>%
-      select(-xpos) %>% mutate(xpos = plot_id)
+    # get_internal_data() from data_formatting.R
+    data <- get_internal_data(genes,grouping,clusters)
+    
+  } else if (is.list(data_source)) {
+    
+    # get_list_data() from data_formatting.R
+    data <- get_list_data(data_source,genes,grouping,clusters)
+    
+  } else if (grepl("\\.db$",data_source)) {
+    
+    # get_db_data() from data_formatting.R
+    data <- get_db_data(data_source,genes,grouping,clusters)
+    
+  } else if (file.exists(paste0(data_source,"/anno.feather"))) {
+    
+    # get_feather_data() from data_formatting.R
+    data <- get_feather_data(data_source,genes,grouping,clusters)
     
   } else {
-    
-    data <- get_db_data(data_source,genes,grouping,clusters) %>%
-      select(-xpos) %>% mutate(xpos = plot_id)
-    
+    stop("Cannot identify data_source.")
   }
+  
+  data <- data %>%
+    select(-xpos) %>%
+    mutate(xpos = plot_id)
   
   genes <- sub("-",".",genes)
   
