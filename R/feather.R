@@ -1,5 +1,5 @@
 #' Write scrattch data to feather files
-build_feather <- function(anno = NULL, data = NULL, desc = NULL, filebase = NULL) {
+build_feather <- function(anno = NULL, data = NULL, desc = NULL, feather_dir = NULL) {
   
   library(dplyr)
   library(feather)
@@ -19,38 +19,50 @@ build_feather <- function(anno = NULL, data = NULL, desc = NULL, filebase = NULL
       gn <- data$gene
       data <- t(data[,-1])
       colnames(data) <- gn
-      data <- as.data.frame(data)
-      data <- cbind(data,sample_id = rownames(data))
+      data <- as.data.frame(data,stringsAsFactors=F)
+      data <- cbind(data,sample_id = rownames(data),stringsAsFactors=F)
 
     }
     
-    all <- left_join(anno, data)
-    
-    mainfile <- paste0(filebase,"_main.feather")
-    cat("Writing main table to",mainfile,"\n")
-    write_feather(all, mainfile)
-    
-    descfile <- paste0(filebase,"_desc.feather")
-    cat("Writing desc table to",descfile,"\n")
-    write_feather(desc, descfile)
-    
+  if(!dir.exists(feather_dir)) {
+    dir.create(feather_dir)
   }
   
+  datafile <- paste0(feather_dir,"/data.feather")
+  cat("Writing data table to",datafile,"\n")
+  write_feather(data, datafile)
+  
+  annofile <- paste0(feather_dir,"/anno.feather")
+  cat("Writing anno table to",annofile,"\n")
+  write_feather(anno, annofile)
+  
+  descfile <- paste0(feather_dir,"/desc.feather")
+  cat("Writing desc table to",descfile,"\n")
+  write_feather(desc, descfile)
+  
+  }
 }
 
-feather_to_list <- function(filebase = NULL, oldformat = F) {
+feather_to_list <- function(feather_dir = NULL, oldformat = F) {
   
   library(feather)
   
-  if(is.null(filebase)) {
-    stop("filebase required.")
+  if(is.null(feather_dir)) {
+    stop("feather directory required.")
   }
   
-  mainfile <- paste0(filebase,"_main.feather")
-  descfile <- paste0(filebase,"_desc.feather")
+  if(!dir.exists(feather_dir)) {
+    stop("feather directory doesn't exist")
+  }
   
-  if(!file.exists(mainfile)) {
-    stop("main file not found.")
+  datafile <- paste0(feather_dir,"/data.feather")
+  annofile <- paste0(feather_dir,"/anno.feather")
+  descfile <- paste0(feather_dir,"/desc.feather")
+  
+  if(!file.exists(datafile)) {
+    stop("data file not found.")
+  } else if(!file.exists(annofile)) {
+    stop("anno file not found")
   } else if(!file.exists(descfile)) {
     stop("desc file not found.")
   }
@@ -58,18 +70,11 @@ feather_to_list <- function(filebase = NULL, oldformat = F) {
   cat("Reading ",descfile,"\n")
   desc <- read_feather(descfile)
   
-  cat("Reading ",mainfile,"\n")
-  main <- read_feather(mainfile)
+  cat("Reading ",annofile,"\n")
+  desc <- read_feather(annofile)
   
-  cat("Splitting main table to anno and data\n")
-  anno_cols <- c("sample_id", paste0(rep(desc$base,each=3),c("_id","_label","_color")))
-  data_cols <- names(main)[!names(main) %in% anno_cols]
-  
-  anno <- main[,anno_cols]
-  data <- main[,data_cols]
-  
-  # Remove any remaining non-numeric columns
-  data <- data[,unlist(lapply(data,is.numeric))]
+  cat("Reading ",datafile,"\n")
+  main <- read_feather(datafile)
   
   if(oldformat == T) {
     # Transforming for compatibility with get_list_data
