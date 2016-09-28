@@ -61,6 +61,8 @@ sample_bar_plot <- function(genes = c("Hspa8","Snap25","Gad2","Vip"),
   }
   
   genes <- sub("-",".",genes)
+  genes[grepl("^[0-9]",genes)] <- paste0("X",genes[grepl("^[0-9]",genes)])
+  names(data)[grepl("^[0-9]",genes)] <- paste0("X",names(data)[grepl("^[0-9]",genes)])
   
   # Calculate the number of genes and clusters for use as plot dimensions
   ngenes <- length(genes)
@@ -259,6 +261,8 @@ sample_heatmap_plot <- function(genes = c("Hspa8","Snap25","Gad2","Vip"),
   }
   
   genes <- sub("-",".",genes)
+  genes[grepl("^[0-9]",genes)] <- paste0("X",genes[grepl("^[0-9]",genes)])
+  names(data)[grepl("^[0-9]",genes)] <- paste0("X",names(data)[grepl("^[0-9]",genes)])
   
   # Calculate the number of genes and clusters for use as plot dimensions
   ngenes <- length(genes)
@@ -407,12 +411,14 @@ group_violin_plot <- function(genes = c("Hspa8","Snap25","Gad2","Vip"),
   } else {
     stop("Cannot identify data_source.")
   }
-  
+
   data <- data %>%
     select(-xpos) %>%
     mutate(xpos = plot_id)
   
   genes <- sub("-",".",genes)
+  genes[grepl("^[0-9]",genes)] <- paste0("X",genes[grepl("^[0-9]",genes)])
+  names(data)[grepl("^[0-9]",genes)] <- paste0("X",names(data)[grepl("^[0-9]",genes)])
   
   ngenes <- length(genes)
   nclust <- length(unique(data$plot_id))
@@ -570,6 +576,8 @@ group_box_plot <- function(genes = c("Hspa8","Snap25","Gad2","Vip"),
     mutate(xpos = plot_id)
   
   genes <- sub("-",".",genes)
+  genes[grepl("^[0-9]",genes)] <- paste0("X",genes[grepl("^[0-9]",genes)])
+  names(data)[grepl("^[0-9]",genes)] <- paste0("X",names(data)[grepl("^[0-9]",genes)])
   
   ngenes <- length(genes)
   nclust <- length(unique(data$plot_id))
@@ -722,6 +730,8 @@ group_heatmap_plot <- function(genes=c("Hspa8","Snap25","Gad2","Vip"),clusters=1
     mutate(xpos = plot_id)
   
   genes <- sub("-",".",genes)
+  genes[grepl("^[0-9]",genes)] <- paste0("X",genes[grepl("^[0-9]",genes)])
+  names(data)[grepl("^[0-9]",genes)] <- paste0("X",names(data)[grepl("^[0-9]",genes)])
   
   ngenes <- length(genes)
   nclust <- length(unique(data$plot_id))
