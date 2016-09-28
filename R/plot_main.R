@@ -875,7 +875,9 @@ group_river_plot <- function(data_source,
                       value = numeric())
   
   if (grepl("db$",data_source)) {
-    anno <- db_to_list(data_source,get_tables = "anno")$anno
+    if(file.exists(data_source)) {
+      anno <- db_to_list(data_source,get_tables = "anno")$anno
+    }
   } else if (dir.exists(data_source)) {
     library(feather)
     anno.file <- paste0(data_source,"/anno.feather")
