@@ -874,8 +874,16 @@ group_river_plot <- function(data_source,
                       target = numeric(),
                       value = numeric())
   
-  anno <- db_to_list(data_source,get_tables = "anno")$anno
-  
+  if (grepl("db$",data_source)) {
+    anno <- db_to_list(data_source,get_tables = "anno")$anno
+  } else if (dir.exists(data_source)) {
+    library(feather)
+    anno.file <- paste0(data_source,"/anno.feather")
+    if(file.exists(anno.file)) {
+      anno <- read_feather(anno.file)
+    }
+    
+  }
   # Filtering annotations
   if(!is.null(group1_filter)) {
     filt <- paste0(group1,"_id %in% ",group1_filter)
