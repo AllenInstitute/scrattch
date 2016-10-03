@@ -143,7 +143,7 @@ build_header_labels <- function(data, ngenes, nsamples, nclust, labelheight = 25
   labheight <- ngenes*(labelheight/100)/(1-labelheight/100)
   
   data <- data %>%
-    select(plot_id,plot_label,plot_color) %>%
+    select(plot_id,plot_label,plot_color,xpos) %>%
     unique()
   
   if(labeltype == "simple") {
