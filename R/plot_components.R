@@ -142,13 +142,17 @@ build_header_labels <- function(data, ngenes, nsamples, nclust, labelheight = 25
   
   labheight <- ngenes*(labelheight/100)/(1-labelheight/100)
   
+  data <- data %>%
+    select(plot_id,plot_label,plot_color) %>%
+    unique()
+  
   if(labeltype == "simple") {
     xlab.rect <- data.frame(xmin = 1:nclust - 0.5,
                             xmax = 1:nclust + 0.5,
                             ymin = ngenes + 1,
                             ymax = ngenes + 1 + labheight,
-                            color = unique(data$plot_color),
-                            label = unique(data$plot_label) )
+                            color = data$plot_color,
+                            label = data$plot_label )
   }
   
   if(labeltype == "angle") {
@@ -157,8 +161,8 @@ build_header_labels <- function(data, ngenes, nsamples, nclust, labelheight = 25
                             # 10% of the label height is reserved for angled polygons
                             ymin = ngenes + 1 + labheight*0.1,
                             ymax = ngenes + 1 + labheight,
-                            color = unique(data$plot_color),
-                            label = unique(data$plot_label) )
+                            color = data$plot_color,
+                            label = data$plot_label )
   }
   if(labeltype == "square") {
     xlab.rect <- data %>% 
