@@ -893,6 +893,8 @@ group_river_plot <- function(data_source,
     anno.file <- paste0(data_source,"/anno.feather")
     if(file.exists(anno.file)) {
       anno <- read_feather(anno.file)
+      anno <- anno %>%
+        mutate_if(is.factor, as.character)
     }
     
   }
