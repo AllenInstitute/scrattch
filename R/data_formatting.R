@@ -57,11 +57,11 @@ get_feather_data <- function(feather_dir,genes,group_by,clusters) {
   data.names <- names(data)
   
   if(sum(genes %in% data.names) != length(genes)) {
-    not_found <- genes[!genes %in% data.names]
+    not_found <- genes[!toupper(genes) %in% toupper(data.names)]
     
     warning(paste(paste0(not_found,collapse=", "), "not found in feather data!"))
     
-    genes <- genes[!genes %in% not_found]
+    genes <- data.names[toupper(data.names) %in% toupper(genes)]
   }
   
   feather_cols <- which(data.names %in% c("sample_id",genes))
