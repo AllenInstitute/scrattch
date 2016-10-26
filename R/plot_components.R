@@ -143,8 +143,9 @@ build_header_labels <- function(data, ngenes, nsamples, nclust, labelheight = 25
   labheight <- ngenes*(labelheight/100)/(1-labelheight/100)
   
   data <- data %>%
-    select(plot_id,plot_label,plot_color,xpos) %>%
-    unique()
+    group_by(plot_id,plot_label,plot_color) %>%
+    summarise(minx = min(xpos),
+              maxx = max(xpos))
   
   if(labeltype == "simple") {
     xlab.rect <- data.frame(xmin = 1:nclust - 0.5,
@@ -167,8 +168,8 @@ build_header_labels <- function(data, ngenes, nsamples, nclust, labelheight = 25
   if(labeltype == "square") {
     xlab.rect <- data %>% 
       group_by(plot_id) %>%
-      summarise(xmin = min(xpos) - 1,
-                xmax = max(xpos),
+      summarise(xmin = minx - 1,
+                xmax = maxx,
                 ymin = ngenes + 1 + labheight * 0.1,
                 ymax = ngenes + 1 + labheight,
                 color = plot_color[1],

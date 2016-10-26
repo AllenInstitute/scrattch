@@ -6,6 +6,7 @@
 #' See Examples for sensible PDF output options.
 #' 
 #' @param genes A character vector containing gene symbols to be plotted
+#' @param group_by A character vector specifying the desc base that should be used to group cells
 #' @param clusters A numeric vector containing clusters to plot (for v1_anno, the range is 1:49)
 #' @param data_source A character object defining where the data is stored. Currently only works with "internal"
 #' @param sort Logical object, determines if cells will be sorted within their clusters (this means that each column will no longer represent a single cell)
@@ -24,7 +25,7 @@
 #' 
 #' ggsave("plot_output.pdf",my_barcell_plot,height=0.2*length(my_genes)+2,width=4)
 sample_bar_plot <- function(genes = c("Hspa8","Snap25","Gad2","Vip"),
-                         grouping = "final", clusters = 1:10,
+                         group_by = "final", clusters = 1:10,
                          data_source = "internal",
                          sort = F, logscale = F,
                          fontsize = 7, labelheight = 25, labeltype = "angle",
@@ -39,22 +40,22 @@ sample_bar_plot <- function(genes = c("Hspa8","Snap25","Gad2","Vip"),
   if(data_source == "internal") {
     
     # get_internal_data() from data_formatting.R
-    data <- get_internal_data(genes,grouping,clusters)
+    data <- get_internal_data(genes,group_by,clusters)
     
   } else if (is.list(data_source)) {
     
     # get_list_data() from data_formatting.R
-    data <- get_list_data(data_source,genes,grouping,clusters)
+    data <- get_list_data(data_source,genes,group_by,clusters)
     
   } else if (grepl("\\.db$",data_source)) {
     
     # get_db_data() from data_formatting.R
-    data <- get_db_data(data_source,genes,grouping,clusters)
+    data <- get_db_data(data_source,genes,group_by,clusters)
     
   } else if (file.exists(paste0(data_source,"/anno.feather"))) {
     
     # get_feather_data() from data_formatting.R
-    data <- get_feather_data(data_source,genes,grouping,clusters)
+    data <- get_feather_data(data_source,genes,group_by,clusters)
     
   } else {
     stop("Cannot identify data_source.")
@@ -63,6 +64,8 @@ sample_bar_plot <- function(genes = c("Hspa8","Snap25","Gad2","Vip"),
   genes <- sub("-",".",genes)
   genes[grepl("^[0-9]",genes)] <- paste0("X",genes[grepl("^[0-9]",genes)])
   names(data)[grepl("^[0-9]",genes)] <- paste0("X",names(data)[grepl("^[0-9]",genes)])
+  
+  genes <- genes[genes %in% names(data)]
   
   # Calculate the number of genes and clusters for use as plot dimensions
   ngenes <- length(genes)
@@ -197,7 +200,7 @@ sample_bar_plot <- function(genes = c("Hspa8","Snap25","Gad2","Vip"),
 #' Extension to user-supplied datasets will come soon.
 #' 
 #' @param genes A character vector containing gene symbols to be plotted
-#' @param grouping A character object containing the annotation to group data by
+#' @param group_by A character object containing the annotation to group data by
 #' @param clusters A numeric vector containing clusters to plot (for v1_anno, the range is 1:49)
 #' @param data_source A character object defining where the data is stored. Can be a Sqlite3 database file or "internal".
 #' @param normalize_rows Logical object, determines if data are normalized to the maximum value for each gene. If FALSE, the heatmap is normalized to the maximum value across all genes.
@@ -224,7 +227,7 @@ sample_bar_plot <- function(genes = c("Hspa8","Snap25","Gad2","Vip"),
 #' 
 #' my_heatcell_plot_2 <- heatcell_plot(gene_fix, clust = cluster_fix, font=12)
 sample_heatmap_plot <- function(genes = c("Hspa8","Snap25","Gad2","Vip"),
-                          clusters = 1:10, grouping = "final",
+                          clusters = 1:10, group_by = "final",
                           data_source = "internal",
                           logscale = T, normalize_rows = F,
                           fontsize = 7, labelheight = 25,
@@ -239,22 +242,22 @@ sample_heatmap_plot <- function(genes = c("Hspa8","Snap25","Gad2","Vip"),
   if(data_source == "internal") {
     
     # get_internal_data() from data_formatting.R
-    data <- get_internal_data(genes,grouping,clusters)
+    data <- get_internal_data(genes,group_by,clusters)
     
   } else if (is.list(data_source)) {
     
     # get_list_data() from data_formatting.R
-    data <- get_list_data(data_source,genes,grouping,clusters)
+    data <- get_list_data(data_source,genes,group_by,clusters)
     
   } else if (grepl("\\.db$",data_source)) {
     
     # get_db_data() from data_formatting.R
-    data <- get_db_data(data_source,genes,grouping,clusters)
+    data <- get_db_data(data_source,genes,group_by,clusters)
     
   } else if (file.exists(paste0(data_source,"/anno.feather"))) {
     
     # get_feather_data() from data_formatting.R
-    data <- get_feather_data(data_source,genes,grouping,clusters)
+    data <- get_feather_data(data_source,genes,group_by,clusters)
     
   } else {
     stop("Cannot identify data_source.")
@@ -263,6 +266,8 @@ sample_heatmap_plot <- function(genes = c("Hspa8","Snap25","Gad2","Vip"),
   genes <- sub("-",".",genes)
   genes[grepl("^[0-9]",genes)] <- paste0("X",genes[grepl("^[0-9]",genes)])
   names(data)[grepl("^[0-9]",genes)] <- paste0("X",names(data)[grepl("^[0-9]",genes)])
+  
+  genes <- genes[genes %in% names(data)]
   
   # Calculate the number of genes and clusters for use as plot dimensions
   ngenes <- length(genes)
@@ -297,9 +302,9 @@ sample_heatmap_plot <- function(genes = c("Hspa8","Snap25","Gad2","Vip"),
   header_polygons <- build_header_polygons(data = data, ngenes = ngenes, nsamples = nsamples, nclust = nclust, labelheight = labelheight, labeltype = labeltype)
   
   # Build the cell type label rectangles
+  # build_header_labels from plot_components.R
   header_labels <- build_header_labels(data = data, ngenes = ngenes, nsamples = nsamples, nclust = nclust, labelheight = labelheight, labeltype = labeltype)
 
-  
   # Build the maximum value labels for the right edge
   max_labels <- data.frame(x = nsamples * 1.01,
                            y = 1:ngenes + 0.5,
@@ -324,9 +329,17 @@ sample_heatmap_plot <- function(genes = c("Hspa8","Snap25","Gad2","Vip"),
   # plot the rectangles for each gene
   for(i in 1:length(genes)) {
     
+    # Explicit specification of rectangle components
+    # prevents overplotting and makes the function faster.
+    plot_data <- data.frame(xmin = data$xpos - 1,
+                            xmax = data$xpos,
+                            ymin = i,
+                            ymax = i + 1,
+                            fill = data[[genes[i]]])
+    
     # plot the rectangles for the heatmap
-    p <- p + geom_rect(data = data,
-                       aes_string(xmin = "xpos - 1", xmax = "xpos", ymin = i,ymax = i + 1, fill = genes[i]))
+    p <- p + geom_rect(data = plot_data,
+                       aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax + 1, fill = fill))
     
   }
   
@@ -378,7 +391,7 @@ sample_heatmap_plot <- function(genes = c("Hspa8","Snap25","Gad2","Vip"),
 #' my_clusters <- c(1,5,9,10,24,37)
 #' pottery_plot(my_genes,my_clusters,logscale=T,fontsize=14)
 group_violin_plot <- function(genes = c("Hspa8","Snap25","Gad2","Vip"),
-                         grouping = "final", clusters = 1:10,
+                         group_by = "final", clusters = 1:10,
                          data_source = "internal",
                          sort = F, logscale = F,
                          fontsize = 7, labelheight = 25,
@@ -391,27 +404,29 @@ group_violin_plot <- function(genes = c("Hspa8","Snap25","Gad2","Vip"),
   if(data_source == "internal") {
     
     # get_internal_data() from data_formatting.R
-    data <- get_internal_data(genes,grouping,clusters)
+    data <- get_internal_data(genes,group_by,clusters)
     
   } else if (is.list(data_source)) {
     
     # get_list_data() from data_formatting.R
-    data <- get_list_data(data_source,genes,grouping,clusters)
+    data <- get_list_data(data_source,genes,group_by,clusters)
     
   } else if (grepl("\\.db$",data_source)) {
     
     # get_db_data() from data_formatting.R
-    data <- get_db_data(data_source,genes,grouping,clusters)
+    data <- get_db_data(data_source,genes,group_by,clusters)
     
   } else if (file.exists(paste0(data_source,"/anno.feather"))) {
     
     # get_feather_data() from data_formatting.R
-    data <- get_feather_data(data_source,genes,grouping,clusters)
+    data <- get_feather_data(data_source,genes,group_by,clusters)
     
   } else {
     stop("Cannot identify data_source.")
   }
 
+  genes <- genes[genes %in% names(data)]
+  
   data <- data %>%
     select(-xpos) %>%
     mutate(xpos = plot_id)
@@ -537,7 +552,7 @@ group_violin_plot <- function(genes = c("Hspa8","Snap25","Gad2","Vip"),
 #' my_clusters <- c(1,5,9,10,24,37)
 #' boxter_plot(my_genes,my_clusters,logscale=T,fontsize=14)
 group_box_plot <- function(genes = c("Hspa8","Snap25","Gad2","Vip"),
-                         grouping = "final", clusters = 1:10,
+                         group_by = "final", clusters = 1:10,
                          data_source = "internal",
                          sort = F, logscale = F,
                          fontsize = 7, labelheight = 25,
@@ -550,22 +565,22 @@ group_box_plot <- function(genes = c("Hspa8","Snap25","Gad2","Vip"),
   if(data_source == "internal") {
     
     # get_internal_data() from data_formatting.R
-    data <- get_internal_data(genes,grouping,clusters)
+    data <- get_internal_data(genes,group_by,clusters)
     
   } else if (is.list(data_source)) {
     
     # get_list_data() from data_formatting.R
-    data <- get_list_data(data_source,genes,grouping,clusters)
+    data <- get_list_data(data_source,genes,group_by,clusters)
     
   } else if (grepl("\\.db$",data_source)) {
     
     # get_db_data() from data_formatting.R
-    data <- get_db_data(data_source,genes,grouping,clusters)
+    data <- get_db_data(data_source,genes,group_by,clusters)
     
   } else if (file.exists(paste0(data_source,"/anno.feather"))) {
     
     # get_feather_data() from data_formatting.R
-    data <- get_feather_data(data_source,genes,grouping,clusters)
+    data <- get_feather_data(data_source,genes,group_by,clusters)
     
   } else {
     stop("Cannot identify data_source.")
@@ -578,6 +593,8 @@ group_box_plot <- function(genes = c("Hspa8","Snap25","Gad2","Vip"),
   genes <- sub("-",".",genes)
   genes[grepl("^[0-9]",genes)] <- paste0("X",genes[grepl("^[0-9]",genes)])
   names(data)[grepl("^[0-9]",genes)] <- paste0("X",names(data)[grepl("^[0-9]",genes)])
+  
+  genes <- genes[genes %in% names(data)]
   
   ngenes <- length(genes)
   nclust <- length(unique(data$plot_id))
@@ -691,7 +708,7 @@ group_box_plot <- function(genes = c("Hspa8","Snap25","Gad2","Vip"),
 #' my_clusters <- c(1,5,9,10,24,37)
 #' heater_plot(my_genes,my_clusters,logscale=T,fontsize=14)
 group_heatmap_plot <- function(genes=c("Hspa8","Snap25","Gad2","Vip"),clusters=1:10,
-                        grouping = "final",calculation="mean",
+                        group_by = "final",calculation="mean",
                         data_source="internal",normalize_rows=FALSE,
                         logscale=T,fontsize=7,labelheight=25,
                         max_width = 10,
@@ -704,22 +721,22 @@ group_heatmap_plot <- function(genes=c("Hspa8","Snap25","Gad2","Vip"),clusters=1
   if(data_source == "internal") {
     
     # get_internal_data() from data_formatting.R
-    data <- get_internal_data(genes,grouping,clusters)
+    data <- get_internal_data(genes,group_by,clusters)
     
   } else if (is.list(data_source)) {
     
     # get_list_data() from data_formatting.R
-    data <- get_list_data(data_source,genes,grouping,clusters)
+    data <- get_list_data(data_source,genes,group_by,clusters)
     
   } else if (grepl("\\.db$",data_source)) {
     
     # get_db_data() from data_formatting.R
-    data <- get_db_data(data_source,genes,grouping,clusters)
+    data <- get_db_data(data_source,genes,group_by,clusters)
     
   } else if (file.exists(paste0(data_source,"/anno.feather"))) {
     
     # get_feather_data() from data_formatting.R
-    data <- get_feather_data(data_source,genes,grouping,clusters)
+    data <- get_feather_data(data_source,genes,group_by,clusters)
     
   } else {
     stop("Cannot identify data_source.")
@@ -732,6 +749,8 @@ group_heatmap_plot <- function(genes=c("Hspa8","Snap25","Gad2","Vip"),clusters=1
   genes <- sub("-",".",genes)
   genes[grepl("^[0-9]",genes)] <- paste0("X",genes[grepl("^[0-9]",genes)])
   names(data)[grepl("^[0-9]",genes)] <- paste0("X",names(data)[grepl("^[0-9]",genes)])
+  
+  genes <- genes[genes %in% names(data)]
   
   ngenes <- length(genes)
   nclust <- length(unique(data$plot_id))
@@ -864,6 +883,22 @@ group_heatmap_plot <- function(genes=c("Hspa8","Snap25","Gad2","Vip"),clusters=1
 }
 
 #' Build Sankey Plots for up to four annotations
+#' 
+#' Builds a Sankey/River plot using NetworkD3 based on data annotations.
+#' 
+#' @param data_source
+#' @param group1
+#' @param group1_filter
+#' @param group2
+#' @param group2_filter
+#' @param group3
+#' @param group3_filter
+#' @param group4
+#' @param group4_filter
+#' @param width numeric, plot width in pixels.
+#' @param height numeric, plot height in pixels
+#' 
+#' @return a NetworkD3 Sankey plot.
 group_river_plot <- function(data_source, 
                              group1 = NULL, 
                              group1_filter = NULL,
@@ -872,7 +907,9 @@ group_river_plot <- function(data_source,
                              group3 = NULL, 
                              group3_filter = NULL,
                              group4 = NULL, 
-                             group4_filter = NULL) {
+                             group4_filter = NULL,
+                             width = 1000,
+                             height = 500) {
   
   library(networkD3)
   library(dplyr)
@@ -1064,10 +1101,48 @@ group_river_plot <- function(data_source,
   sankeyNetwork(Links = links, Nodes = nodes, Source = 'source',
                 Target = 'target', Value = 'value', NodeID = 'name',
                 NodeGroup = 'name', colourScale = JS(d3.colors),
-                fontSize = 12)
+                fontSize = 12, width = width, height = height)
   
 }
 
+#' Build a heatmap legend plot
+#' 
+#' @param minval numeric, the minimum value in the plot scale (default = 0)
+#' @param maxval numeric, the maximum value in the plot scale (default = 4)
+#' @param scale_name character, the name for the values displayed (default = "FPKM")
+#' @param colorset character vector, the colors to interpolate between using colorRampPalette.
+#' 
+#' @return a ggplot2 heatmap legend plot
+heatmap_legend_plot <- function(minval = 0, maxval = 4, scale_name = "FPKM", colorset=c("darkblue","dodgerblue","gray80","orange","orangered")) {
+  
+  library(ggplot2)
+  
+  colors <- colorRampPalette(colorset)(1001)
+  
+  ## Build geom_rect() compatible table
+  legend_data <- data.frame(xmin = 1:1001,
+                            xmax = 1:1001+1,
+                            ymin = 0,
+                            ymax = 1,
+                            fill = colors)
+  
+  legend_plot <- ggplot(legend_data) +
+    geom_rect(aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax, fill = fill)) +
+    geom_segment(aes(x = min(xmin), xend = max(xmax), y = 0, yend = 0)) +
+    scale_fill_identity() +
+    scale_y_continuous(expand = c(0,0)) +
+    scale_x_continuous(scale_name, breaks=c(0,250,500,750,1000),
+                       labels=round(seq(minval, maxval, by = (maxval-minval)/4),2)) +
+    theme_classic() +
+    theme(axis.text.y = element_blank(),
+          axis.ticks.y = element_blank(),
+          axis.line.y = element_blank(),
+          axis.title.y = element_blank(),
+          axis.line.x = element_blank())
+  
+  return(legend_plot)
+  
+}
 
 
 ### Legacy function names
@@ -1078,10 +1153,20 @@ heater_plot <- group_heatmap_plot
 boxter_plot <- group_box_plot
 
 
-testset <- function() eval.parent(substitute( {
+testset2 <- function() eval.parent(substitute( {
   genes <- c("Hspa8","Snap25","Gad2","Slc17a6")
   clusters <- 1:49
   data_source <- "internal"
+  sort <- F
+  logscale <- F
+  fontsize <- 7
+} ))
+
+testset2 <- function() eval.parent(substitute( {
+  genes <- c("HSPA8","SNAP25","GAD2","VGLUT3")
+  clusters <- 1:10
+  data_source <- "//AIBSdata/hct/CT_clustering/human_nuc/shinydb/20161007_1/"
+  group_by <- "cellmap"
   sort <- F
   logscale <- F
   fontsize <- 7

@@ -1,5 +1,5 @@
 #' Combine data for plotting from the included Mouse V1 data
-get_internal_data <- function(genes,grouping,clusters) {
+get_internal_data <- function(genes,group_by,clusters) {
   data <- scrattch::v1_data
   all.anno <- scrattch::v1_anno
   
@@ -27,9 +27,9 @@ get_internal_data <- function(genes,grouping,clusters) {
   
   # Filter and order the rows
   data <- left_join(data,all.anno,by="sample_id") %>%
-    rename_("plot_id" = paste0(grouping,"_id"),
-            "plot_label" = paste0(grouping,"_label"),
-            "plot_color" = paste0(grouping,"_color")) %>%
+    rename_("plot_id" = paste0(group_by,"_id"),
+            "plot_label" = paste0(group_by,"_label"),
+            "plot_color" = paste0(group_by,"_color")) %>%
     filter(plot_id %in% clusters) %>%
     left_join(cluster_order,by=c("plot_id"="clusters")) %>%
     arrange(cluster_x) %>%
@@ -42,7 +42,7 @@ get_internal_data <- function(genes,grouping,clusters) {
 
 #' Get data directly from a directory of feather files
 #' 
-get_feather_data <- function(feather_dir,genes,grouping,clusters) {
+get_feather_data <- function(feather_dir,genes,group_by,clusters) {
   
   library(dplyr)
   library(feather)
@@ -51,20 +51,35 @@ get_feather_data <- function(feather_dir,genes,grouping,clusters) {
   anno.file <- paste0(feather_dir,"/anno.feather")
   
   data <- feather(data.file)
-  anno <- read_feather(anno.file)
+  anno <- read_feather(anno.file) %>%
+    mutate_if(is.factor, as.character)
   
-  gene.data <- data[,c("sample_id",genes)]
+  data.names <- names(data)
+  
+  if(sum(genes %in% data.names) != length(genes)) {
+    not_found <- genes[!genes %in% data.names]
+    
+    warning(paste(paste0(not_found,collapse=", "), "not found in feather data!"))
+    
+    genes <- genes[!genes %in% not_found]
+  }
+  
+  feather_cols <- which(data.names %in% c("sample_id",genes))
+  
+  gene.data <- data[,feather_cols]
+  
+  colnames(gene.data) <- sub("-",".",colnames(gene.data))
   
   all.anno <- anno %>%
-    rename_("plot_id" = paste0(grouping,"_id"),
-            "plot_label" = paste0(grouping,"_label"),
-            "plot_color" = paste0(grouping,"_color"))
+    rename_("plot_id" = paste0(group_by,"_id"),
+            "plot_label" = paste0(group_by,"_label"),
+            "plot_color" = paste0(group_by,"_color"))
   
   cluster_order <- data.frame(clusters=clusters) %>%
     mutate(cluster_x=1:n())
   
   # Filter and order the rows
-  data <- left_join(all.anno,gene.data) %>%
+  data <- left_join(all.anno,gene.data, by = "sample_id") %>%
     filter(plot_id %in% clusters) %>%
     left_join(cluster_order,by=c("plot_id"="clusters")) %>%
     arrange(cluster_x) %>%
@@ -78,7 +93,7 @@ get_feather_data <- function(feather_dir,genes,grouping,clusters) {
 #' Format data provided in list format for scrattch plots
 #' 
 #' Currently only compatible with data from feather_to_list()
-get_list_data <- function(datalist,genes,grouping,clusters) {
+get_list_data <- function(datalist,genes,group_by,clusters) {
   
   library(dplyr)
   
@@ -86,9 +101,9 @@ get_list_data <- function(datalist,genes,grouping,clusters) {
     select(one_of(genes))
     
   all.anno <- datalist$anno %>%
-    rename_("plot_id" = paste0(grouping,"_id"),
-            "plot_label" = paste0(grouping,"_label"),
-            "plot_color" = paste0(grouping,"_color"))
+    rename_("plot_id" = paste0(group_by,"_id"),
+            "plot_label" = paste0(group_by,"_label"),
+            "plot_color" = paste0(group_by,"_color"))
   
   cluster_order <- data.frame(clusters=clusters) %>%
     mutate(cluster_x=1:n())
@@ -106,7 +121,7 @@ get_list_data <- function(datalist,genes,grouping,clusters) {
 }
 
 #' Get data from a SQLite3 database for scrattch plotting
-get_db_data <- function(data_source,genes,grouping,clusters) {
+get_db_data <- function(data_source,genes,group_by,clusters) {
   library(dplyr)
   library(DBI)
   library(RSQLite)
@@ -120,11 +135,11 @@ get_db_data <- function(data_source,genes,grouping,clusters) {
   all.anno <- dbFetch(res,n=-1)
   dbClearResult(res)
   
-  # Rename based on grouping, and select annotations in the clusters
+  # Rename based on group_by, and select annotations in the clusters
   anno <- all.anno %>%
-    rename_("plot_id" = paste0(grouping,"_id"),
-            "plot_label" = paste0(grouping,"_label"),
-            "plot_color" = paste0(grouping,"_color")) %>%
+    rename_("plot_id" = paste0(group_by,"_id"),
+            "plot_label" = paste0(group_by,"_label"),
+            "plot_color" = paste0(group_by,"_color")) %>%
     filter(plot_id %in% clusters)
   
   # Get data for genes
