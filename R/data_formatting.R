@@ -54,6 +54,11 @@ get_feather_data <- function(feather_dir,genes,group_by,clusters) {
   anno <- read_feather(anno.file) %>%
     mutate_if(is.factor, as.character)
   
+  id_cols <- names(anno)[grepl("_id$",names(anno)) & names(anno) != "sample_id"]
+  anno[id_cols] <- anno[id_cols] %>%
+    mutate_if(!is.numeric, as.numeric)
+  lapply(anno[id_cols],as.numeric)
+  
   data.names <- names(data)
   
   if(sum(genes %in% data.names) != length(genes)) {
