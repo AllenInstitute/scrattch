@@ -35,7 +35,7 @@ get_internal_data <- function(genes,group_by,clusters) {
     arrange(cluster_x) %>%
     mutate(xpos=1:n()) %>%
     select(-plot_id) %>%
-    rename(plot_id=cluster_x)
+    rename_("plot_id"="cluster_x")
   
   return(data)
 }
@@ -85,7 +85,7 @@ get_feather_data <- function(feather_dir,genes,group_by,clusters) {
     arrange(cluster_x) %>%
     mutate(xpos=1:n()) %>%
     select(-plot_id) %>%
-    rename(plot_id=cluster_x)
+    rename_("plot_id" = "cluster_x")
   
   return(data)
 }

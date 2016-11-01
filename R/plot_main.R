@@ -1165,7 +1165,7 @@ testset2 <- function() eval.parent(substitute( {
 testset2 <- function() eval.parent(substitute( {
   genes <- c("HSPA8","SNAP25","GAD2","VGLUT3")
   clusters <- 1:10
-  data_source <- "//AIBSdata/hct/CT_clustering/human_nuc/shinydb/20161007_1/"
+  data_source <- "//AIBSdata/hct/CT_clustering/human_nuc_JCVI/shinydb/20160916_MTG_L1_1/"
   group_by <- "cellmap"
   sort <- F
   logscale <- F
