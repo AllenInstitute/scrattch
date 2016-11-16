@@ -33,7 +33,7 @@ annotate_categorical <- function(x, name = NULL, sort_label = T, colorset = "rai
   
   library(dplyr)
   library(viridis)
-  
+
   if(!is.character(x)) {
     x <- as.character(x)
   }
@@ -48,13 +48,17 @@ annotate_categorical <- function(x, name = NULL, sort_label = T, colorset = "rai
     mutate(id = 1:n())
   
   if(colorset == "rainbow") {
-    
-    colors <- rainbow(nrow(annotations))
-    
+    colors <- sub("FF$","",rainbow(nrow(annotations)))
   } else if(colorset == "viridis") {
-    
     colors <- sub("FF$","",viridis(nrow(annotations)))
-    
+  } else if(colorset == "magma") {
+    colors <- sub("FF$","",magma(nrow(annotations)))
+  } else if(colorset == "inferno") {
+    colors <- sub("FF$","",inferno(nrow(annotations)))
+  } else if(colorset == "plasma") {
+    colors <- sub("FF$","",plasma(nrow(annotations)))
+  } else if(colorset == "terrain") {
+    colors <- sub("FF$","",terrain.colors(nrow(annotations)))
   }
   
   if(color_order == "random") {
