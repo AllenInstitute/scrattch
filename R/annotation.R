@@ -19,13 +19,9 @@ annotate_numeric <- function(x, name = NULL, logscale = F, colorset = c("darkblu
   
   annotations <- cbind(annotations, color = colors, stringsAsFactors = F)
   
-  results <- data.frame(label = x) %>%
-    left_join(annotations) %>%
-    select(id,label,color)
+  names(annotations) <- paste0(name,c("_label","_id","_color"))
   
-  names(results) <- paste0(name,c("_id","_label","_color"))
-  
-  return(results)
+  return(annotations)
   
 }
 
@@ -69,11 +65,8 @@ annotate_categorical <- function(x, name = NULL, sort_label = T, colorset = "rai
   
   annotations <- cbind(annotations, color = colors, stringsAsFactors = F)
   
-  results <- data.frame(label = x, stringsAsFactors = F) %>%
-    left_join(annotations) %>% 
-    select(id,label,color)
+  names(annotations) <- paste0(name,c("_label","_id","_color"))
   
-  names(results) <- paste0(name,c("_id","_label","_color"))
-  
-  return(results)
+  return(annotations)
+
 }
