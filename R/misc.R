@@ -15,15 +15,52 @@ chr_to_sql <- function(in_chr) {
   return(result)
 }
 
+flip_table <- function(df, gene_col = "gene", id_col = "sample_id") {
+  
+  if(gene_col %in% names(df)) {
+    
+    genes <- df[,gene_col]
+    df_t <- t(df[,names(df) != gene_col])
+    samples <- rownames(df_t)
+    df_out <- cbind(samples, as.data.frame(df_t))
+    names(df_out) <- c(id_col,genes)
+    rownames(df_out) <- NULL
+    df_out
+    
+  } else if(id_col %in% names(df)) {
+    
+    samples <- df[,id_col]
+    df_t <- t(df[,names(df) != id_col])
+    genes <- rownames(df_t)
+    df_out <- cbind(genes, as.data.frame(df_t))
+    names(df_out) <- c(gene_col, samples)
+    rownames(df_out) <- NULL
+    df_out
+    
+  } else {
+    print(paste("No column named",gene_col,"or",id_col,"found."))
+  }
+    
+}
 
 #' Evaluate a character string to a numeric vector
+#' 
+#' @param in_chr a character string
+#' @return a numeric object
+#' 
+#' @examples 
+#' test <- "1:5"
+#' chr_to_num(test)
+#' 
+#' test <- "8,7,45,20"
+#' chr_to_num(test)
 chr_to_num <- function(in_chr) {
   result <- eval(parse(text=paste0("round(c(",in_chr,"),0)")))
   return(result)
 }
 
 
-#' Mix two colors additively
+#' Mix two colors additively in RGB space
 #' 
 #' @param col1 A hex or R color
 #' @param col2 Another hex or R color
@@ -76,7 +113,7 @@ riken_case <- function(in_chr) {
 }
 
 
-#' Split a character string by commas, spaces, and tabs
+#' Split a character string by commas, spaces, and tabs into a character vector
 #' 
 #' @param in_string a chr string containing commas, spaces, and/or tabs
 #' @return a character vector with each object separated by any combination of commas, spaces, and/or tabs
