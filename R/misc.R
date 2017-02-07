@@ -19,7 +19,7 @@ flip_table <- function(df, gene_col = "gene", id_col = "sample_id") {
   
   if(gene_col %in% names(df)) {
     
-    genes <- df[,gene_col]
+    genes <- unlist(df[,gene_col])
     df_t <- t(df[,names(df) != gene_col])
     samples <- rownames(df_t)
     df_out <- cbind(samples, as.data.frame(df_t))
@@ -29,7 +29,7 @@ flip_table <- function(df, gene_col = "gene", id_col = "sample_id") {
     
   } else if(id_col %in% names(df)) {
     
-    samples <- df[,id_col]
+    samples <- unlist(df[,id_col])
     df_t <- t(df[,names(df) != id_col])
     genes <- rownames(df_t)
     df_out <- cbind(genes, as.data.frame(df_t))
