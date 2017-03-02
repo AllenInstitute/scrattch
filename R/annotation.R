@@ -36,7 +36,7 @@ annotate_num <- function (df,
     colors <- values_to_colors(log2(annotations$label + 1), colorset = colorset)
   } else if(scale == "zscore") {
     colors <- values_to_colors(scale(annotations$label), colorset = colorset)
-  } else {
+  } else if(scale == "linear") {
     colors <- values_to_colors(annotations$label, colorset = colorset)
   }
   annotations <- mutate(annotations, color = colors)
