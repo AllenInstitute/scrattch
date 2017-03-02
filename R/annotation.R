@@ -20,8 +20,9 @@ annotate_numeric <- function (df,
   
   if (!is.numeric(df[[col]])) {
     df[[col]] <- as.numeric(df[[col]])
-    df[[col]][is.na(df[[col]])] <- na_val
   }
+  
+  df[[col]][is.na(df[[col]])] <- na_val
   
   x <- df[[col]]
   
@@ -69,8 +70,9 @@ annotate_categorical <- function(df,
   
   if(!is.character(df[[col]])) {
     df[[col]] <- as.character(df[[col]])
-    df[[col]][is.na(df[[col]])] <- na_val
   }
+  
+  df[[col]][is.na(df[[col]])] <- na_val
   
   x <- df[[col]]
   
