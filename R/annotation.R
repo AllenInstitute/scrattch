@@ -1,7 +1,7 @@
-annotate_numeric <- function (df, 
-                              col = NULL, base = NULL, 
-                              scale = "log10", na_val = 0, 
-                              colorset = c("darkblue", "white", "red")) 
+annotate_num <- function (df, 
+                          col = NULL, base = NULL, 
+                          scale = "log10", na_val = 0, 
+                          colorset = c("darkblue", "white", "red")) 
 {
   library(scrattch)
   library(dplyr)
@@ -47,10 +47,10 @@ annotate_numeric <- function (df,
   df
 }
 
-annotate_categorical <- function(df, 
-                                 col = NULL, base = NULL, 
-                                 sort_label = T, na_val = "ZZ_Missing", 
-                                 colorset = "rainbow", color_order = "sort") {
+annotate_cat <- function(df, 
+                         col = NULL, base = NULL, 
+                         sort_label = T, na_val = "ZZ_Missing", 
+                         colorset = "rainbow", color_order = "sort") {
   
   library(dplyr)
   library(viridis)
@@ -107,9 +107,12 @@ annotate_categorical <- function(df,
   
   annotations <- mutate(annotations, color = colors)
   
-  names(annotations) <- paste0(base,c("_label","_id","_color"))
+  names(annotations) <- paste0(base, c("_label","_id","_color"))
+  
   names(df)[names(df) == col] <- paste0(base,"_label")
-  df <- left_join(df, annotations, by = paste0(base,"_label"))
+  
+  df <- left_join(df, annotations, by = paste0(base, "_label"))
+  
   df
 }
 
