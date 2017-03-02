@@ -6,7 +6,15 @@ annotate_numeric <- function (df,
   library(scrattch)
   library(dplyr)
   
-  if(is.null(base)) {
+  if(class(try(is.character(col), silent = T)) == "try-error") {
+    col <- lazyeval::expr_text(col)
+  } else if(class(col) == "NULL") {
+    stop("Specify a column (col) to annotate.")
+  }
+  
+  if(class(try(is.character(base), silent = T)) == "try-error") {
+    base <- lazyeval::expr_text(base)
+  } else if(class(base) == "NULL") {
     base <- col
   }
   
@@ -45,8 +53,17 @@ annotate_categorical <- function(df,
   
   library(dplyr)
   library(viridis)
+
   
-  if(is.null(base)) {
+  if(class(try(is.character(col), silent = T)) == "try-error") {
+    col <- lazyeval::expr_text(col)
+  } else if(class(col) == "NULL") {
+      stop("Specify a column (col) to annotate.")
+  }
+  
+  if(class(try(is.character(base), silent = T)) == "try-error") {
+    base <- lazyeval::expr_text(base)
+  } else if(class(base) == "NULL") {
     base <- col
   }
   

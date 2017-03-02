@@ -11,6 +11,7 @@ License: For internal use at the Allen Institute for Brain Science. Do not
 LazyData: true
 Imports:
     dplyr (>= 0.4.3),
+    lazyeval (>= 0.2.0),
     ggplot2 (>= 1.0.1),
     grid (>= 3.2.2),
     DBI (>= 0.3.1),
