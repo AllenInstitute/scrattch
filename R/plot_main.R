@@ -393,7 +393,7 @@ sample_heatmap_plot <- function(genes = c("Hspa8","Snap25","Gad2","Vip"),
 group_violin_plot <- function(genes = c("Hspa8","Snap25","Gad2","Vip"),
                          group_by = "final", clusters = 1:10,
                          data_source = "internal",
-                         sort = F, logscale = F,
+                         sort = F, logscale = F, showcounts = T, rotatecounts = F,
                          fontsize = 7, labelheight = 25,
                          max_width = 10) {
   library(dplyr)
@@ -512,10 +512,6 @@ group_violin_plot <- function(genes = c("Hspa8","Snap25","Gad2","Vip"),
     geom_text(data = header_labels,
               aes(x = (xmin + xmax) / 2, y = ymin + 0.05, label = label),
               angle = 90, vjust = 0.35, hjust = 0, size = pt2mm(fontsize)) +
-    # Cluster counts
-    geom_text(data = cluster_data,
-              aes(y = cny, x = xpos,label = cn),
-              size = pt2mm(fontsize)) +
     # Maximum value labels on right side of plot
     geom_rect(aes(xmin = nclust + 0.5, xmax = nclust + 0.5 + max_width, ymin = 1, ymax = max(header_labels$ymax)),
               fill = "white") +
@@ -526,6 +522,22 @@ group_violin_plot <- function(genes = c("Hspa8","Snap25","Gad2","Vip"),
               aes(x = x, y = y, label = label),
               hjust = 0, vjust = 0.35, size = pt2mm(fontsize), parse = TRUE)
     
+  # Cluster counts
+  if(showcounts) {
+    if(rotatecounts) {
+      p <- p + geom_text(data = cluster_data,
+                         aes(y = cny, x = xpos, label = cn),
+                         angle = 90,
+                         vjust = 0.35,
+                         hjust = 1,
+                         size = pt2mm(fontsize))
+    } else {
+      p <- p + geom_text(data = cluster_data,
+                         aes(y = cny, x = xpos,label = cn),
+                         size = pt2mm(fontsize))
+    }
+  }
+  
   p
 }
 
@@ -554,7 +566,7 @@ group_violin_plot <- function(genes = c("Hspa8","Snap25","Gad2","Vip"),
 group_box_plot <- function(genes = c("Hspa8","Snap25","Gad2","Vip"),
                          group_by = "final", clusters = 1:10,
                          data_source = "internal",
-                         sort = F, logscale = F,
+                         sort = F, logscale = F, showcounts = T, rotatecounts = F,
                          fontsize = 7, labelheight = 25,
                          max_width = 10) {
   library(dplyr)
@@ -651,7 +663,7 @@ group_box_plot <- function(genes = c("Hspa8","Snap25","Gad2","Vip"),
           legend.position = "none") +
     geom_hline(aes(yintercept = 1:(ngenes)), size = 0.2)
   
-  # plot the violins for each gene
+  # plot the boxplots for each gene
   for(i in 1:length(genes)) {
     p <- p + 
       geom_boxplot(data = data,
@@ -666,10 +678,6 @@ group_box_plot <- function(genes = c("Hspa8","Snap25","Gad2","Vip"),
     geom_text(data = header_labels,
               aes(x = (xmin + xmax) / 2, y = ymin + 0.05, label = label),
               angle = 90, vjust = 0.35, hjust = 0, size = pt2mm(fontsize)) +
-    # Cluster counts
-    geom_text(data = cluster_data,
-              aes(y = cny, x = xpos,label = cn),
-              size = pt2mm(fontsize)) +
     # Maximum value labels on right side of plot
     geom_rect(aes(xmin = nclust + 0.5, xmax = nclust + 0.5 + max_width, ymin = 1, ymax = max(header_labels$ymax)),
               fill = "white") +
@@ -679,6 +687,22 @@ group_box_plot <- function(genes = c("Hspa8","Snap25","Gad2","Vip"),
     geom_text(data = max_labels,
               aes(x = x, y = y, label = label),
               hjust = 0, vjust = 0.35, size = pt2mm(fontsize), parse = TRUE)
+  
+  # Cluster counts
+  if(showcounts) {
+    if(rotatecounts) {
+      p <- p + geom_text(data = cluster_data,
+                         aes(y = cny, x = xpos, label = cn),
+                         angle = 90,
+                         vjust = 0.35,
+                         hjust = 1,
+                         size = pt2mm(fontsize))
+    } else {
+      p <- p + geom_text(data = cluster_data,
+                         aes(y = cny, x = xpos,label = cn),
+                         size = pt2mm(fontsize))
+    }
+  }
   
   p
 }
@@ -710,8 +734,8 @@ group_box_plot <- function(genes = c("Hspa8","Snap25","Gad2","Vip"),
 group_heatmap_plot <- function(genes=c("Hspa8","Snap25","Gad2","Vip"),clusters=1:10,
                         group_by = "final",calculation="mean",
                         data_source="internal",normalize_rows=FALSE,
-                        logscale=T,fontsize=7,labelheight=25,
-                        max_width = 10,
+                        logscale=T, fontsize=7, labelheight=25,
+                        max_width = 10, showcounts = T, rotatecounts = F,
                         maxval="auto",colorset=c("darkblue","dodgerblue","gray80","orange","orangered")) {
   library(dplyr)
   library(ggplot2)
@@ -865,10 +889,6 @@ group_heatmap_plot <- function(genes=c("Hspa8","Snap25","Gad2","Vip"),clusters=1
     geom_text(data = header_labels,
               aes(x = (xmin + xmax) / 2, y = ymin + 0.05, label = label),
               angle = 90, vjust = 0.35, hjust = 0, size = pt2mm(fontsize)) +
-    # Cluster counts
-    geom_text(data = cluster_data,
-              aes(y = cny, x = xpos,label = cn),
-              size = pt2mm(fontsize)) +
     # Maximum value labels on right side of plot
     geom_rect(aes(xmin = nclust + 0.5, xmax = nclust + 0.5 + max_width, ymin = 1, ymax = max(header_labels$ymax)),
               fill = "white") +
@@ -878,6 +898,22 @@ group_heatmap_plot <- function(genes=c("Hspa8","Snap25","Gad2","Vip"),clusters=1
     geom_text(data = max_labels,
               aes(x = x, y = y, label = label),
               hjust = 0, vjust = 0.35, size = pt2mm(fontsize), parse = TRUE)
+  
+  # Cluster counts
+  if(showcounts) {
+    if(rotatecounts) {
+      p <- p + geom_text(data = cluster_data,
+                         aes(y = cny, x = xpos, label = cn),
+                         angle = 90,
+                         vjust = 0.35,
+                         hjust = 1,
+                         size = pt2mm(fontsize))
+    } else {
+      p <- p + geom_text(data = cluster_data,
+                aes(y = cny, x = xpos,label = cn),
+                size = pt2mm(fontsize))
+    }
+  }
   
   return(p)
 }
@@ -968,10 +1004,11 @@ group_river_plot <- function(data_source,
       select(one_of(anno_id,anno_label,anno_color)) %>%
       unique() %>%
       arrange_(anno_id) %>%
-      select(-one_of(anno_id)) %>%
       mutate(group = base)
     
-    names(group_nodes) <- c("name","color","group")
+    names(group_nodes) <- c("id","name","color","group")
+    
+    group_nodes <- mutate(group_nodes, name = paste(id, name))
     
     nodes <- rbind(nodes,group_nodes)
   }
@@ -986,10 +1023,11 @@ group_river_plot <- function(data_source,
       select(one_of(anno_id,anno_label,anno_color)) %>%
       unique() %>%
       arrange_(anno_id) %>%
-      select(-one_of(anno_id)) %>%
       mutate(group = base)
     
-    names(group_nodes) <- c("name","color","group")
+    names(group_nodes) <- c("id","name","color","group")
+    
+    group_nodes <- mutate(group_nodes, name = paste(id, name))
     
     nodes <- rbind(nodes,group_nodes)
   }
@@ -1004,10 +1042,11 @@ group_river_plot <- function(data_source,
       select(one_of(anno_id,anno_label,anno_color)) %>%
       unique() %>%
       arrange_(anno_id) %>%
-      select(-one_of(anno_id)) %>%
       mutate(group = base)
     
-    names(group_nodes) <- c("name","color","group")
+    names(group_nodes) <- c("id","name","color","group")
+    
+    group_nodes <- mutate(group_nodes, name = paste(id, name))
     
     nodes <- rbind(nodes,group_nodes)
   }
@@ -1022,17 +1061,18 @@ group_river_plot <- function(data_source,
       select(one_of(anno_id,anno_label,anno_color)) %>%
       unique() %>%
       arrange_(anno_id) %>%
-      select(-one_of(anno_id)) %>%
       mutate(group = base)
     
-    names(group_nodes) <- c("name","color","group")
+    names(group_nodes) <- c("id","name","color","group")
+    
+    group_nodes <- mutate(group_nodes, name = paste(id, name))
     
     nodes <- rbind(nodes,group_nodes)
   }
   
   # Add ID column
   nodes <- nodes %>%
-    mutate(id = 1:nrow(nodes) - 1)
+    mutate(id = 1:n() - 1)
   
   # Add Edges to the edges table
   if(!is.null(group1) & !is.null(group2)) {
