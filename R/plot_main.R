@@ -1008,8 +1008,6 @@ group_river_plot <- function(data_source,
     
     names(group_nodes) <- c("id","name","color","group")
     
-    group_nodes <- mutate(group_nodes, name = paste(id, name))
-    
     nodes <- rbind(nodes,group_nodes)
   }
   
@@ -1026,8 +1024,6 @@ group_river_plot <- function(data_source,
       mutate(group = base)
     
     names(group_nodes) <- c("id","name","color","group")
-    
-    group_nodes <- mutate(group_nodes, name = paste(id, name))
     
     nodes <- rbind(nodes,group_nodes)
   }
@@ -1046,8 +1042,6 @@ group_river_plot <- function(data_source,
     
     names(group_nodes) <- c("id","name","color","group")
     
-    group_nodes <- mutate(group_nodes, name = paste(id, name))
-    
     nodes <- rbind(nodes,group_nodes)
   }
   
@@ -1064,8 +1058,6 @@ group_river_plot <- function(data_source,
       mutate(group = base)
     
     names(group_nodes) <- c("id","name","color","group")
-    
-    group_nodes <- mutate(group_nodes, name = paste(id, name))
     
     nodes <- rbind(nodes,group_nodes)
   }
@@ -1135,12 +1127,17 @@ group_river_plot <- function(data_source,
   
   # build JavaScript object for colors
   
-  d3.colors <- paste0("d3.scale.ordinal().domain([\"",paste(nodes$id,collapse="\",\""),"\"]).range([\"",paste(nodes$color,collapse="\",\""),"\"]);")
-  
+  # d3.colors <- paste0("d3.scaleOrdinal().domain([\"",
+  #                     paste(nodes$id, collapse = "\",\""),
+  #                     "\"]).range([\"",
+  #                     paste(nodes$color, collapse = "\",\""),
+  #                     "\"]);")
+  # 
   # Return the plot
   sankeyNetwork(Links = links, Nodes = nodes, Source = 'source',
                 Target = 'target', Value = 'value', NodeID = 'name',
-                NodeGroup = 'name', colourScale = JS(d3.colors),
+                NodeGroup = 'group',
+                #colourScale = JS(d3.colors),
                 fontSize = 12, width = width, height = height)
   
 }
