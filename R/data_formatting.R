@@ -101,24 +101,24 @@ get_list_data <- function(datalist,genes,group_by,clusters) {
   library(dplyr)
   
   gene.data <- datalist$data %>%
-    select(one_of(genes))
+    select(one_of(c("sample_id",genes)))
     
   all.anno <- datalist$anno %>%
     rename_("plot_id" = paste0(group_by,"_id"),
             "plot_label" = paste0(group_by,"_label"),
             "plot_color" = paste0(group_by,"_color"))
   
-  cluster_order <- data.frame(clusters=clusters) %>%
+  cluster_order <- data.frame(plot_id=clusters) %>%
     mutate(cluster_x=1:n())
   
   # Filter and order the rows
   data <- left_join(all.anno,gene.data) %>%
     filter(plot_id %in% clusters) %>%
-    left_join(cluster_order,by=c("plot_id"="clusters")) %>%
+    left_join(cluster_order,by="plot_id") %>%
     arrange(cluster_x) %>%
-    mutate(xpos=1:n()) %>%
+    mutate(xpos = 1:n()) %>%
     select(-plot_id) %>%
-    rename(plot_id=cluster_x)
+    rename_("plot_id" = "cluster_x")
   
   return(data)
 }
