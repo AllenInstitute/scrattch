@@ -347,6 +347,146 @@ check_list_structure <- function(list_data,verbose=T) {
   
 }
 
+#'Check Feather Directory structure
+#'
+#'This function will examine a SQLite3 database to make sure it's consistent
+#'with the structure required for my Shiny applications.
+#'
+#'@param feather_dir a character object that gives the file location of a feather dataset.
+#'@param verbose a logical value indicating if errors should be displayed. If set to FALSE, all messages will be suppressed.
+#'
+#'@return A logical value indicating if the database passes all required checks.
+#'
+#'@examples
+#'database_file <- "//AIBSData2/mct-t200/ShinyApps/linnarsson/linnarsson2.db"
+#'
+#'check_db_structure(feather_dir)
+#'
+#'check_db_structure(feather_dir,verbose=F)
+check_feather_structure <- function(feather_dir,verbose=T) {
+  library(feather)
+
+  # 5 checks need to pass for the database to work with shiny
+  passed_checks <- 0
+  
+  # Check to see if the 3 tables are available.
+  feather_files <- list.files(feather_dir)
+  
+  expected_tables <- c("desc.feather","anno.feather","data.feather")
+  desc_file <- paste0(feather_dir,"/desc.feather")
+  anno_file <- paste0(feather_dir,"/anno.feather")
+  data_file <- paste0(feather_dir,"/data.feather")
+  
+  for(table_name in expected_tables) {
+    if(table_name %in% feather_files) {
+      if(verbose) { cat(paste0(table_name," table exists :)\n")) }
+      passed_checks <- passed_checks + 1
+    } else { 
+      if(verbose) { cat(paste0("no ",table_name," table! :'(\nThis table is required for scrattch compatibility.\n\n")) }
+    } 
+  }
+  
+  # If desc exists, read it to get the annotations we expect in anno.
+  if(sum(c("desc.feather","anno.feather") %in% feather_files) == 2) {
+    desc <- read_feather(desc_file)
+    
+    if(verbose) {
+      cat("Description table:\n")
+      print(desc)
+      cat("\n")
+    }
+    
+    expected_anno_columns <- c("sample_id",
+                               paste0(desc$base,"_id"),
+                               paste0(desc$base,"_label"),
+                               paste0(desc$base,"_color"))
+    
+    anno <- feather(anno_file)
+    anno_columns <- names(anno)
+    
+    if(sum(expected_anno_columns %in% anno_columns) == length(expected_anno_columns)) {
+      if(verbose) { cat("all described columns were found! :)\n") }
+      passed_checks <- passed_checks + 1
+    } else if (sum(expected_anno_columns %in% anno_columns) < length(expected_anno_columns)) {
+      if(verbose) { cat("some described columns were not found! :'(\n")
+        for(col_name in expected_anno_columns[!expected_anno_columns %in% anno_columns]) {
+          cat(paste0(col_name,"\n\n"))
+        }
+        cat("Missing columns for some expected annotations\n\n")
+      }
+    }
+    
+    if(sum(!anno_columns %in% expected_anno_columns) > 0) {
+      if(verbose) {
+        cat("some annotations were not found in the desc table:\n")
+        for(col_name in anno_columns$name[!anno_columns %in% expected_anno_columns]) {
+          cat(paste0(col_name,"\n"))
+        }
+        cat("These annotations may not be visible to some scrattch functions\n\n")
+      }
+    }
+    
+  }
+  
+  # Check to see if all filenames in anno are found in data (and vice-versa)
+  if(sum(c("anno.feather","data.feather") %in% feather_files) == 2) {
+    
+    anno <- feather(anno_file)
+    anno_samples <- anno$sample_id
+    
+    
+    if(verbose) { cat(paste0("found annotations for ",length(anno_samples)," cells.\n")) }
+    
+    expected_rpkm_columns <- c("gene",anno_filenames)
+    
+    get <- "PRAGMA table_info('data')"
+    res <- dbSendQuery(con,get)
+    rpkm_columns <- dbFetch(res,n=-1)
+    dbClearResult(res)
+    
+    if(verbose) { cat(paste0("found data for ",nrow(rpkm_columns) - 1," cells.\n")) }
+    
+    if(sum(expected_rpkm_columns %in% rpkm_columns$name) == length(expected_rpkm_columns)) {
+      if(verbose) { cat("all annotations have corresponding data! :)\n") }
+      passed_checks <- passed_checks + 1
+    } else if (sum(expected_rpkm_columns %in% rpkm_columns$name) < length(expected_rpkm_columns)) {
+      if(verbose) {
+        cat("some annotated cells don't have data! :'(\n")
+        for(col_name in expected_rpkm_columns[!expected_rpkm_columns %in% rpkm_columns$name]) {
+          cat(paste0(col_name,"\n"))
+        }
+        cat("!!this will cause errors in the shiny app!!\n\n")
+      }
+    }
+    
+    if(nrow(rpkm_columns) > length(expected_rpkm_columns)) {
+      if(verbose) {
+        cat("some cells have data, but are not annotated:\n")
+        for(col_name in rpkm_columns$name[!rpkm_columns$name %in% expected_rpkm_columns]) {
+          cat(paste0(col_name,"\n"))
+        }
+        cat("this will work with the shiny app, but the data for these cells will be hidden.\n\n")
+        
+      }
+    }
+    
+  }
+  
+  dbDisconnect(con)
+  
+  if(passed_checks == 5) {
+    if(verbose) { cat("The database has passed all essential checks! HOORAY!!\n") 
+    } 
+    return(TRUE)
+  } else {
+    if(verbose) { cat("The database has some problems that will prevent it from working with shiny.\n") 
+    } 
+    return(FALSE)
+    
+  }
+  
+}
+
 
 #'Write SQLite3 Database
 #'
