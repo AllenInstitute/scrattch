@@ -1,6 +1,6 @@
-library(ggplot2)
-library(dplyr)
-library(feather)
+# library(ggplot2)
+# library(dplyr)
+# library(feather)
 
 # Error function
 # used to generate sigmoidal curve
@@ -306,16 +306,16 @@ build_river_plot_bokeh <- function(anno, group_by, pad = 0.1, fill_group = NULL)
   b
   
 }
-
-build_river_plot_bokeh(anno, c("region","cre","layer"), pad = 0.1)
-
-anno <- read_feather("//AIBSData/rnaseqanalysis/shiny/facs_seq/mouse_V1_ALM_20170405/anno.feather")
-
-filtered_anno <- anno %>%
-  filter(cre_label == "Snap25-IRES2-Cre") %>%
-  filter(region_label == "VISp")
-
-test <- build_river_plot(filtered_anno, c("cre","layer","cluster"), pad = 0.1)
-
-ggsave("~/../Desktop/river_test.pdf",test, width = 12, height = 8)
-  
+# 
+# build_river_plot_bokeh(anno, c("region","cre","layer"), pad = 0.1)
+# 
+# anno <- read_feather("//AIBSData/rnaseqanalysis/shiny/facs_seq/mouse_V1_ALM_20170405/anno.feather")
+# 
+# filtered_anno <- anno %>%
+#   filter(cre_label == "Snap25-IRES2-Cre") %>%
+#   filter(region_label == "VISp")
+# 
+# test <- build_river_plot(filtered_anno, c("cre","layer","cluster"), pad = 0.1)
+# 
+# ggsave("~/../Desktop/river_test.pdf",test, width = 12, height = 8)
+#   
