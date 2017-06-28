@@ -68,6 +68,28 @@ annotate_num <- function (df,
   df
 }
 
+#' Generate colors and ids for categorical annotations
+#'
+#' @param df data frame to annotate
+#' @param col name of the character column to annotate
+#' @param base base name for the annotation, which wil be used in the desc table. If not provided, will use col as base.
+#' @param sort_label a logical value to determine if the data in col should be arranged alphanumerically before ids are assigned. default = T.
+#' @param na_val The value to use to replace NAs. default = "ZZ_Missing".
+#' @param colorset The colorset to use for assigning category colors. Options are "rainbow","viridis","inferno","magma", and "terrain"
+#' @param color_order The order in which colors should be assigned. Options are "sort" and "random". "sort" assigns colors in order; "random" will randomly assign colors.
+#' 
+#' @return A modified data frame: the annotated column will be renamed base_label, and base_id and base_color columns will be appended
+#' 
+#' @examples 
+#' flowers <- iris %>%
+#'   annotate_cat(Species)
+#'
+#'head(flowers)
+#'
+#'flowers2 <- iris %>%
+#'  annotate_num(Species, spp, sort_label = F, colorset = "viridis")
+#'  
+#'head(flowers2)
 annotate_cat <- function(df, 
                          col = NULL, base = NULL, 
                          sort_label = T, na_val = "ZZ_Missing", 
