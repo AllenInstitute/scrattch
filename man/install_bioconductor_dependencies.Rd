@@ -10,4 +10,3 @@ install_bioconductor_dependencies()
 Some packages not available (or not complete) from CRAN can be retrieved from the Bioconductor package repository:
 WGCNA
 }
-

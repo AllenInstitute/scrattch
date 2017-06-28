@@ -1,3 +1,24 @@
+#' Generate colors and ids for numeric annotations
+#'
+#' @param df data frame to annotate
+#' @param col name of the numeric column to annotate
+#' @param base base name for the annotation, which wil be used in the desc table. If not provided, will use col as base.
+#' @param scale The scale to use for assigning colors. Options are "linear","log10","log2, and "zscore"
+#' @param na_val The value to use to replace NAs. default = 0.
+#' @param colorset A vector of colors to use for the color gradient. default = c("darkblue","white","red")
+#' 
+#' @return A modified data frame: the annotated column will be renamed base_label, and base_id and base_color columns will be appended
+#' 
+#' @examples 
+#' cars <- mtcars %>%
+#'   annotate_num(wt)
+#'
+#'head(cars)
+#'
+#'cars2 <- mtcars %>%
+#'  annotate_num(wt, weight, "linear", colorset = c("#000000","#808080","#FF0000"))
+#'  
+#'head(cars2)
 annotate_num <- function (df, 
                           col = NULL, base = NULL, 
                           scale = "log10", na_val = 0, 

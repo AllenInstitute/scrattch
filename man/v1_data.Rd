@@ -4,20 +4,19 @@
 \name{v1_data}
 \alias{v1_data}
 \title{RPKM data for single-cell transcriptomic datasets}
-\format{A Data Frame with 1670 columns (cells) and 24,057 rows (genes)
+\format{A Data Frame with 283 columns (cells) and 24,057 rows (genes)
 \describe{
- \item{sample_id}{The first column, a list of gene symbols}
+ \item{gene}{The first column, a list of gene symbols}
  \item{other columns}{Each subsequent column is named using a unique cell identifier that corresponds to the filename column in the v1_anno annotations table.}
 }}
 \usage{
 v1_data
 }
 \description{
-A dataset consisting of RPKM values for all 1679 cells
-characterized in Tasic, et al. (2015).
+A dataset consisting of RPKM values for a subset of the cells
+characterized in Tasic, et al. (2016).
 }
 \details{
 Each row corresponds to a single gene symbol. Each column corresponds to a single cell.
 }
 \keyword{datasets}
-

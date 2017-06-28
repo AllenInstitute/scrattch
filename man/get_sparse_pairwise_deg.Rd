@@ -42,4 +42,3 @@ the fraction of cells with expression above a given thresshold. Because multiple
 are termed "class 1" and "class 2" for this comparison. The comparison is performed in both directions, so will
 identify genes with preferrential expression for both class 1 and class 2.
 }
-
