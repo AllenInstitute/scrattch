@@ -159,6 +159,27 @@ annotate_cat <- function(df,
   df
 }
 
+#'Group annotation columns
+#'
+#'@param df the annotation dataframe to arrange
+#'@param keep_order a logical value. If FALSE, will sort the annotations alphanumerically by base.
+#'
+#'
+#'@return an annotation data frame with reordered columns
+#'
+#'@examples
+#'anno <- mtcars %>%
+#'  mutate(sample_id = paste0("car",1:n())) %>%
+#'  select(sample_id, wt, mpg) %>%
+#'  annotate_num(wt) %>%
+#'  annotate_num(mpg)
+#'  
+#'head(anno)
+#'
+#'anno2 <- group_annotations(anno)
+#'
+#'head(anno2)
+#'
 group_annotations <- function(df, keep_order = TRUE) {
   labels <- names(df)[grepl("_label",names(df))]
   if(!keep_order) {
