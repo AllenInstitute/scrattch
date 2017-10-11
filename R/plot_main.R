@@ -74,8 +74,8 @@ sample_bar_plot <- function(genes = c("Hspa8","Snap25","Gad2","Vip"),
   
   # Get maximum values for each gene before rescaling to plot space.
   max_vals <- data %>% 
-    select( one_of(genes) ) %>% 
-    summarise_each( funs(max) ) %>% 
+    select(one_of(genes)) %>%
+    summarise_all(max) %>% 
     unlist()
   
   # Scale the data based on the logscale option
@@ -276,8 +276,8 @@ sample_heatmap_plot <- function(genes = c("Hspa8","Snap25","Gad2","Vip"),
   
   # Get maximum values for each gene before rescaling to plot space.
   max_vals <- data %>% 
-    select( one_of(genes) ) %>% 
-    summarise_each( funs(max) ) %>% 
+    select(one_of(genes)) %>% 
+    summarise_all(max) %>% 
     unlist()
   # Calculate the overall maximum value of gene expression
   data_max <- max(max_vals)
@@ -442,7 +442,7 @@ group_violin_plot <- function(genes = c("Hspa8","Snap25","Gad2","Vip"),
   # Compute maximum values before scaling to plot space
   max_vals <- data %>% 
     select(one_of(genes)) %>% 
-    summarise_each(funs(max)) %>% 
+    summarise_all(max) %>% 
     unlist()
   
   # Variance injection
@@ -615,7 +615,7 @@ group_box_plot <- function(genes = c("Hspa8","Snap25","Gad2","Vip"),
   # Compute maximum values before scaling to plot space
   max_vals <- data %>% 
     select(one_of(genes)) %>% 
-    summarise_each(funs(max)) %>% 
+    summarise_all(max) %>% 
     unlist()
   
   # Scale the data between i and i + 0.9
@@ -817,7 +817,7 @@ group_heatmap_plot <- function(genes=c("Hspa8","Snap25","Gad2","Vip"),clusters=1
   
   max_vals <- heat_data %>% 
     select(one_of(genes)) %>% 
-    summarise_each(funs(max)) %>% 
+    summarise_all(max) %>% 
     unlist()
   
   max_labels <- data.frame(x = (nclust + 0.5) * 1.01,
