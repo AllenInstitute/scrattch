@@ -19,6 +19,7 @@ sigline <- function(x = 0, xend = 1,
                     sigx = 1.5) {
   
   xsteps <- seq(-sigx, sigx, length.out = steps)
+  
   if(sigfun == "erf") {
     ysteps <- erf(xsteps)
   }
@@ -60,6 +61,8 @@ sigribbon <- function(sigline, height, from = "top") {
 make_group_nodes <- function(anno,
                         group_by,
                         xpos = NULL) {
+  
+  library(dplyr)
   
   nodes <- data.frame(id = numeric(),
                       name = character(),
@@ -104,6 +107,8 @@ make_plot_nodes <- function(group_nodes,
                             # plot space for total width
                             width = 0.1) {
   
+  library(dplyr)
+  
   total_n <- sum(group_nodes$n)/length(unique(group_nodes$group))
   total_pad <- total_n * pad
   
@@ -130,6 +135,8 @@ make_plot_nodes <- function(group_nodes,
 make_group_links <- function(anno,
                         group_by,
                         plot_nodes) {
+  
+  library(dplyr)
   
   pairs <- list()
   
@@ -203,6 +210,8 @@ make_group_links <- function(anno,
 make_plot_links <- function(group_links,
                             fill = NULL) {
   
+  library(dplyr)
+  
   for(i in 1:nrow(group_links)) {
     
     link_line <- sigline(x = group_links$x[i], xend = group_links$xend[i],
@@ -220,6 +229,8 @@ make_plot_links <- function(group_links,
       link_ribbon <- mutate(link_ribbon, fill = "#808080")
     }
     
+    link_ribbon <- mutate(link_ribbon, link_id = i)
+    
     if(exists("all_ribbons")) {
       all_ribbons <- rbind(all_ribbons, link_ribbon)
     } else {
@@ -232,6 +243,8 @@ make_plot_links <- function(group_links,
 }
 
 build_river_plot <- function(anno, group_by, pad = 0.1, fill_group = NULL) {
+  
+  library(ggplot2)
   
   group_nodes <- make_group_nodes(anno, group_by)
   plot_nodes <- make_plot_nodes(group_nodes, pad = pad)
@@ -298,24 +311,11 @@ build_river_plot_bokeh <- function(anno, group_by, pad = 0.1, fill_group = NULL)
     ly_polygons(data = poly_links,
                 xs = x, ys = -y,
                 group = link_id,
-                hover = list("Group 1" = group1_label,
-                             "Group 2" = group2_label,
-                             "N Cells" = n),
+                # hover = list("Group 1" = group1_label,
+                #              "Group 2" = group2_label,
+                #              "N Cells" = n),
                 color = "#808080")
   
   b
   
 }
-# 
-# build_river_plot_bokeh(anno, c("region","cre","layer"), pad = 0.1)
-# 
-# anno <- read_feather("//AIBSData/rnaseqanalysis/shiny/facs_seq/mouse_V1_ALM_20170405/anno.feather")
-# 
-# filtered_anno <- anno %>%
-#   filter(cre_label == "Snap25-IRES2-Cre") %>%
-#   filter(region_label == "VISp")
-# 
-# test <- build_river_plot(filtered_anno, c("cre","layer","cluster"), pad = 0.1)
-# 
-# ggsave("~/../Desktop/river_test.pdf",test, width = 12, height = 8)
-#   
