@@ -8,7 +8,7 @@ get_feather_data <- function(feather_dir, genes, group_by, group_ids) {
   data_file <- paste0(feather_dir, "/data.feather")
   anno_file <- paste0(feather_dir, "/anno.feather")
   
-  data <- feather(data.file)
+  data <- feather(data_file)
   
   # Read annotations and convert factors
   anno <- read_feather(anno_file) %>%
@@ -33,13 +33,13 @@ get_feather_data <- function(feather_dir, genes, group_by, group_ids) {
   
   # Find column indexes for sample_id and the matched genes
   # This seems to be faster than calling data[,c("sample_id",genes)] directly
-  data_cols <- which(data.names %in% c("sample_id", genes))
+  data_cols <- which(data_names %in% c("sample_id", genes))
   
   # Read the data from the data feather file into memory
   gene_data <- data[,feather_cols]
   
   # Change - to . in column names and genes
-  colnames(gene_data) <- gsub("-",".",colnames(gene.data))
+  colnames(gene_data) <- gsub("-",".",colnames(gene_data))
   genes <- gsub("-",".",genes)
   
   # rename the _id, _label, and _color for the group_by values for use in plotting
@@ -53,7 +53,7 @@ get_feather_data <- function(feather_dir, genes, group_by, group_ids) {
     mutate(cluster_x = 1:n())
   
   # Filter and order the rows
-  data <- left_join(all_anno, gene.data, by = "sample_id") %>%
+  data <- left_join(all_anno, gene_data, by = "sample_id") %>%
     filter(plot_id %in% group_ids) %>%
     left_join(cluster_order, by = c("plot_id" = "group_ids")) %>%
     arrange(cluster_x) %>%
