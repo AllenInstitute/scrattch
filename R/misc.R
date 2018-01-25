@@ -169,9 +169,17 @@ values_to_colors <- function(x, minval = NULL, maxval = NULL, colorset = c("dark
     minval <- min(x)
   }
   
-  heat_positions <- unlist(round((x - minval) / (maxval - minval) * 1000 + 1, 0))
-  
-  colors <- heat_colors[heat_positions]
+  if(length(x) > 1) {
+    if(var(x) == 0) {
+      colors <- rep(heat_colors[500], length(x))
+    } else {
+      heat_positions <- unlist(round((x - minval) / (maxval - minval) * 1000 + 1, 0))
+      
+      colors <- heat_colors[heat_positions]
+    }
+  } else {
+    colors <- heat_colors[500]
+  }
   
   colors
 }
