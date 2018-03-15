@@ -30,3 +30,7 @@ The previous internal version of `scrattch` has been split to two packages:
 File handling and data formatting are now part of [`scrattch.io`](https://github.com/AllenInstitute/scrattch.io).  
 Plotting and visualization are now part of [`scrattch.vis`](https://github.com/AllenInstitute/scrattch.vis).  
 
+Should you need the previous version, it can still be installed using:  
+```
+devtools::install_github("AllenInstitute/scrattch", ref = "archive")
+```
