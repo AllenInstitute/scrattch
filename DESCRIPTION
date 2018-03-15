@@ -1,25 +1,12 @@
 Package: scrattch
 Type: Package
-Title: Single Cell RNA Analysis for Transcriptomic Type Characterization
-Version: 0.0.208
-Date: 2016-10-31
-Author: Lucas T. Gray
-Maintainer: Lucas Gray <lucasg@alleninstitute.org>
-Description: Cell type analysis, built from scrattch.
-License: For internal use at the Allen Institute for Brain Science. Do not
-    distribute (yet).
+Title: What the Package Does (Title Case)
+Version: 0.1.0
+Author: Who wrote it
+Maintainer: The package maintainer <yourself@somewhere.net>
+Description: More about what it does (maybe more than one line)
+    Use four spaces when indenting paragraphs within the Description.
+License: What license is it under?
+Encoding: UTF-8
 LazyData: true
-Imports:
-    dplyr (>= 0.4.3),
-    lazyeval (>= 0.2.0),
-    ggplot2 (>= 1.0.1),
-    grid (>= 3.2.2),
-    DBI (>= 0.3.1),
-    RSQLite (>= 1.0.0),
-    dendextend (>= 1.2.0),
-    networkD3 (>= 0.2.13),
-    feather (>= 0.3.0)
 RoxygenNote: 6.0.1
-Suggests: knitr,
-    rmarkdown
-VignetteBuilder: knitr
