@@ -11,6 +11,8 @@ You can use `scrattch` to automatically install or update these packages:
 
 If you're interested in only one of these modules, you can install them separately. `scrattch` will install them all together.  
 
+### Installation
+
 To install all scrattch packages along with their Github and BioConductor dependencies, use:
 ```
 devtools::install_github("AllenInstitute/scrattch")
@@ -20,7 +22,7 @@ scrattch::install_scrattch_deps()
 scrattch::install_scrattch()
 ```
 
-The previous internal version of `scrattch` has been split to two packages:  
+The previous, internal version of `scrattch` has been split to two packages:  
 File handling and data formatting are now part of [`scrattch.io`](https://github.com/AllenInstitute/scrattch.io).  
 Plotting and visualization are now part of the (in-development) [`scrattch.vis`](https://github.com/AllenInstitute/scrattch.vis).  
 
