@@ -6,7 +6,7 @@ This is the umbrella package for the `scrattch` suite of R packages from the All
 You can use `scrattch` to automatically install or update these packages:  
 
 [`scrattch.io`](https://github.com/AllenInstitute/scrattch.io) - File handling and data formatting  
-[`scrattch.hicat`](https://github.com/AllenInstitute/scrattch.hicat) - **H**ierarchical, **i**terative **c**lustering for **a**nalysis of  **t**ranscriptomics
+[`scrattch.hicat`](https://github.com/AllenInstitute/scrattch.hicat) - **H**ierarchical, **i**terative **c**lustering for **a**nalysis of  **t**ranscriptomics  
 [`tasic2016data`](https://github.com/AllenInstitute/tasic2016data) - Data from Tasic, et al. (2016), which is used for demos  
 
 If you're interested in only one of these modules, you can install them separately. `scrattch` will install them all together.  
