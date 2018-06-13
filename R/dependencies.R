@@ -1,28 +1,28 @@
 #' Install dependencies for scrattch packages from Bioconductor
 #'
-#' @param packages A character vector of scrattch packages. If NULL (default), installs dependencies for all packages.
+install_bioc_deps <- function() {
+  source("https://bioconductor.org/biocLite.R")
+  
+  # Required by scrattch.io: rhdf5
+  biocLite("rhdf5")
+  
+  # Required by scrattch.hicat: limma, WGCNA
+  biocLite("limma")
+  biocLite("WGCNA")
+  
+}
+
+#' Install dependencies for scrattch packages from Github
 #'
-#'
-install_bioc_deps <- function(packages = NULL) {
-  if(is.null(packages)) {
-    cat("Installing Bioconductor dependencies for scrattch.io")
-    scrattch.io::install_bioc_deps()
-    cat("Installing Bioconductor dependencies for scrattch.iterclust")
-    scrattch.iterclust::install_bioc_deps()
-    cat("Installing Bioconductor dependencies for scrattch.lowcat")
-    scrattch.lowcat::install_bioc_deps()
-  } else {
-    if("scrattch.io" %in% packages) {
-      cat("Installing Bioconductor dependencies for scrattch.io")
-      scrattch.io::install_bioc_deps()
-    }
-    if("scrattch.iterclust" %in% packages) {
-      cat("Installing Bioconductor dependencies for scrattch.iterclust")
-      scrattch.iterclust::install_bioc_deps()
-    }
-    if("scrattch.lowcat" %in% packages) {
-      cat("Installing Bioconductor dependencies for scrattch.lowcat")
-      scrattch.lowcat::install_bioc_deps()
-    }
-  }
+install_github_deps <- function() {
+  # Required by scrattch.hicat: JinmiaoChenLab/Rphenograph
+  devtools::install_github("JinmiaoChenLab/Rphenograph")
+  
+}
+
+#' Install all dependencies from Github and BioConductor
+#' 
+install_scrattch_deps <- function() {
+  install_github_deps()
+  install_bioc_deps()
 }

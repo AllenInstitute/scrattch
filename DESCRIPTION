@@ -1,12 +1,13 @@
 Package: scrattch
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Single Cell RNA-seq Analysis for Transcriptomic Type CHaracterization
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Author: Lucas T. Graybuck <lucasg@alleninstitute.org>
+Maintainer: Lucas T. Graybuck <lucasg@alleninstitute.org>
+Description: An umbrella package for RNA-seq analysis packages from the Allen Institute for Brain Science
+License: file LICENSE
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.0.1
+Imports:
+  devtools
