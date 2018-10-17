@@ -6,8 +6,11 @@ install_bioc_deps <- function() {
   # Required by scrattch.io: rhdf5
   biocLite("rhdf5")
   
-  # Required by scrattch.hicat: limma, WGCNA
+  # Required by scrattch.hicat: impute, limma, WGCNA
+  # impute and limma are WGCNA dependencies
+  biocLite("impute")
   biocLite("limma")
+  biocLite("preprocessCore")
   biocLite("WGCNA")
   
 }
