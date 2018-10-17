@@ -35,6 +35,10 @@ devtools::install_github("AllenInstitute/scrattch", ref = "archive")
 
 The license for this package is available on Github at: [https://github.com/AllenInstitute/scrattch/blob/master/LICENSE](https://github.com/AllenInstitute/scrattch/blob/master/LICENSE)
 
+### Contribution Agreement
+
+If you contribute code to this repository through pull requests or other mechanisms, you are subject to the Allen Institute Contribution Agreement, which is available in full at: https://github.com/AllenInstitute/scrattch/blob/master/CONTRIBUTION
+
 ### Level of Support
 
 We are planning on occasional updating this tool with no fixed schedule. Community involvement is encouraged through both issues and pull requests.
