@@ -1,25 +1,51 @@
+scrattch_dependencies <- list(
+  hicat = list(bioconductor = c("impute",
+                                "limma",
+                                "preprocessCore",
+                                "WGCNA"),
+               
+               github = c("JinmiaoChenLab/Rphenograph")),
+  
+  io = list(bioconductor = c("rhdf5"),
+            
+            github = c()),
+  
+  vis = list(bioconductor = c(),
+             
+             github = c())
+)
+
 #' Install dependencies for scrattch packages from Bioconductor
 #'
 install_bioc_deps <- function() {
-  source("https://bioconductor.org/biocLite.R")
+  if(length(scrattch_dependencies$hicat$bioconductor) > 0) {
+    BiocManager::install(scrattch_dependencies$hicat$bioconductor)
+  }
   
-  # Required by scrattch.io: rhdf5
-  biocLite("rhdf5")
+  if(length(scrattch_dependencies$io$bioconductor) > 0) {
+    BiocManager::install(scrattch_dependencies$io$bioconductor)
+  }
   
-  # Required by scrattch.hicat: impute, limma, WGCNA
-  # impute and limma are WGCNA dependencies
-  biocLite("impute")
-  biocLite("limma")
-  biocLite("preprocessCore")
-  biocLite("WGCNA")
+  if(length(scrattch_dependencies$vis$bioconductor) > 0) {
+    BiocManager::install(scrattch_dependencies$vis$bioconductor)
+  }
   
 }
 
 #' Install dependencies for scrattch packages from Github
 #'
 install_github_deps <- function() {
-  # Required by scrattch.hicat: JinmiaoChenLab/Rphenograph
-  devtools::install_github("JinmiaoChenLab/Rphenograph")
+  if(length(scrattch_dependencies$hicat$github) > 0) {
+    devtools::install_github(scrattch_dependencies$hicat$github)
+  }
+  
+  if(length(scrattch_dependencies$io$github) > 0) {
+    devtools::install_github(scrattch_dependencies$io$github)
+  }
+  
+  if(length(scrattch_dependencies$vis$github) > 0) {
+    devtools::install_github(scrattch_dependencies$vis$github)
+  }
   
 }
 

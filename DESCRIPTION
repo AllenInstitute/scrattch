@@ -1,13 +1,17 @@
 Package: scrattch
 Type: Package
 Title: Single Cell RNA-seq Analysis for Transcriptomic Type CHaracterization
-Version: 0.1.0
+Version: 0.2.0
 Author: Lucas T. Graybuck <lucasg@alleninstitute.org>
 Maintainer: Lucas T. Graybuck <lucasg@alleninstitute.org>
 Description: An umbrella package for RNA-seq analysis packages from the Allen Institute for Brain Science
 License: file LICENSE
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.0
+Depends:
+  devtools,
+  BiocManager
 Imports:
-  devtools
+  dplyr,
+  ggplot2
