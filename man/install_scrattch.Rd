@@ -7,7 +7,13 @@
 install_scrattch(packages = NULL)
 }
 \arguments{
-\item{packages}{A character vector of scrattch packages. If NULL (default), installs all packages.}
+\item{packages}{A character vector of scrattch packages. If NULL (default), installs all packages. Available packages are:
+\itemize{
+\item "scrattch.io": File handling for RNA-seq data storage formats.
+\item "scrattch.hicat": Hierarchical, iterative clustering for analysis of transcriptomics.
+\item "scrattch.vis": Data visualization for RNA-seq analysis results.
+\item "tasic2016data": Data and annotations from Tasic, et al., Nature Neuroscience (2016). Used for demonstrations and testing.
+}}
 }
 \description{
 Install all packages in the scrattch suite

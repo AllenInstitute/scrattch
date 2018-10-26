@@ -4,10 +4,7 @@
 \alias{install_bioc_deps}
 \title{Install dependencies for scrattch packages from Bioconductor}
 \usage{
-install_bioc_deps(packages = NULL)
-}
-\arguments{
-\item{packages}{A character vector of scrattch packages. If NULL (default), installs dependencies for all packages.}
+install_bioc_deps()
 }
 \description{
 Install dependencies for scrattch packages from Bioconductor
