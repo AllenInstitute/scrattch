@@ -125,6 +125,17 @@ color_sum <- function(col1,col2) {
   
 }
 
+#' Compute the mean of multiple colors in RGB space
+#' 
+#' @param color_vec A vector of hex or R colors
+#' @return The mean of the colors as a character hex color (e.g. "#FFFFFF")
+#' 
+color_mean <- function(color_vec) {
+  rgbmat <- grDevices::col2rgb(color_vec)/255
+  means <- rowMeans(rgbmat)
+  rgb(means[1], means[2], means[3])
+}
+
 #' Convert values to colors along a color ramp
 #' 
 #' @param x a numeric vector to be converted to colors
@@ -190,4 +201,61 @@ varibow <- function(n_colors) {
   sats <- rep_len(c(0.55,0.7,0.85,1),length.out = n_colors)
   vals <- rep_len(c(1,0.8,0.6),length.out = n_colors)
   sub("FF$","",grDevices::rainbow(n_colors, s = sats, v = vals))
+}
+
+#' Convert colors to alpha-beta values
+#' 
+#' See https://en.wikipedia.org/wiki/HSL_and_HSV#Hue_and_chroma for more information.
+#' 
+#' @param hexes A character vector with a set of hex color values or R colors
+#'
+#' @return a data.frame with columns for the original color, alpha, and beta values.
+#'
+col2ab <- function(hexes) {
+  rgbs <- col2rgb(hexes) / 255
+  alphas <- rgbs["red",] - 0.5 * (rgbs["green",] + rgbs["blue",])
+  betas <- sqrt(3) / 2 * (rgbs["green",] - rgbs["blue",])
+  return(data.frame(color = hexes,
+                    alpha = alphas,
+                    beta = betas))
+}
+
+#' Generate a plot in alpha-beta colorspace for a palette
+#'
+#' The resulting plot will be a 2-D projection onto the HSV/HSL chromaticity plane.
+#' See https://en.wikipedia.org/wiki/HSL_and_HSV#Hue_and_chroma for more information.
+#' 
+#' @param palette a character vector containing colors as either hex values (starting with #) or R colors
+#' @param show_pures a logical value indicating whether or not to plot points for pure colors
+#'
+#' @return a ggplot2 plot with palette colors in alpha-beta space.
+#'
+colorspace_plot <- function(palette,
+                            show_pures = TRUE) {
+
+  data <- col2ab(colorspace_plot)
+
+  p <- ggplot(data) +
+    geom_point(aes(x = alpha,
+                   y = beta,
+                   color = color),
+               size = 2) +
+    scale_color_identity() +
+    theme_classic() +
+    scale_x_continuous(limits = c(-1.1,1.1)) +
+    scale_y_continuous(limits = c(-1.1,1.1))
+
+  if(show_pures) {
+    pure_colors <- c("#FF0000","#FFFF00","#00FF00","#00FFFF","#0000FF","#FF00FF")
+    pure_df <- col2ab(pure_colors)
+    p <- p + geom_point(data = pure_df,
+                        aes(x = alpha,
+                            y = beta,
+                            fill = color),
+                        size = 4,
+                        pch = 21) +
+      scale_fill_identity()
+  }
+
+  return(p)
 }
