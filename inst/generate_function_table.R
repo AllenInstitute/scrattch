@@ -5,7 +5,18 @@ library(scrattch.vis)
 
 make_funs_df <- function(package_name) {
   funs <- lsf.str(paste0("package:",package_name))
-  funs_str <- capture.output(print(funs, width = 1e4))
+  funs_str <- capture.output(print(funs, width = 1e6))
+  
+  while(sum(grepl(" : ",funs_str)) != length(funs_str)) {
+    rm_idx <- integer()
+    for(i in 2:length(funs_str)) {
+      if(!grepl(" : ", funs_str[i])) {
+        funs_str[i - 1] <- paste0(funs_str[i - 1], funs_str[i])
+        rm_idx <- c(rm_idx, i)
+      }
+    }
+    funs_str <- funs_str[-rm_idx]
+  }
   
   data.frame(package = package_name,
              name = sub(" : .+","",funs_str),
@@ -13,13 +24,12 @@ make_funs_df <- function(package_name) {
 }
 
 scrattch_funs <- make_funs_df("scrattch")
+scrattch.io_funs <- make_funs_df("scrattch.io")
+scrattch.hicat_funs <- make_funs_df("scrattch.hicat")
+scrattch.vis_funs <- make_funs_df("scrattch.vis")
 
-scrattch.io_funs <- lsf.str("package:scrattch.io")
-scrattch.io_funs <- capture.output(print(scrattch.io_funs))
-
-scrattch.hicat_funs <- lsf.str("package:scrattch.hicat")
-scrattch.hicat_funs <- capture.output(print(scrattch.hicat_funs))
-
-scrattch.vis_funs <- lsf.str("package:scrattch.vis")
-scrattch.vis_funs <- capture.output(print(scrattch.vis_funs))
-
+all_funs <- rbind(scrattch_funs,
+                  scrattch.io_funs,
+                  scrattch.hicat_funs,
+                  scrattch.vis_funs)
+write.csv(all_funs, "inst/scrattch_function_list.csv", row.names = F)
