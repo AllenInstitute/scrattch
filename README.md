@@ -30,6 +30,11 @@ Should you need the previous version, it can still be installed using:
 devtools::install_github("AllenInstitute/scrattch", ref = "archive")
 ```
 
+### Function List
+
+There are now a lot of functions available in `scrattch` packages. To assist in finding what package a function is stored in, you can check this CSV file stored in the `scrattch` umbrella package:  
+[scrattch function list](https://github.com/AllenInstitute/scrattch/blob/dev/inst/scrattch_function_list.csv)
+
 ### License
 
 The license for this package is available on Github at: [https://github.com/AllenInstitute/scrattch/blob/master/LICENSE](https://github.com/AllenInstitute/scrattch/blob/master/LICENSE)
