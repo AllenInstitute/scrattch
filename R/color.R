@@ -125,6 +125,17 @@ color_sum <- function(col1,col2) {
   
 }
 
+#' Compute the mean of multiple colors in RGB space
+#' 
+#' @param color_vec A vector of hex or R colors
+#' @return The mean of the colors as a character hex color (e.g. "#FFFFFF")
+#' 
+color_mean <- function(color_vec) {
+  rgbmat <- grDevices::col2rgb(color_vec)/255
+  means <- rowMeans(rgbmat)
+  rgb(means[1], means[2], means[3])
+}
+
 #' Convert values to colors along a color ramp
 #' 
 #' @param x a numeric vector to be converted to colors
