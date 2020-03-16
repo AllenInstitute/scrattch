@@ -61,10 +61,11 @@ make_funs_df <- function(package_name,
              parameters = sub(".+function \\(","",sub("\\)[ ]+$","",funs_str)))
 }
 
-scrattch_funs <- make_funs_df("scrattch", "/Dropbox/R/scrattch")
-scrattch.io_funs <- make_funs_df("scrattch.io", "/Dropbox/R/scrattch.io")
-scrattch.hicat_funs <- make_funs_df("scrattch.hicat", "/Dropbox/R/scrattch.hicat")
-scrattch.vis_funs <- make_funs_df("scrattch.vis", "/Dropbox/R/scrattch.vis")
+scrattch_funs <- make_funs_df("scrattch", "../scrattch")
+scrattch.io_funs <- make_funs_df("scrattch.io", "../scrattch.io")
+scrattch.hicat_funs <- make_funs_df("scrattch.hicat", "../scrattch.hicat")
+scrattch.vis_funs <- make_funs_df("scrattch.vis", "../scrattch.vis")
+
 
 all_funs <- rbind(scrattch_funs,
                   scrattch.io_funs,
