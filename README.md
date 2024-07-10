@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/119578865.svg)](https://zenodo.org/doi/10.5281/zenodo.12706763)
+
 # scrattch
 ### **S**ingle-**c**ell **R**NA-seq **a**nalysis for **t**ranscriptomic **t**ype **ch**aracterization
 
