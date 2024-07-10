@@ -2,11 +2,13 @@ Package: scrattch
 Type: Package
 Title: Single Cell RNA-seq Analysis for Transcriptomic Type CHaracterization
 Version: 0.2.0
-Authors@R: c(person("Zizhen", "Yao", email = "zizheny@alleninstitute.org", role = c("aut")),
+Authors@R: c(person("Zizhen", "Yao", email = "zizheny@alleninstitute.org", role = c("aut", "cre")),
   person("Lucas", "Graybuck", email = "lucasg@alleninstitute.org", role = c("aut", "cre")),
-  person("Cindy", "van Velthoven", email = "cindy.vanvelthoven@alleninstitute.org", role = c("aut")),
-  person("Jeremy", "Miller", email = "jeremym@alleninstitute.org", role = c("aut")),	
-  person("Changkyu","Lee", email="Changkyul@alleninstitute.org", role = c("aut")))
+  person("Cindy", "van Velthoven", email = "cindy.vanvelthoven@alleninstitute.org", role = c("aut", "cre")),
+  person("Jeremy", "Miller", email = "jeremym@alleninstitute.org", role = c("aut", "cre")),	
+  person("Changkyu","Lee", email="Changkyul@alleninstitute.org", role = c("aut", "cre")),
+  person(given = "Nelson", family = "Johansen", role = c("aut", "cre"), email = "nelson.johansen@alleninstitute.org")
+)
 Maintainer: Lucas T. Graybuck <lucasg@alleninstitute.org>
 Description: An umbrella package for RNA-seq analysis packages from the Allen Institute for Brain Science
 License: file LICENSE
