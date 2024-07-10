@@ -10,6 +10,7 @@ You can use `scrattch` to automatically install or update these packages:
 [`scrattch.io`](https://github.com/AllenInstitute/scrattch.io) - File handling and data formatting  
 [`scrattch.hicat`](https://github.com/AllenInstitute/scrattch.hicat) - **H**ierarchical, **i**terative **c**lustering for **a**nalysis of  **t**ranscriptomics  
 [`scrattch.bigcat`](https://github.com/AllenInstitute/scrattch.bigcat) - Clustering analysis for extremely large single cell dataset  
+[`scrattch.mapping`](https://github.com/AllenInstitute/scrattch.mapping) - Generalized mapping scripts for RNA-seq, Patch-seq or any gene expression data  
 [`scrattch.vis`](https://github.com/AllenInstitute/scrattch.vis) - Plotting functions for visualization of RNA-seq data  
 [`tasic2016data`](https://github.com/AllenInstitute/tasic2016data) - Data from Tasic, et al. (2016), which is used for demos  
 
