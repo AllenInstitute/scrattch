@@ -1,43 +1,102 @@
 [![DOI](https://zenodo.org/badge/119578865.svg)](https://zenodo.org/doi/10.5281/zenodo.12706763)
 
 # scrattch
-### **S**ingle-**c**ell **R**NA-seq **a**nalysis for **t**ranscriptomic **t**ype **ch**aracterization
+## **S**ingle-**c**ell **R**NA-seq **a**nalysis for **t**ranscriptomic **t**ype **ch**aracterization
 
-This is the umbrella package for the `scrattch` suite of R packages from the Allen Institute for Brain Science. It is modeled after the [`tidyverse`](https://www.tidyverse.org/) package.  
+This is the umbrella package for the `scrattch` suite of R packages from the Allen Institute for Brain Science. It is modeled after the [`tidyverse`](https://www.tidyverse.org/) package.  You can use `scrattch` to automatically install or update any of the underying packages.  
 
-You can use `scrattch` to automatically install or update these packages:  
+<img src="https://github.com/user-attachments/assets/c6f3b081-8573-41da-a1ac-06343f9b22a2" width="200" />
 
-[`scrattch.io`](https://github.com/AllenInstitute/scrattch.io) - File handling and data formatting  
+***PLACEHOLDER LOGO***
+
+
+## Scrattch packages
+
+Scrattch includes several packages for clustering, mapping, and data formatting and visualization, along with example data for demos.  These include:
+
+**Data preparation:** file formats and schema
+
+[`scrattch.taxonomy`](https://github.com/AllenInstitute/scrattch.taxonomy) - Taxonomy building scripts for RNA-seq based taxonomies following the [Allen Institute (AIT) schema](https://github.com/AllenInstitute/scrattch.taxonomy/tree/main/schema).
+[`scrattch.io`](https://github.com/AllenInstitute/scrattch.io) - [depecated]. Library for file handling and data formatting, replaced by `scrattch.taxonomy` in 2024 
+
+**Data analysis:** cell clustering and mapping (also called label transfer)
+
 [`scrattch.hicat`](https://github.com/AllenInstitute/scrattch.hicat) - **H**ierarchical, **i**terative **c**lustering for **a**nalysis of  **t**ranscriptomics  
 [`scrattch.bigcat`](https://github.com/AllenInstitute/scrattch.bigcat) - Clustering analysis for extremely large single cell dataset  
 [`scrattch.mapping`](https://github.com/AllenInstitute/scrattch.mapping) - Generalized mapping scripts for RNA-seq, Patch-seq or any gene expression data  
+[`scrattch.patchseq`](https://github.com/AllenInstitute/scrattch.patchseq) - Functions for generating additional QC metrics and output files for patch-seq analysis   
+
+**Data visualization**
+
 [`scrattch.vis`](https://github.com/AllenInstitute/scrattch.vis) - Plotting functions for visualization of RNA-seq data  
-[`tasic2016data`](https://github.com/AllenInstitute/tasic2016data) - Data from Tasic, et al. (2016), which is used for demos  
+
+**Example data:** small RNA-seq data sets
+
+[`tasic2016data`](https://github.com/AllenInstitute/tasic2016data) - Data from [Tasic, et al. (2016)](https://pubmed.ncbi.nlm.nih.gov/26727548/), which is used for demos  
+[`hodge2019data`](https://github.com/AllenInstitute/hodge2019data) - Data from [Hodge, et al. (2019)](https://pubmed.ncbi.nlm.nih.gov/31435019/), which is used for demos  
 
 If you're interested in only one of these modules, you can install them separately. `scrattch` will install them all together.  
 
-### Installation
+### Related content
 
-To install all scrattch packages along with their Github and BioConductor dependencies, use:
+Several related websites and R and python libraries are outside of the `scrattch` suite, but are either used as part of `scrattch` libraries or directly work with `scrattch` outputs.  These include (but are not limited to):
+
+[`bmark`](https://github.com/AllenInstitute/bmark) - Standardized strategies for benchmarking clustering and mapping results
+[`transcriptomic_clustering`](https://github.com/AllenInstitute/transcriptomic_clustering) - Python implementation of scrattch.hicat clustering
+[`cell_type_mapper`](https://github.com/AllenInstitute/cell_type_mapper) - Python implementation of heirarchical mapping algorithm used in `scrattch.mapping` and [`MapMyCells`](https://portal.brain-map.org/atlases-and-data/bkp/mapmycells)
+[`ACE`](https://github.com/AllenInstitute/ace) - R Shiny and [web-based](https://sea-ad.shinyapps.io/ACEapp/) app for comparison of annotations, including clustering and mapping results
+[`mfishtools`](https://github.com/AllenInstitute/mfishtools) - Functions for gene selection and analysis of spatial transcriptomics data
+
+
+## Installation
+
+**We strongly encourage the use of docker to the `scrattch` suite.** In particular, several functions in `scrattch.taxonomy` and `scrattch.mapping` have known issues in certain R environments.  That said, we provide options for installing and running R in both a docker environment and through
+
+### Using docker
+
+The current docker version is accessible through docker hub via: ('njjai/scrattch_mapping')[https://hub.docker.com/r/njjai/scrattch_mapping]. As of 10 September 2024 the version is `njjai/scrattch_mapping:0.6.3`.
+
+Docker can be run on some HPC environments that use singularity in a single line of code, as follows:
+
+`singularity shell --cleanenv docker://njjai/scrattch_mapping:0.6.3 Rscript YOUR_CODE.R` # Non-interactive
+`singularity shell --cleanenv docker://njjai/scrattch_mapping:0.6.3` # Interactive
+
+Instructions for using Docker in other environments will be posted soon; in the meantime, please post an issue if you can't figure it out.
+
+### Running `scrattch` in R
+
+While we advise using the provided docker, you can install all `scrattch` packages along with their Github and BioConductor dependencies, as follows:
 ```
 devtools::install_github("AllenInstitute/scrattch")
-
 scrattch::install_scrattch()
 ```
+Note that `doMC` may need to be installed manually from the download link at https://r-forge.r-project.org/R/?group_id=947 if you use Windows.
 
-The previous, internal version of `scrattch` has been split to two packages:  
-File handling and data formatting are now part of [`scrattch.io`](https://github.com/AllenInstitute/scrattch.io).  
-Plotting and visualization are now part of [`scrattch.vis`](https://github.com/AllenInstitute/scrattch.vis).  
+### Installing previous versions
 
-Should you need the previous version, it can still be installed using:  
+Two historical versions of scrattch are included in this package. These can be safely run without using docker, but are missing several recent components of the `scrattch` suite.
+
+**scrattch_2023** is the stable version of the package prior to the release of `scrattch.mapping`, `scrattch.taxonomy`, `scrattch.patchseq`, and `hodge2019data` ***THIS NEEDS TO BE ARCHIVED PROPERLY***
+**archive** is the original package from ~2018, and should not be used for most folks
+
+Should you need one of these previous versions, they can still be installed using:  
 ```
+devtools::install_github("AllenInstitute/scrattch", ref = "scrattch_2023") # -OR-
 devtools::install_github("AllenInstitute/scrattch", ref = "archive")
 ```
 
-### Function List
+
+## Documentation
+
+***THIS NEEDS TO BE UPDATED***
 
 There are now a lot of functions available in `scrattch` packages. To assist in finding what package a function is stored in, you can check this CSV file stored in the `scrattch` umbrella package:  
-[scrattch function list](https://github.com/AllenInstitute/scrattch/blob/dev/inst/scrattch_function_list.csv)
+[scrattch function list (OUT OF DATE)](https://github.com/AllenInstitute/scrattch/blob/dev/inst/scrattch_function_list.csv)
+
+You can find a detail description of all scrattch.taxonomy functions here: ![Documentation (DOES NOT EXIST YET)]([no file](https://github.com/AllenInstitute/scrattch))
+
+
+## Housekeeping
 
 ### License
 
@@ -49,5 +108,5 @@ If you contribute code to this repository through pull requests or other mechani
 
 ### Level of Support
 
-We are planning on occasional updating this tool with no fixed schedule. Community involvement is encouraged through both issues and pull requests.
+We are planning on occasional updating this tool with no fixed schedule. Community involvement is encouraged through both issues and pull requests.  We encourge community involvement in child packages directly, rather than through the `scrattch` umbrella package, when appropriate.
 
