@@ -16,24 +16,24 @@ Scrattch includes several packages for clustering, mapping, and data formatting 
 
 **Data preparation:** file formats and schema
 
-[`scrattch.taxonomy`](https://github.com/AllenInstitute/scrattch.taxonomy) - Taxonomy building scripts for RNA-seq based taxonomies following the [Allen Institute (AIT) schema](https://github.com/AllenInstitute/scrattch.taxonomy/tree/main/schema).
-[`scrattch.io`](https://github.com/AllenInstitute/scrattch.io) - [depecated]. Library for file handling and data formatting, replaced by `scrattch.taxonomy` in 2024 
+* [`scrattch.taxonomy`](https://github.com/AllenInstitute/scrattch.taxonomy) - Taxonomy building scripts for RNA-seq based taxonomies following the [Allen Institute (AIT) schema](https://github.com/AllenInstitute/scrattch.taxonomy/tree/main/schema).  
+* [`scrattch.io`](https://github.com/AllenInstitute/scrattch.io) - [depecated]. Library for file handling and data formatting, replaced by `scrattch.taxonomy` in 2024  
 
 **Data analysis:** cell clustering and mapping (also called label transfer)
 
-[`scrattch.hicat`](https://github.com/AllenInstitute/scrattch.hicat) - **H**ierarchical, **i**terative **c**lustering for **a**nalysis of  **t**ranscriptomics  
-[`scrattch.bigcat`](https://github.com/AllenInstitute/scrattch.bigcat) - Clustering analysis for extremely large single cell dataset  
-[`scrattch.mapping`](https://github.com/AllenInstitute/scrattch.mapping) - Generalized mapping scripts for RNA-seq, Patch-seq or any gene expression data  
-[`scrattch.patchseq`](https://github.com/AllenInstitute/scrattch.patchseq) - Functions for generating additional QC metrics and output files for patch-seq analysis   
+* [`scrattch.hicat`](https://github.com/AllenInstitute/scrattch.hicat) - **H**ierarchical, **i**terative **c**lustering for **a**nalysis of  **t**ranscriptomics  
+* [`scrattch.bigcat`](https://github.com/AllenInstitute/scrattch.bigcat) - Clustering analysis for extremely large single cell dataset  
+* [`scrattch.mapping`](https://github.com/AllenInstitute/scrattch.mapping) - Generalized mapping scripts for RNA-seq, Patch-seq or any gene expression data  
+* [`scrattch.patchseq`](https://github.com/AllenInstitute/scrattch.patchseq) - Functions for generating additional QC metrics and output files for patch-seq analysis   
 
 **Data visualization**
 
-[`scrattch.vis`](https://github.com/AllenInstitute/scrattch.vis) - Plotting functions for visualization of RNA-seq data  
+* [`scrattch.vis`](https://github.com/AllenInstitute/scrattch.vis) - Plotting functions for visualization of RNA-seq data  
 
 **Example data:** small RNA-seq data sets
 
-[`tasic2016data`](https://github.com/AllenInstitute/tasic2016data) - Data from [Tasic, et al. (2016)](https://pubmed.ncbi.nlm.nih.gov/26727548/), which is used for demos  
-[`hodge2019data`](https://github.com/AllenInstitute/hodge2019data) - Data from [Hodge, et al. (2019)](https://pubmed.ncbi.nlm.nih.gov/31435019/), which is used for demos  
+* [`tasic2016data`](https://github.com/AllenInstitute/tasic2016data) - Data from [Tasic, et al. (2016)](https://pubmed.ncbi.nlm.nih.gov/26727548/), which is used for demos  
+* [`hodge2019data`](https://github.com/AllenInstitute/hodge2019data) - Data from [Hodge, et al. (2019)](https://pubmed.ncbi.nlm.nih.gov/31435019/), which is used for demos  
 
 If you're interested in only one of these modules, you can install them separately. `scrattch` will install them all together.  
 
@@ -41,11 +41,11 @@ If you're interested in only one of these modules, you can install them separate
 
 Several related websites and R and python libraries are outside of the `scrattch` suite, but are either used as part of `scrattch` libraries or directly work with `scrattch` outputs.  These include (but are not limited to):
 
-[`bmark`](https://github.com/AllenInstitute/bmark) - Standardized strategies for benchmarking clustering and mapping results
-[`transcriptomic_clustering`](https://github.com/AllenInstitute/transcriptomic_clustering) - Python implementation of scrattch.hicat clustering
-[`cell_type_mapper`](https://github.com/AllenInstitute/cell_type_mapper) - Python implementation of heirarchical mapping algorithm used in `scrattch.mapping` and [`MapMyCells`](https://portal.brain-map.org/atlases-and-data/bkp/mapmycells)
-[`ACE`](https://github.com/AllenInstitute/ace) - R Shiny and [web-based](https://sea-ad.shinyapps.io/ACEapp/) app for comparison of annotations, including clustering and mapping results
-[`mfishtools`](https://github.com/AllenInstitute/mfishtools) - Functions for gene selection and analysis of spatial transcriptomics data
+* [`bmark`](https://github.com/AllenInstitute/bmark) - Standardized strategies for benchmarking clustering and mapping results  
+* [`transcriptomic_clustering`](https://github.com/AllenInstitute/transcriptomic_clustering) - Python implementation of scrattch.hicat clustering  
+* [`cell_type_mapper`](https://github.com/AllenInstitute/cell_type_mapper) - Python implementation of heirarchical mapping algorithm used in `scrattch.mapping` and [`MapMyCells`](https://portal.brain-map.org/atlases-and-data/bkp/mapmycells)  
+* [`ACE`](https://github.com/AllenInstitute/ace) - R Shiny and [web-based](https://sea-ad.shinyapps.io/ACEapp/) app for comparison of annotations, including clustering and mapping results  
+* [`mfishtools`](https://github.com/AllenInstitute/mfishtools) - Functions for gene selection and analysis of spatial transcriptomics data  
 
 
 ## Installation
@@ -54,12 +54,13 @@ Several related websites and R and python libraries are outside of the `scrattch
 
 ### Using docker
 
-The current docker version is accessible through docker hub via: ('njjai/scrattch_mapping')[https://hub.docker.com/r/njjai/scrattch_mapping]. As of 10 September 2024 the version is `njjai/scrattch_mapping:0.6.3`.
+The current docker version is accessible through docker hub via: ('njjai/scrattch_mapping')[https://hub.docker.com/r/njjai/scrattch_mapping]. As of 13 September 2024 the version is `njjai/scrattch_mapping:0.6.6`.
 
-Docker can be run on some HPC environments that use singularity in a single line of code, as follows:
+Docker can be run on some HPC environments that use singularity as follows:
 
-`singularity shell --cleanenv docker://njjai/scrattch_mapping:0.6.3 Rscript YOUR_CODE.R` # Non-interactive
-`singularity shell --cleanenv docker://njjai/scrattch_mapping:0.6.3` # Interactive
+* **Non-interactive**: `singularity shell --cleanenv docker://njjai/scrattch_mapping:0.6.6 Rscript YOUR_CODE.R`
+* **Interactive**: `singularity shell --cleanenv docker://njjai/scrattch_mapping:0.6.6`
+* **To create a sif file for use in other environments**: `singularity pull scrattch_mapping:0.6.6.sif docker://njjai/scrattch_mapping:0.6.6` 
 
 Instructions for using Docker in other environments will be posted soon; in the meantime, please post an issue if you can't figure it out.
 
@@ -76,8 +77,8 @@ Note that `doMC` may need to be installed manually from the download link at htt
 
 Two historical versions of scrattch are included in this package. These can be safely run without using docker, but are missing several recent components of the `scrattch` suite.
 
-**scrattch_2023** is the stable version of the package prior to the release of `scrattch.mapping`, `scrattch.taxonomy`, `scrattch.patchseq`, and `hodge2019data` ***THIS NEEDS TO BE ARCHIVED PROPERLY***
-**archive** is the original package from ~2018, and should not be used for most folks
+* **scrattch_2023** is the stable version of the package prior to the release of `scrattch.mapping`, `scrattch.taxonomy`, `scrattch.patchseq`, and `hodge2019data` ***THIS NEEDS TO BE ARCHIVED PROPERLY***  
+* **archive** is the original package from ~2018, and should not be used for most folks
 
 Should you need one of these previous versions, they can still be installed using:  
 ```
@@ -93,7 +94,7 @@ devtools::install_github("AllenInstitute/scrattch", ref = "archive")
 There are now a lot of functions available in `scrattch` packages. To assist in finding what package a function is stored in, you can check this CSV file stored in the `scrattch` umbrella package:  
 [scrattch function list (OUT OF DATE)](https://github.com/AllenInstitute/scrattch/blob/dev/inst/scrattch_function_list.csv)
 
-You can find a detail description of all scrattch.taxonomy functions here: ![Documentation (DOES NOT EXIST YET)]([no file](https://github.com/AllenInstitute/scrattch))
+You can find a detail description of all scrattch.taxonomy functions here: ![Documentation (DOES NOT EXIST YET)](https://github.com/AllenInstitute/scrattch).
 
 
 ## Housekeeping
