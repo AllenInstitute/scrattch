@@ -3,7 +3,7 @@
 # scrattch
 ## **S**ingle-**c**ell **R**NA-seq **a**nalysis for **t**ranscriptomic **t**ype **ch**aracterization
 
-This is the umbrella package for the `scrattch` suite of R packages from the Allen Institute for Brain Science. It is modeled after the [`tidyverse`](https://www.tidyverse.org/) package.  You can use `scrattch` to automatically install or update any of the underying packages.  
+This is the umbrella package for the `scrattch` suite of R packages from the Allen Institute for Brain Science. It is modeled after the [`tidyverse`](https://www.tidyverse.org/) package.  You can use `scrattch` to automatically install or update any of the underlying packages.  
 
 <img src="https://github.com/user-attachments/assets/c6f3b081-8573-41da-a1ac-06343f9b22a2" width="200" />
 
@@ -17,7 +17,7 @@ Scrattch includes several packages for clustering, mapping, and data formatting 
 **Data preparation:** file formats and schema
 
 * [`scrattch.taxonomy`](https://github.com/AllenInstitute/scrattch.taxonomy) - Taxonomy building scripts for RNA-seq based taxonomies following the [Allen Institute (AIT) schema](https://github.com/AllenInstitute/scrattch.taxonomy/tree/main/schema).  
-* [`scrattch.io`](https://github.com/AllenInstitute/scrattch.io) - [depecated]. Library for file handling and data formatting, replaced by `scrattch.taxonomy` in 2024  
+* [`scrattch.io`](https://github.com/AllenInstitute/scrattch.io) - [deprecated]. Library for file handling and data formatting, replaced by `scrattch.taxonomy` in 2024  
 
 **Data analysis:** cell clustering and mapping (also called label transfer)
 
@@ -43,14 +43,14 @@ Several related websites and R and python libraries are outside of the `scrattch
 
 * [`bmark`](https://github.com/AllenInstitute/bmark) - Standardized strategies for benchmarking clustering and mapping results  
 * [`transcriptomic_clustering`](https://github.com/AllenInstitute/transcriptomic_clustering) - Python implementation of scrattch.hicat clustering  
-* [`cell_type_mapper`](https://github.com/AllenInstitute/cell_type_mapper) - Python implementation of heirarchical mapping algorithm used in `scrattch.mapping` and [`MapMyCells`](https://portal.brain-map.org/atlases-and-data/bkp/mapmycells)  
+* [`cell_type_mapper`](https://github.com/AllenInstitute/cell_type_mapper) - Python implementation of hierarchical mapping algorithm used in `scrattch.mapping` and [`MapMyCells`](https://portal.brain-map.org/atlases-and-data/bkp/mapmycells)  
 * [`ACE`](https://github.com/AllenInstitute/ace) - R Shiny and [web-based](https://sea-ad.shinyapps.io/ACEapp/) app for comparison of annotations, including clustering and mapping results  
 * [`mfishtools`](https://github.com/AllenInstitute/mfishtools) - Functions for gene selection and analysis of spatial transcriptomics data  
 
 
 ## Installation
 
-**We strongly encourage the use of docker to the `scrattch` suite.** In particular, several functions in `scrattch.taxonomy` and `scrattch.mapping` have known issues in certain R environments.  That said, we provide options for installing and running R in both a docker environment and through
+**We strongly encourage the use of docker to the `scrattch` suite.** In particular, several functions in `scrattch.taxonomy` and `scrattch.mapping` have known issues in certain R environments.  That said, we provide options for installing and running R in both a docker environment and through standard R approaches.
 
 ### Using docker
 
@@ -60,13 +60,13 @@ Docker can be run on some HPC environments that use singularity as follows:
 
 * **Non-interactive**: `singularity shell --cleanenv docker://njjai/scrattch_mapping:0.6.6 Rscript YOUR_CODE.R`
 * **Interactive**: `singularity shell --cleanenv docker://njjai/scrattch_mapping:0.6.6`
-* **To create a sif file for use in other environments**: `singularity pull scrattch_mapping:0.6.6.sif docker://njjai/scrattch_mapping:0.6.6` 
+* **To create a sif file for use in other environments**: `singularity pull scrattch_mapping_0.6.6.sif docker://njjai/scrattch_mapping:0.6.6` 
 
 Instructions for using Docker in other environments will be posted soon; in the meantime, please post an issue if you can't figure it out.
 
 ### Running `scrattch` in R
 
-While we advise using the provided docker, you can install all `scrattch` packages along with their Github and BioConductor dependencies, as follows:
+While we advise using the provided docker, you can install all `scrattch` packages along with their GitHub and BioConductor dependencies, as follows:
 ```
 devtools::install_github("AllenInstitute/scrattch")
 scrattch::install_scrattch()
@@ -109,5 +109,5 @@ If you contribute code to this repository through pull requests or other mechani
 
 ### Level of Support
 
-We are planning on occasional updating this tool with no fixed schedule. Community involvement is encouraged through both issues and pull requests.  We encourge community involvement in child packages directly, rather than through the `scrattch` umbrella package, when appropriate.
+We are planning on occasional updating this tool with no fixed schedule. Community involvement is encouraged through both issues and pull requests.  We encourage community involvement in child packages directly, rather than through the `scrattch` umbrella package, when appropriate.
 
