@@ -36,7 +36,7 @@ devtools::install_github("AllenInstitute/scrattch", ref = "archive")
 
 ### Function List
 
-There are now a lot of functions available in `scrattch` packages. To assist in finding what package a function is stored in, you can check this CSV file stored in the `scrattch` umbrella package:  
+There are now a lot of functions available in `scrattch` packages. To assist in finding which scrattch package a function is stored in, you can check this CSV file stored in the `scrattch` umbrella package:  
 [scrattch function list](https://github.com/AllenInstitute/scrattch/blob/dev/inst/scrattch_function_list.csv)
 
 ### License
