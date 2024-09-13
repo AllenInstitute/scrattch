@@ -5,7 +5,7 @@
 
 This is the umbrella package for the `scrattch` suite of R packages from the Allen Institute for Brain Science. It is modeled after the [`tidyverse`](https://www.tidyverse.org/) package.  You can use `scrattch` to automatically install or update any of the underlying packages.  
 
-<img src="https://github.com/user-attachments/assets/c6f3b081-8573-41da-a1ac-06343f9b22a2" width="200" />
+<img src="https://github.com/user-attachments/assets/6c29a501-6934-486f-8b8e-6b72a21a9b6c" width="300" />
 
 ***PLACEHOLDER LOGO***
 
