@@ -96,9 +96,6 @@ There are now a lot of functions available in `scrattch` packages. To assist in 
 
 You can find a detail description of all scrattch.taxonomy functions here: ![Documentation (DOES NOT EXIST YET)](https://github.com/AllenInstitute/scrattch).
 
-
-## Housekeeping
-
 ### License
 
 The license for this package is available on Github at: [https://github.com/AllenInstitute/scrattch/blob/master/LICENSE](https://github.com/AllenInstitute/scrattch/blob/master/LICENSE)
