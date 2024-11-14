@@ -7,7 +7,7 @@ This is the umbrella package for the `scrattch` suite of R packages from the All
 
 <img src="https://github.com/user-attachments/assets/6c29a501-6934-486f-8b8e-6b72a21a9b6c" width="300" />
 
-***PLACEHOLDER LOGO***
+***TEMPORARY LOGO***: Please submit an issue if you have a suggestion for a better logo!
 
 
 ## Scrattch packages
@@ -16,7 +16,7 @@ Scrattch includes several packages for clustering, mapping, and data formatting 
 
 **Data preparation:** file formats and schema
 
-* [`scrattch.taxonomy`](https://github.com/AllenInstitute/scrattch.taxonomy) - Taxonomy building scripts for RNA-seq based taxonomies following the [Allen Institute (AIT) schema](https://github.com/AllenInstitute/scrattch.taxonomy/tree/main/schema).  
+* [`scrattch.taxonomy`](https://github.com/AllenInstitute/scrattch.taxonomy) - Taxonomy building scripts for RNA-seq based taxonomies following the [Allen Institute (AIT) schema](https://github.com/AllenInstitute/scrattch.taxonomy/tree/main/schema) ***TO BE MOVED SOON***.  
 * [`scrattch.io`](https://github.com/AllenInstitute/scrattch.io) - [deprecated]. Library for file handling and data formatting, replaced by `scrattch.taxonomy` in 2024  
 
 **Data analysis:** cell clustering and mapping (also called label transfer)
@@ -35,7 +35,7 @@ Scrattch includes several packages for clustering, mapping, and data formatting 
 * [`tasic2016data`](https://github.com/AllenInstitute/tasic2016data) - Data from [Tasic, et al. (2016)](https://pubmed.ncbi.nlm.nih.gov/26727548/), which is used for demos  
 * [`hodge2019data`](https://github.com/AllenInstitute/hodge2019data) - Data from [Hodge, et al. (2019)](https://pubmed.ncbi.nlm.nih.gov/31435019/), which is used for demos  
 
-If you're interested in only one of these modules, you can install them separately. `scrattch` will install them all together.  
+If you're interested in only one of these modules, you can install them separately. That said, we recommend using the installation instructions below to install combinations of `scrattch` packages to ensure they interact properly.  
 
 ### Related content
 
@@ -58,9 +58,9 @@ The current docker version is accessible through docker hub via: ('njjai/scrattc
 
 Docker can be run on some HPC environments that use singularity as follows:
 
-* **Non-interactive**: `singularity shell --cleanenv docker://njjai/scrattch_mapping:0.6.6 Rscript YOUR_CODE.R`
-* **Interactive**: `singularity shell --cleanenv docker://njjai/scrattch_mapping:0.6.6`
-* **To create a sif file for use in other environments**: `singularity pull scrattch_mapping_0.6.6.sif docker://njjai/scrattch_mapping:0.6.6` 
+* **Non-interactive**: `singularity shell --cleanenv docker://jeremyinseattle/scrattch:0.1.0 Rscript YOUR_CODE.R`
+* **Interactive**: `singularity shell --cleanenv docker://jeremyinseattle/scrattch:0.1.0`
+* **To create a sif file for use in other environments**: `singularity pull scrattch:0.1.0.sif docker://jeremyinseattle/scrattch:0.1.0` 
 
 Instructions for using Docker in other environments will be posted soon; in the meantime, please post an issue if you can't figure it out.
 
