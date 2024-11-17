@@ -54,7 +54,7 @@ Several related websites and R and python libraries are outside of the `scrattch
 
 ### Using docker
 
-The current docker version is accessible through docker hub via: ('njjai/scrattch_mapping')[https://hub.docker.com/r/njjai/scrattch_mapping]. As of 13 September 2024 the version is `njjai/scrattch_mapping:0.6.6`.
+The current docker version is accessible through docker hub via: ('jeremyinseattle/scrattch')[https://hub.docker.com/r/jeremyinseattle/scrattch]. As of 17 November 2024 the version is `jeremyinseattle/scrattch:0.1.1`.
 
 Docker can be run on some HPC environments that use singularity as follows:
 
