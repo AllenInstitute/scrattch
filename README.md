@@ -60,7 +60,7 @@ Docker can be run on some HPC environments that use singularity as follows:
 
 * **Non-interactive**: `singularity shell --cleanenv docker://jeremyinseattle/scrattch:0.7.1 Rscript YOUR_CODE.R`
 * **Interactive**: `singularity shell --cleanenv docker://jeremyinseattle/scrattch:0.7.1`
-* **To create a sif file for use in other environments**: `singularity pull scrattch:0.7.0.sif docker://jeremyinseattle/scrattch:0.7.1` 
+* **To create a sif file for use in other environments**: `singularity pull scrattch:0.7.1.sif docker://jeremyinseattle/scrattch:0.7.1` 
 
 Instructions for using Docker in other environments will be posted soon; in the meantime, please post an issue if you can't figure it out.
 
