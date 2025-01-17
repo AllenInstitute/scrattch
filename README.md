@@ -54,7 +54,7 @@ Several related websites and R and python libraries are outside of the `scrattch
 
 ### Using docker
 
-The current docker version is accessible through docker hub via: ('jeremyinseattle/scrattch')[https://hub.docker.com/r/jeremyinseattle/scrattch]. As of 20 December 2024 the version is `jeremyinseattle/scrattch:0.7.1`.
+The current docker version is accessible through docker hub via: ['jeremyinseattle/scrattch'](https://hub.docker.com/r/jeremyinseattle/scrattch). As of 20 December 2024 the version is `jeremyinseattle/scrattch:0.7.1`.
 
 Docker can be run on some HPC environments that use singularity as follows:
 
