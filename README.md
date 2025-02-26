@@ -52,9 +52,9 @@ Several related websites and R and python libraries are outside of the `scrattch
 
 **We strongly encourage the use of docker to the `scrattch` suite.** In particular, several functions in `scrattch.taxonomy` and `scrattch.mapping` have known issues in certain R environments.  That said, we provide options for installing and running R in both a docker environment and through standard R approaches.
 
-### Using docker
+### Using docker (RECOMMENDED)
 
-The current docker version is accessible through docker hub via: ['jeremyinseattle/scrattch'](https://hub.docker.com/r/jeremyinseattle/scrattch). As of 20 December 2024 the version is `jeremyinseattle/scrattch:0.7.1`.
+The current docker version is accessible through docker hub via: ['docker://njjai/scrattch_mapping'](https://hub.docker.com/r/njjai/scrattch_mapping). As of 26 February 2025 the Docker version is `njjai/scrattch_mapping:1.0.0`.  This corresponds to AIT (v1.0.0) (see [the Allen Institute Taxonomy GitHub respository](https://github.com/AllenInstitute/AllenInstituteTaxonomy/) for details).
 
 Docker can be run on some HPC environments that use singularity as follows:
 
@@ -62,7 +62,7 @@ Docker can be run on some HPC environments that use singularity as follows:
 * **Interactive**: `singularity shell --cleanenv docker://njjai/scrattch_mapping:1.0.0`
 * **To create a sif file for use in other environments**: `singularity pull scrattch:1.0.0.sif docker://njjai/scrattch_mapping:1.0.0`
 
-** WARNING ** The 1.0.0 docker listed above provides all the tooling for AIT (v1.0.0) but has broken scrattch.mapping and scrattch.patchseq. An update mid-march will bring both of these packages back up to speed with the AIT schema / format. 
+** WARNING ** The 1.0.0 docker listed above provides all the tooling for AIT (v1.0.0) but has broken scrattch.mapping and scrattch.patchseq. An update mid-March will bring both of these packages back up to speed with the AIT schema / format. 
 
 Instructions for using Docker in other environments will be posted soon; in the meantime, please post an issue if you can't figure it out.
 
