@@ -60,7 +60,9 @@ Docker can be run on some HPC environments that use singularity as follows:
 
 * **Non-interactive**: `singularity shell --cleanenv docker://njjai/scrattch_mapping:1.0.0 Rscript YOUR_CODE.R`
 * **Interactive**: `singularity shell --cleanenv docker://njjai/scrattch_mapping:1.0.0`
-* **To create a sif file for use in other environments**: `singularity pull scrattch:1.0.0.sif docker://njjai/scrattch_mapping:1.0.0` 
+* **To create a sif file for use in other environments**: `singularity pull scrattch:1.0.0.sif docker://njjai/scrattch_mapping:1.0.0`
+
+** WARNING ** The 1.0.0 docker listed above provides all the tooling for AIT (v1.0.0) but has broken scrattch.mapping and scrattch.patchseq. An update mid-march will bring both of these packages back up to speed with the AIT schema / format. 
 
 Instructions for using Docker in other environments will be posted soon; in the meantime, please post an issue if you can't figure it out.
 
