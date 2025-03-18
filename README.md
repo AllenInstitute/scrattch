@@ -54,15 +54,15 @@ Several related websites and R and python libraries are outside of the `scrattch
 
 ### Using docker (RECOMMENDED)
 
-The current docker version is accessible through docker hub via: ['docker://njjai/scrattch_mapping'](https://hub.docker.com/r/njjai/scrattch_mapping). As of 26 February 2025 the Docker version is `njjai/scrattch_mapping:1.0.0`.  This corresponds to AIT (v1.0.0) (see [the Allen Institute Taxonomy GitHub respository](https://github.com/AllenInstitute/AllenInstituteTaxonomy/) for details).
+The current docker version is accessible through docker hub via: ['docker://njjai/scrattch_mapping'](https://hub.docker.com/r/njjai/scrattch_mapping). As of 26 February 2025 the Docker version is `njjai/scrattch_mapping:1.1.0`.  This corresponds to AIT (v1.1.0) (see [the Allen Institute Taxonomy GitHub respository](https://github.com/AllenInstitute/AllenInstituteTaxonomy/) for details).
 
 Docker can be run on some HPC environments that use singularity as follows:
 
-* **Non-interactive**: `singularity shell --cleanenv docker://njjai/scrattch_mapping:1.0.0 Rscript YOUR_CODE.R`
-* **Interactive**: `singularity shell --cleanenv docker://njjai/scrattch_mapping:1.0.0`
-* **To create a sif file for use in other environments**: `singularity pull scrattch:1.0.0.sif docker://njjai/scrattch_mapping:1.0.0`
+* **Non-interactive**: `singularity shell --cleanenv docker://njjai/scrattch_mapping:1.1.0 Rscript YOUR_CODE.R`
+* **Interactive**: `singularity shell --cleanenv docker://njjai/scrattch_mapping:1.1.0`
+* **To create a sif file for use in other environments**: `singularity pull scrattch:1.1.0.sif docker://njjai/scrattch_mapping:1.1.0`
 
-** WARNING ** The 1.0.0 docker listed above provides all the tooling for AIT (v1.0.0) but has broken scrattch.mapping and scrattch.patchseq. An update mid-March will bring both of these packages back up to speed with the AIT schema / format. 
+** WARNING ** The 1.1.0 docker listed above provides all the tooling for AIT (v1.1.0) but has broken scrattch.mapping and scrattch.patchseq. An update mid-March will bring both of these packages back up to speed with the AIT schema / format. 
 
 Instructions for using Docker in other environments will be posted soon; in the meantime, please post an issue if you can't figure it out.
 
