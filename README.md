@@ -3,12 +3,9 @@
 # scrattch
 ## **S**ingle-**c**ell **R**NA-seq **a**nalysis for **t**ranscriptomic **t**ype **ch**aracterization
 
-This is the umbrella package for the `scrattch` suite of R packages from the Allen Institute for Brain Science. It is modeled after the [`tidyverse`](https://www.tidyverse.org/) package.  You can use `scrattch` to automatically install or update any of the underlying packages.  
+This is the umbrella package for the `scrattch` suite of R packages from the Allen Institute for Brain Science. It is modeled after the [`tidyverse`](https://www.tidyverse.org/) package.  You can use `scrattch` to automatically install or update some of the underlying packages and can run the remaining packages in docker environments.
 
-<img src="https://github.com/user-attachments/assets/6c29a501-6934-486f-8b8e-6b72a21a9b6c" width="300" />
-
-***TEMPORARY LOGO***: Please submit an issue if you have a suggestion for a better logo!
-
+<img src="https://github.com/user-attachments/assets/6c29a501-6934-486f-8b8e-6b72a21a9b6c" width="200" />
 
 ## Scrattch packages
 
@@ -16,24 +13,24 @@ Scrattch includes several packages for clustering, mapping, and data formatting 
 
 **Data preparation:** file formats and schema
 
-* [`scrattch.taxonomy`](https://github.com/AllenInstitute/scrattch.taxonomy) - Taxonomy building scripts for RNA-seq based taxonomies following the [Allen Institute (AIT) schema](https://github.com/AllenInstitute/scrattch.taxonomy/tree/main/schema) ***TO BE MOVED SOON***.  
+* [`scrattch.taxonomy`](https://github.com/AllenInstitute/scrattch.taxonomy) - Taxonomy building scripts for RNA-seq based taxonomies following the [Allen Institute (AIT) schema](https://github.com/AllenInstitute/AllenInstituteTaxonomy/tree/main/schema).  
 * [`scrattch.io`](https://github.com/AllenInstitute/scrattch.io) - [deprecated]. Library for file handling and data formatting, replaced by `scrattch.taxonomy` in 2024  
 
 **Data analysis:** cell clustering and mapping (also called label transfer)
 
 * [`scrattch.hicat`](https://github.com/AllenInstitute/scrattch.hicat) - **H**ierarchical, **i**terative **c**lustering for **a**nalysis of  **t**ranscriptomics  
 * [`scrattch.bigcat`](https://github.com/AllenInstitute/scrattch.bigcat) - Clustering analysis for extremely large single cell dataset  
-* [`scrattch.mapping`](https://github.com/AllenInstitute/scrattch.mapping) - Generalized mapping scripts for RNA-seq, Patch-seq or any gene expression data  
+* [`scrattch.mapping`](https://github.com/AllenInstitute/scrattch.mapping) - Generalized mapping scripts for single cell RNA-seq, Patch-seq, spatial transcriptomics, or related data types  
 * [`scrattch.patchseq`](https://github.com/AllenInstitute/scrattch.patchseq) - Functions for generating additional QC metrics and output files for patch-seq analysis   
 
 **Data visualization**
 
-* [`scrattch.vis`](https://github.com/AllenInstitute/scrattch.vis) - Plotting functions for visualization of RNA-seq data  
+* [`scrattch.vis`](https://github.com/AllenInstitute/scrattch.vis) - Plotting functions for visualization of single cell RNA-seq data  
 
 **Example data:** small RNA-seq data sets
 
 * [`tasic2016data`](https://github.com/AllenInstitute/tasic2016data) - Data from [Tasic, et al. (2016)](https://pubmed.ncbi.nlm.nih.gov/26727548/), which is used for demos  
-* [`hodge2019data`](https://github.com/AllenInstitute/hodge2019data) - Data from [Hodge, et al. (2019)](https://pubmed.ncbi.nlm.nih.gov/31435019/), which is used for demos  
+* [`hodge2019data`](https://github.com/AllenInstitute/hodge2019data) - Data subset from [Hodge, et al. (2019)](https://pubmed.ncbi.nlm.nih.gov/31435019/), which is used for demos  
 
 If you're interested in only one of these modules, you can install them separately. That said, we recommend using the installation instructions below to install combinations of `scrattch` packages to ensure they interact properly.  
 
@@ -54,17 +51,17 @@ Several related websites and R and python libraries are outside of the `scrattch
 
 ### Using docker (RECOMMENDED)
 
-The current docker version is accessible through docker hub via: ['docker://njjai/scrattch_mapping'](https://hub.docker.com/r/njjai/scrattch_mapping). As of 26 February 2025 the Docker version is `njjai/scrattch_mapping:1.1.0`.  This corresponds to AIT (v1.1.0) (see [the Allen Institute Taxonomy GitHub respository](https://github.com/AllenInstitute/AllenInstituteTaxonomy/) for details).
+The current docker version is accessible through [Docker Hub](https://hub.docker.com/u/alleninstitute). As of 26 March 2025 the [Docker version] is **`docker://jeremyinseattle/scrattch:1.1.2`**.  This corresponds to AIT (v1.1.0) (see [the Allen Institute Taxonomy GitHub respository](https://github.com/AllenInstitute/AllenInstituteTaxonomy/) for details).
 
 Docker can be run on some HPC environments that use singularity as follows:
 
-* **Non-interactive**: `singularity shell --cleanenv docker://njjai/scrattch_mapping:1.1.0 Rscript YOUR_CODE.R`
-* **Interactive**: `singularity shell --cleanenv docker://njjai/scrattch_mapping:1.1.0`
-* **To create a sif file for use in other environments**: `singularity pull scrattch:1.1.0.sif docker://njjai/scrattch_mapping:1.1.0`
+* **Non-interactive**: `singularity shell --cleanenv [Docker version] Rscript YOUR_CODE.R`
+* **Interactive**: `singularity shell --cleanenv [Docker version]`
+* **To create a sif file for use in other environments**: `singularity pull scrattch:1.[#.#.#].sif [Docker version]`
 
-** WARNING ** The 1.1.0 docker listed above provides all the tooling for AIT (v1.1.0) but has broken scrattch.mapping and scrattch.patchseq. An update mid-March will bring both of these packages back up to speed with the AIT schema / format. 
+If you cannot figure out how to use Docker in your specific environment, please post an issue.
 
-Instructions for using Docker in other environments will be posted soon; in the meantime, please post an issue if you can't figure it out.
+*--WARNING-- The 1.1.2 docker listed above provides all the tooling for AIT (v1.1.0) and some functionality for scrattch.mapping, but is broken for hierarchical mapping and all scrattch.patchseq functionality. An update mid-April will bring both of these packages back up to speed with the AIT schema / format.* 
 
 ### Running `scrattch` in R
 
@@ -79,7 +76,7 @@ Note that `doMC` may need to be installed manually from the download link at htt
 
 Two historical versions of scrattch are included in this package. These can be safely run without using docker, but are missing several recent components of the `scrattch` suite.
 
-* **scrattch_2023** is the stable version of the package prior to the release of `scrattch.mapping`, `scrattch.taxonomy`, `scrattch.patchseq`, and `hodge2019data` ***THIS NEEDS TO BE ARCHIVED PROPERLY***  
+* **scrattch_2023** is the stable version of the package prior to the release of `scrattch.mapping`, `scrattch.taxonomy`, `scrattch.patchseq`, and `hodge2019data`  
 * **archive** is the original package from ~2018, and should not be used for most folks
 
 Should you need one of these previous versions, they can still be installed using:  
@@ -89,14 +86,13 @@ devtools::install_github("AllenInstitute/scrattch", ref = "archive")
 ```
 
 
-## Documentation
+## Usage and contribution
 
-***THIS NEEDS TO BE UPDATED***
+`Scrattch` is under active development. Please reach out if you have any challenges or suggestions!
 
-There are now a lot of functions available in `scrattch` packages. To assist in finding what package a function is stored in, you can check this CSV file stored in the `scrattch` umbrella package:  
-[scrattch function list (OUT OF DATE)](https://github.com/AllenInstitute/scrattch/blob/dev/inst/scrattch_function_list.csv)
+### Documentation
 
-You can find a detail description of all scrattch.taxonomy functions here: ![Documentation (DOES NOT EXIST YET)](https://github.com/AllenInstitute/scrattch).
+There is no specific documentation for `scrattch`. However, each child package has extensive documentation available via help commands within R and/or through the corresponding GitHub page.  Conversion of documentation for select packages to ReadTheDocs in planned for April.
 
 ### License
 
