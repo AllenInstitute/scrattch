@@ -51,17 +51,17 @@ Several related websites and R and python libraries are outside of the `scrattch
 
 ### Using docker (RECOMMENDED)
 
-The current docker version is accessible through [Docker Hub](https://hub.docker.com/u/alleninstitute). As of 26 March 2025 the [Docker version] is **`docker://jeremyinseattle/scrattch:1.1.2`**.  This corresponds to AIT (v1.1.0) (see [the Allen Institute Taxonomy GitHub respository](https://github.com/AllenInstitute/AllenInstituteTaxonomy/) for details).
+The current docker version is accessible through [Docker Hub](https://hub.docker.com/u/alleninstitute). As of 26 March 2025 the [Docker version](https://hub.docker.com/r/alleninst/scrattch/tags) is **`docker://alleninst/scrattch:1.1.2`**.  This corresponds to AIT (v1.1.2) (see [the Allen Institute Taxonomy GitHub respository](https://github.com/AllenInstitute/AllenInstituteTaxonomy/) for details).
 
 Docker can be run on some HPC environments that use singularity as follows:
 
 * **Non-interactive**: `singularity shell --cleanenv [Docker version] Rscript YOUR_CODE.R`
 * **Interactive**: `singularity shell --cleanenv [Docker version]`
-* **To create a sif file for use in other environments**: `singularity pull scrattch:1.[#.#.#].sif [Docker version]`
+* **To create a sif file for use in other environments**: `singularity pull scrattch:[#.#.#].sif [Docker version]`
 
 If you cannot figure out how to use Docker in your specific environment, please post an issue.
 
-*--WARNING-- The 1.1.2 docker listed above provides all the tooling for AIT (v1.1.0) and some functionality for scrattch.mapping, but is broken for hierarchical mapping and all scrattch.patchseq functionality. An update mid-April will bring both of these packages back up to speed with the AIT schema / format.* 
+*--WARNING-- The 1.1.2 docker listed above provides all the tooling for AIT (v1.1.2) and some functionality for scrattch.mapping, but is broken for hierarchical mapping and all scrattch.patchseq functionality. An update mid-April will bring both of these packages back up to speed with the AIT schema / format.* 
 
 ### Running `scrattch` in R
 
