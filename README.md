@@ -3,7 +3,7 @@
 # scrattch
 ## **S**ingle-**c**ell **R**NA-seq **a**nalysis for **t**ranscriptomic **t**ype **ch**aracterization
 
-This is the umbrella package for the `scrattch` suite of R packages from the Allen Institute for Brain Science. It is modeled after the [`tidyverse`](https://www.tidyverse.org/) package.  You can use `scrattch` to automatically install or update some of the underlying packages and can run the remaining packages in docker environments.
+This is the umbrella package for the `scrattch` suite of R packages from the Allen Institute for Brain Science. It is modeled after the [`tidyverse`](https://www.tidyverse.org/) package.  You can use `scrattch` to automatically install or update some of the underlying packages and can run the remaining packages in [docker environments](https://github.com/AllenInstitute/scrattch?tab=readme-ov-file#using-docker-recommended).
 
 <img src="https://github.com/user-attachments/assets/6c29a501-6934-486f-8b8e-6b72a21a9b6c" width="200" />
 
@@ -13,15 +13,15 @@ Scrattch includes several packages for clustering, mapping, and data formatting 
 
 **Data preparation:** file formats and schema
 
-* [`scrattch.taxonomy`](https://github.com/AllenInstitute/scrattch.taxonomy) - Taxonomy building scripts for RNA-seq based taxonomies following the [Allen Institute (AIT) schema](https://github.com/AllenInstitute/AllenInstituteTaxonomy/tree/main/schema).  
+* [`scrattch.taxonomy`](https://alleninstitute.github.io/scrattch.taxonomy) - Taxonomy building scripts for RNA-seq based taxonomies following the [Allen Institute (AIT) schema](https://github.com/AllenInstitute/AllenInstituteTaxonomy/tree/main/schema).  A table of available AIT-formatted taxonomies **[can be found here](https://github.com/AllenInstitute/AllenInstituteTaxonomy/blob/main/taxonomies.md)** 
 * [`scrattch.io`](https://github.com/AllenInstitute/scrattch.io) - [deprecated]. Library for file handling and data formatting, replaced by `scrattch.taxonomy` in 2024  
 
 **Data analysis:** cell clustering and mapping (also called label transfer)
 
 * [`scrattch.hicat`](https://github.com/AllenInstitute/scrattch.hicat) - **H**ierarchical, **i**terative **c**lustering for **a**nalysis of  **t**ranscriptomics  
 * [`scrattch.bigcat`](https://github.com/AllenInstitute/scrattch.bigcat) - Clustering analysis for extremely large single cell dataset  
-* [`scrattch.mapping`](https://github.com/AllenInstitute/scrattch.mapping) - Generalized mapping scripts for single cell RNA-seq, Patch-seq, spatial transcriptomics, or related data types  
-* [`scrattch.patchseq`](https://github.com/AllenInstitute/scrattch.patchseq) - Functions for generating additional QC metrics and output files for patch-seq analysis   
+* [`scrattch.mapping`](https://alleninstitute.github.io/scrattch.mapping) - Generalized mapping scripts for single cell RNA-seq, Patch-seq, spatial transcriptomics, or related data types  
+* [`scrattch.patchseq`](https://alleninstitute.github.io/scrattch.patchseq) - Functions for generating additional QC metrics and output files for patch-seq analysis   
 
 **Data visualization**
 
@@ -30,7 +30,8 @@ Scrattch includes several packages for clustering, mapping, and data formatting 
 **Example data:** small RNA-seq data sets
 
 * [`tasic2016data`](https://github.com/AllenInstitute/tasic2016data) - Data from [Tasic, et al. (2016)](https://pubmed.ncbi.nlm.nih.gov/26727548/), which is used for demos  
-* [`hodge2019data`](https://github.com/AllenInstitute/hodge2019data) - Data subset from [Hodge, et al. (2019)](https://pubmed.ncbi.nlm.nih.gov/31435019/), which is used for demos  
+* [`hodge2019data`](https://github.com/AllenInstitute/hodge2019data) - Data subset from [Hodge, et al. (2019)](https://pubmed.ncbi.nlm.nih.gov/31435019/), which is used for demos
+* A table of actual AIT-formatted taxonomies **[can be found here](https://github.com/AllenInstitute/AllenInstituteTaxonomy/blob/main/taxonomies.md)**  
 
 If you're interested in only one of these modules, you can install them separately. That said, we recommend using the installation instructions below to install combinations of `scrattch` packages to ensure they interact properly.  
 
@@ -47,7 +48,7 @@ Several related websites and R and python libraries are outside of the `scrattch
 
 ## Installation
 
-**We strongly encourage the use of docker to the `scrattch` suite.** In particular, several functions in `scrattch.taxonomy` and `scrattch.mapping` have known issues in certain R environments.  That said, we provide options for installing and running R in both a docker environment and through standard R approaches.
+**We strongly encourage the use of docker to install the `scrattch` suite.** In particular, several functions in `scrattch.taxonomy` and `scrattch.mapping` have known issues in certain R environments.  That said, we provide options for installing and running R in both a docker environment and through standard R approaches.
 
 ### Using docker (RECOMMENDED)
 
@@ -92,11 +93,11 @@ devtools::install_github("AllenInstitute/scrattch", ref = "archive")
 
 ### Documentation
 
-There is no specific documentation for `scrattch`. However, each child package has extensive documentation available via help commands within R and/or through the corresponding GitHub page.  Conversion of documentation for select packages to ReadTheDocs in planned for April.
+There is no specific documentation for `scrattch`. However, each child package has extensive documentation available via help commands within R and/or through the corresponding GitHub page.  Conversion of documentation to web-based versions is complete for [`scrattch.taxonomy`](https://alleninstitute.github.io/scrattch.taxonomy), [`scrattch.mapping`](https://alleninstitute.github.io/scrattch.mapping), and [`scrattch.patchseq`](https://alleninstitute.github.io/scrattch.patchseq).
 
 ### License
 
-The license for this package is available on Github at: [https://github.com/AllenInstitute/scrattch/blob/master/LICENSE](https://github.com/AllenInstitute/scrattch/blob/master/LICENSE)
+The license for this package is available on Github at: [https://github.com/AllenInstitute/scrattch/blob/master/LICENSE](https://github.com/AllenInstitute/scrattch/blob/master/LICENSE). 
 
 ### Contribution Agreement
 
@@ -104,5 +105,5 @@ If you contribute code to this repository through pull requests or other mechani
 
 ### Level of Support
 
-We are planning on occasional updating this tool with no fixed schedule. Community involvement is encouraged through both issues and pull requests.  We encourage community involvement in child packages directly, rather than through the `scrattch` umbrella package, when appropriate.
+We frequently update the child packages of this tool with no fixed schedule. Community involvement is encouraged through both issues and pull requests.  We encourage community involvement in child packages directly, rather than through the `scrattch` umbrella package, when appropriate.
 
