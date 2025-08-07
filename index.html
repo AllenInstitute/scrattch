@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>scrattch: Single-cell RNA-seq analysis</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            display: flex;
+            line-height: 1.6;
+        }
+
+        .sidebar {
+            width: 300px;
+            min-width: 250px;
+            background-color: #B3C1CD;
+            padding: 20px;
+            box-sizing: border-box;
+            overflow-y: auto;
+            height: 100vh;
+            border-right: 1px solid #ccc;
+        }
+
+        .main-content {
+            flex-grow: 1;
+            padding: 20px 40px;
+            box-sizing: border-box;
+            overflow-y: auto;
+            height: 100vh;
+            color: #333; /* Default text color */
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 20px;
+        }
+
+        .sidebar li {
+            margin-bottom: 8px;
+        }
+
+        .sidebar li a {
+            text-decoration: none;
+            color: #003057;
+            display: block;
+            padding: 2px;
+            border-radius: 3px;
+            transition: background-color 0.2s;
+        }
+
+        .sidebar li a:hover {
+            background-color: rgba(0, 48, 87, 0.1);
+        }
+        
+        .sidebar-h2 {
+            font-weight: bold;
+            font-size: 1em;
+            padding-left: 0;
+        }
+
+        .sidebar-h3 {
+            font-weight: normal;
+            font-size: 0.9em;
+            padding-left: 20px;
+        }
+        
+        h1, h2, h3 {
+            color: #003057; /* Match header color to the theme */
+            scroll-margin-top: 20px;
+            border-bottom: 1px solid #eaecef;
+            padding-bottom: 0.3em;
+            margin-top: 24px;
+            margin-bottom: 16px;
+        }
+
+        h1 {
+            border-bottom-width: 2px;
+        }
+
+        a {
+            color: #0366d6;
+        }
+		
+		hr {
+		    height: 5px; /* Adjust the height */
+		    border: none; /* remove default border */
+		    background-color: #003057; /* set the color */
+		    width: 50%; /* Adjust the width (percentage or pixels) */
+		    margin-left: 0;
+            margin-right: auto; /* optional, to make it behave more predictably */
+		}
+
+        /* Styles for code blocks from original scrattch file */
+        code {
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+            font-size: 85%;
+            padding: 0.2em 0.4em;
+            margin: 0;
+            background-color: rgba(27,31,35,0.05);
+            border-radius: 3px;
+        }
+        
+        pre {
+            padding: 16px;
+            overflow: auto;
+            font-size: 85%;
+            line-height: 1.45;
+            background-color: #f6f8fa;
+            border-radius: 3px;
+        }
+
+        pre code {
+            padding: 0;
+            margin: 0;
+            background-color: transparent;
+            border: 0;
+        }
+    </style>
+	
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+	
+</head>
+	
+<body>
+
+    <div class="sidebar">
+        <h2 style="color: #003057;">scrattch</h2>
+		<p><a href="https://zenodo.org/doi/10.5281/zenodo.12706763"><img src="https://zenodo.org/badge/119578865.svg" alt="DOI"></a></p>
+		<img src="logo.png" width="120" alt="scrattch hex logo">
+        <ul>
+            <li class="sidebar-h4"><a href="#top">(jump to top)</a></li>
+			<li class="sidebar-h2"><a href="#packages">Scrattch packages</a></li>
+			<li class="sidebar-h3"><a href="#packages">Packages</a></li>
+			<li class="sidebar-h3"><a href="#package-functions">Available functions</a></li>
+            <li class="sidebar-h3"><a href="#related-content">Related content</a></li>
+            <li class="sidebar-h2"><a href="#installation">Installation</a></li>
+            <li class="sidebar-h3"><a href="#docker">Using docker</a></li>
+            <li class="sidebar-h3"><a href="#in-r">Installing from R</a></li>
+            <li class="sidebar-h3"><a href="#previous-versions">Installing previous versions</a></li>
+			<li class="sidebar-h2"><a href="#use-case">Use cases</a></li>
+			<li class="sidebar-h3"><a href="#clustering">Clustering</a></li>
+			<li class="sidebar-h3"><a href="#visualization">Data visualization</a></li>
+			<li class="sidebar-h3"><a href="#taxonomy">Creating a taxonomy</a></li>
+			<li class="sidebar-h3"><a href="#mapping">Mapping user data</a></li>
+			<li class="sidebar-h3"><a href="#patchseq">Patch-seq</a></li>
+			<li class="sidebar-h3"><a href="#spatial">Spatial transcriptomics</a></li>
+            <li class="sidebar-h2"><a href="#usage">Usage and contribution</a></li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+	    <h1 id="top">scrattch</h1>
+        
+        <p><u><strong>S</strong></u>ingle-<u><strong>c</strong></u>ell <u><strong>R</strong></u>NA-seq <u><strong>a</strong></u>nalysis for <u><strong>t</strong></u>ranscriptomic <u><strong>t</strong></u>ype <u><strong>ch</strong></u>aracterization (or "scrattch") is a suite of R and python scripts from the Allen Institute for Brain Science. The core R libraries are linked in the umbrella package called <code>scrattch</code>, which is modeled after the <a href="https://www.tidyverse.org/"><code>tidyverse</code></a> package. You can use <code>scrattch</code> to automatically install or update some of the underlying packages and can run the remaining packages in <a href="https://github.com/AllenInstitute/scrattch?tab=readme-ov-file#using-docker-recommended">docker environments</a>. This page describes all core and adjacent scrattch content.</p>
+		
+		<img src="logo.png" width="180" alt="scrattch hex logo">
+		
+		<br><br><hr>
+    
+        <h2 id="packages"><i class="fas fa-brain"></i> Scrattch packages</h2>
+
+        <p>Scrattch includes several packages for clustering, mapping, and data formatting and visualization, along with example data for demos. These include:</p>
+    
+        <p><font color="#003057"><strong>Data preparation:</strong> file formats and schema</font></p>
+        <ul>
+            <li><i class="fa-brands fa-r-project"></i> <a href="https://alleninstitute.github.io/scrattch.taxonomy"><code>scrattch.taxonomy</code></a> - Taxonomy building scripts for RNA-seq based taxonomies following the <a href="https://github.com/AllenInstitute/AllenInstituteTaxonomy/tree/main/schema">Allen Institute (AIT) schema</a>. A table of available AIT-formatted taxonomies <strong><a href="https://github.com/AllenInstitute/AllenInstituteTaxonomy/blob/main/taxonomies.md">can be found here</a></strong>.</li>
+            <li><i class="fa-brands fa-r-project"></i><code>scrattch.io</code> - [deprecated]. Library for file handling and data formatting, replaced by <code>scrattch.taxonomy</code> in 2024.</li>
+        </ul>
+    
+        <p><font color="#003057"><strong>Data analysis:</strong> cell clustering and mapping (also called label transfer)</font></p>
+        <ul>
+            <li><i class="fa-brands fa-r-project"></i> <a href="https://github.com/AllenInstitute/scrattch.hicat"><code>scrattch.hicat</code></a> - <strong>H</strong>ierarchical, <strong>i</strong>terative <strong>c</strong>lustering for <strong>a</strong>nalysis of <strong>t</strong>ranscriptomics</li>
+            <li><i class="fa-brands fa-r-project"></i> <a href="https://github.com/AllenInstitute/scrattch.bigcat"><code>scrattch.bigcat</code></a> - Clustering analysis for extremely large single cell dataset</li>
+            <li><i class="fa-brands fa-r-project"></i> <a href="https://alleninstitute.github.io/scrattch.mapping"><code>scrattch.mapping</code></a> - Generalized mapping scripts for single cell RNA-seq, Patch-seq, spatial transcriptomics, or related data types</li>
+            <li><i class="fa-brands fa-r-project"></i> <a href="https://alleninstitute.github.io/scrattch.patchseq"><code>scrattch.patchseq</code></a> - Functions for generating additional QC metrics and output files for patch-seq analysis</li>
+        </ul>
+    
+        <p><font color="#003057"><strong>Data visualization</strong></font></p>
+        <ul>
+            <li><i class="fa-brands fa-r-project"></i> <a href="https://github.com/AllenInstitute/scrattch.vis"><code>scrattch.vis</code></a> - Plotting functions for visualization of single cell RNA-seq data</li>
+        </ul>
+    
+        <p><font color="#003057"><strong>Example data:</strong> small RNA-seq data sets</font></p>
+        <ul>
+            <li><i class="fa-brands fa-r-project"></i> <a href="https://github.com/AllenInstitute/tasic2016data"><code>tasic2016data</code></a> - Data from <a href="https://pubmed.ncbi.nlm.nih.gov/26727548/">Tasic, et al. (2016)</a>, which is used for demos</li>
+            <li><i class="fa-brands fa-r-project"></i> <a href="https://github.com/AllenInstitute/hodge2019data"><code>hodge2019data</code></a> - Data subset from <a href="https://pubmed.ncbi.nlm.nih.gov/31435019/">Hodge, et al. (2019)</a>, which is used for demos</li>
+            <li><i class="fa-solid fa-desktop"></i> A table of actual AIT-formatted taxonomies <strong><a href="https://github.com/AllenInstitute/AllenInstituteTaxonomy/blob/main/taxonomies.md">can be found here</a></strong>.</li>
+        </ul>
+    
+        <p>If you're interested in only one of these modules, you can install them separately. That said, we recommend using the installation instructions below to install combinations of <code>scrattch</code> packages to ensure they interact properly.</p>
+		
+		<h3 id="package-functions">Find a scrattch function</h3>
+		<p>Use this table to search for the exported functions in the core <code>scrattch</code> suite R libraries. While we have attempted to keep this table complete, we would encourage accessing the most up-to-date function descriptions via the '?' call in R. This table does not include python functions.</p>
+		<iframe src="scrattch_documentation.html" width="100%" height="600" frameborder="0"></iframe>
+    
+        <h3 id="related-content">Related content</h3>
+        <p>Several related websites and R and python libraries are outside of the <code>scrattch</code> suite, but are either used as part of <code>scrattch</code> libraries or directly work with <code>scrattch</code> outputs. These include (but are not limited to):</p>
+        <ul>
+            <li><i class="fa-brands fa-r-project"></i> <a href="https://alleninstitute.github.io/scrattch.example/"><code>scrattch.example</code></a> - Collection of notebooks for visualization of cell type taxonomies using constellation, dendrogram, and sunburst plots.</li>
+			<li><i class="fa-brands fa-python"></i> <a href="https://github.com/AllenInstitute/bmark"><code>bmark</code></a> - Standardized strategies for benchmarking clustering and mapping results</li>
+            <li><i class="fa-brands fa-python"></i> <a href="https://github.com/AllenInstitute/transcriptomic_clustering"><code>transcriptomic_clustering</code></a> - Python implementation of scrattch.hicat clustering</li>
+            <li><i class="fa-brands fa-python"></i> <a href="https://github.com/AllenInstitute/cell_type_mapper"><code>cell_type_mapper</code></a> - Python implementation of hierarchical mapping algorithm used in <code>scrattch.mapping</code> and <a href="https://portal.brain-map.org/atlases-and-data/bkp/mapmycells"><code>MapMyCells</code></a></li>
+            <li><a href="https://github.com/AllenInstitute/ace"><code>ACE</code></a> - R Shiny and <i class="fa-solid fa-desktop"></i> <a href="https://sea-ad.shinyapps.io/ACEapp/">web-based</a> app for comparison of annotations, including clustering and mapping results</li>
+            <li><i class="fa-brands fa-r-project"></i> <a href="https://github.com/AllenInstitute/mfishtools"><code>mfishtools</code></a> - Functions for gene selection and analysis of spatial transcriptomics data</li>
+        </ul>
+        
+		<br><hr>
+		
+        <h2 id="installation"><i class="fas fa-brain"></i> Installation</h2>
+        <p><strong>We strongly encourage the use of docker to install the <code>scrattch</code> suite.</strong> In particular, several functions in <code>scrattch.taxonomy</code> and <code>scrattch.mapping</code> have known issues in certain R environments. That said, we provide options for installing and running R in both a docker environment and through standard R approaches.</p>
+    
+        <h3 id="docker">Using docker (RECOMMENDED)</h3>
+        <p>The current docker version is accessible through <a href="https://hub.docker.com/u/alleninstitute">Docker Hub</a>. As of 26 March 2025 the <a href="https://hub.docker.com/r/alleninst/scrattch/tags">Docker version</a> is <strong><code>docker://alleninst/scrattch:1.1.2</code></strong>. This corresponds to AIT (v1.1.2) (see <a href="https://github.com/AllenInstitute/AllenInstituteTaxonomy/">the Allen Institute Taxonomy GitHub respository</a> for details).</p>
+        <p>Docker can be run on some HPC environments that use singularity as follows:</p>
+        <ul>
+            <li><strong>Non-interactive</strong>: <code>singularity shell --cleanenv [Docker version] Rscript YOUR_CODE.R</code></li>
+            <li><strong>Interactive</strong>: <code>singularity shell --cleanenv [Docker version]</code></li>
+            <li><strong>To create a sif file for use in other environments</strong>: <code>singularity pull scrattch:[#.#.#].sif [Docker version]</code></li>
+        </ul>
+        <p>If you cannot figure out how to use Docker in your specific environment, please post an issue.</p>
+        <p><em>--WARNING-- The 1.1.2 docker listed above provides all the tooling for AIT (v1.1.2) and some functionality for scrattch.mapping, but is broken for hierarchical mapping and all scrattch.patchseq functionality. An update mid-April will bring both of these packages back up to speed with the AIT schema / format.</em></p>
+    
+        <h3 id="in-r">Installing <code>scrattch</code> in R</h3>
+        <p>While we advise using the provided docker, you can install all <code>scrattch</code> packages along with their GitHub and BioConductor dependencies, as follows:</p>
+<pre><code>devtools::install_github("AllenInstitute/scrattch")
+scrattch::install_scrattch()</code></pre>
+        <p>Note that <code>doMC</code> may need to be installed manually from the download link at <a href="https://r-forge.r-project.org/R/?group_id=947">https://r-forge.r-project.org/R/?group_id=947</a> if you use Windows.</p>
+    
+        <h3 id="previous-versions">Installing previous versions</h3>
+        <p>Two historical versions of scrattch are included in this package. These can be safely run without using docker, but are missing several recent components of the <code>scrattch</code> suite.</p>
+        <ul>
+            <li><strong>scrattch_2023</strong> is the stable version of the package prior to the release of <code>scrattch.mapping</code>, <code>scrattch.taxonomy</code>, <code>scrattch.patchseq</code>, and <code>hodge2019data</code></li>
+            <li><strong>archive</strong> is the original package from ~2018, and should not be used for most folks</li>
+        </ul>
+        <p>Should you need one of these previous versions, they can still be installed using:</p>
+<pre><code>devtools::install_github("AllenInstitute/scrattch", ref = "scrattch_2023") # -OR-
+devtools::install_github("AllenInstitute/scrattch", ref = "archive")</code></pre>
+
+        <br><hr>
+		
+        <h2 id="use-case"><i class="fas fa-brain"></i> Use cases</h2>
+	    <p>This section collects many existing use cases for all aspects of single cell analysis including clustering, visualization, mapping, and more.</p>
+	    
+		<h3 id="clustering">Clustering single cell/nucleus data</h3>
+        <p>Two examples workflows for clustering data are provided as part of the <code>scrattch.hicat</code> package. These both include full workflows including data QC, iterative analysis, and using visualizations and statistics to assess cluster quality. These functions will work for moderately-sized data sets (up to a few hundred-thousand cells and a few hundred cell types). Clusters are often grouped into hierarchies (e.g., "SST" and "PVALB" cells are both types of "GABAergic interneurons" in a process not discussed here.</p>
+        <ul>
+            <li><i class="fa-brands fa-r-project"></i> <a href="http://htmlpreview.github.io/?https://github.com/AllenInstitute/scrattch.hicat/blob/master/vignettes/scrattch.hicat_release.html"><strong>Clustering vignette</strong></a> - An overview of the main functions in <code>scrattch.hicat</code></li>
+            <li><i class="fa-brands fa-r-project"></i> <a href="https://taxonomy.shinyapps.io/scrattch_tutorial/"><strong>Clustering tutorial</strong></a> - An interactive walkthrough of the major steps in clustering for <code>scrattch.hicat</code></li>
+			<li><i class="fa-brands fa-r-project"></i> <strong>[Large data sets]</strong> - For data sets with more than a few hundred thousand cells, <code>scrattch.bigcat</code> has similar functionality (but no formal examples at this time). 
+			<li><i class="fa-brands fa-python"></i> <a href="https://github.com/AllenInstitute/transcriptomic_clustering/blob/dev/docs/notebooks/iterative_clustering.ipynb"><strong>Running iterative clustering in python</strong></a> - Another option performing iterative clustering using the <code>scrattch.hicat</code> algorithm is to install the <code>transcriptomic_clustering</code> python library. This example shows how to use this script, and will work for data sets of any size.
+        </ul>
+		
+		<h3 id="visualization">Visualizing single cell/nucleus data</h3>
+        <p>The <code>scrattch</code> suite has been used to visualize single cell/nucleus RNA-seq data in publications from the Allen Institute for nearly a decade. These examples below show how you can create similar plots for your data.</p>
+        <ul>
+            <li><i class="fa-brands fa-r-project"></i> <a href="https://github.com/AllenInstitute/scrattch.vis?tab=readme-ov-file#plot-types"><strong><code>scrattch.vis</code> plots</strong></a> - Example code for creating many types of plots, including dot plots, heatmaps, bar plots, violin plots, fire plots, beeswarm plots, and box plots.</li>
+            <li><i class="fa-brands fa-r-project"></i> <a href="https://alleninstitute.github.io/scrattch.example/Constellation.html"><strong>Constellation diagram</strong></a> - An example for plotting a constellation diagram plot (points are represent clusters, with links showing cluster connections).</li>
+			<li><i class="fa-brands fa-r-project"></i> <a href="https://alleninstitute.github.io/scrattch.example/HierTree.html"><strong>Hierarchical Tree</strong></a> - An example for plotting a hierarchical tree (not dendrogram!) based on result from hierarchical clustering.</li>
+			<li><i class="fa-brands fa-r-project"></i> <a href="https://alleninstitute.github.io/scrattch.example/Sunburst.html"><strong>Sunburst diagram</strong></a> - An example for plotting a sunburst diagram based on result from hierarchical clustering. (These are the circle plots on the <a href="https://knowledge.brain-map.org/celltypes">Cell Type Knowledge Explorer<a/>.</li>
+			<li><i class="fa-brands fa-r-project"></i> <a href="#clustering"><strong>Clustering tutorials and vignettes</strong></a> include additional examples for visualizing dendrograms, confusion matrices, tSNE (or UMAP) plots, and heatmaps.</li>
+        </ul>
+		
+		<h3 id="taxonomy">Creating a cell type taxonomy</h3>
+        <p>Clustering provides a critical first step in defining a cell type taxonomy, by defining cell types of the highest resolution in a hierarchy. However, for many downstream use cases (e.g., integration with CELLxGENE) it is critical to have the data and associated data in a standard format with a standard schema. These examples describe how to convert your project into the <a href="https://github.com/AllenInstitute/AllenInstituteTaxonomy/">Allen Institute Taxonomy format</a> for use with other <code>scrattch</code> functionalities, such as cell type mapping.</p>
+        <ul>
+            <li><i class="fa-brands fa-r-project"></i> <a href="https://github.com/AllenInstitute/scrattch.taxonomy/blob/main/examples/build_taxonomy.md"><strong>Build a basic AIT file</strong></a> - This example provides the basics for creating a new taxonomy compatible with scrattch.mapping mapping functions using the data from <code>tasic2016data</code> as a starting point.</li>
+            <li><i class="fa-brands fa-r-project"></i> <a href="https://github.com/AllenInstitute/scrattch.taxonomy/blob/main/examples/build_MTG_taxonomy.md"><strong>Create a human MTG taxonomy in AIT format with a neuron only 'child' taxonomy</strong></a> - This example provides a step-by-step process for downloading human MTG data from adult neurotypical humans along with the associated SEA-AD taxonomy <a href="https://portal.brain-map.org/atlases-and-data/rnaseq/human-mtg-10x_sea-ad">(from here)</a>, converting it to an AIT file that aligns with the AIT schema, and adding a child taxonomy subsetting to only neuronal types for use with Patch-seq mapping (see <code>scrattch.patchseq</code> library).</li>
+			<li><i class="fa-brands fa-r-project"></i> <a href="https://github.com/AllenInstitute/AllenInstituteTaxonomy/blob/main/taxonomies.md"><strong>Available AIT files</strong></a> - Many cell type taxonomies from the Allen Institute can be found at this single link.</li>
+			<li><i class="fa-brands fa-python"></i> <strong>[Large data sets]</strong> - Future python scripts will allow creation of AIT files for cells with more than a few hundred thousand cells.  Stay tuned!</li>
+        </ul>
+		
+		<h3 id="mapping">Mapping user data to a cell type taxonomy</h3>
+        <p>In many cases it is useful to transfer cell type labels from an existing cell type taxonomy to user data (called "mapping") in addition to or instead of performing de novo clustering. Note that any AIT file created using <code>scrattch.taxonomy</code> should be compatible with these examples.</p>
+        <ul>
+            <li><i class="fa-brands fa-r-project"></i> <a href="https://github.com/AllenInstitute/scrattch-mapping/blob/main/examples/mapping.md"><strong>Run Flat, Tree, and Seurat taxonomy mapping</strong></a> - This example shows how to use <code>scrattch.mapping</code> for standard taxonomy mapping.</li>
+			<li><i class="fa-brands fa-r-project"></i> <a href="https://github.com/AllenInstitute/scrattch-mapping/blob/main/examples/mapping_BasalGanglia.md"><strong>Mapping to HMBA Basal Ganglia AIT</strong></a> - This tutorial shows how to map against the HMBA Human and Macaque Basal Ganglia consensus taxonomies.</li>
+			<li><i class="fa-solid fa-desktop"></i> <a href="https://portal.brain-map.org/atlases-and-data/bkp/mapmycells"><strong>MapMyCells</strong></a> - A drag and drop GUI for mapping user data to select cell type taxonomies hosted on Allen Brain Map (no code required!).</li>
+			<li><i class="fa-brands fa-python"></i> <a href="https://github.com/AllenInstitute/cell_type_mapper?tab=readme-ov-file"><strong>cell_type_mapper</strong></a> - the backbone of MapMyCells and a preferred <code>scrattch.mapping</code> algorithm. The main page includes multiple detailed use cases in python, and <b>is the recommended mapping strategy for large taxonomies</b>.</li>
+        </ul>
+		
+		<h3 id="patchseq">QC and mapping of patch-seq data</h3>
+        <p>The <code>scrattch</code> suite provides specialized scripts for analysis of transcriptomics data collected from patch-seq experiments, including extension of reference taxonomies, definition of QC metrics, and cell type mapping. We provide a couple of examples describing how to apply these scripts.</p>
+        <ul>
+            <li><i class="fa-brands fa-r-project"></i> <a href="https://github.com/AllenInstitute/scrattch.patchseq/blob/main/examples/build_patchseq_taxonomy.md"><strong>Map against a small mouse PatchSeq taxonomy</strong></a> - This example provides the basics for updating a taxonomy to be compatible with patch-seq style mapping and visualization, and for collecting QC metrics of potential use to everyone. This is a continuation of examples in <code>scrattch.taxonomy</code> and <code>scrattch.mapping</code> building data from <a href="https://www.nature.com/articles/nn.4216">Tasic et al 2016</a> as reference and inhibitory neurons from <a href="https://www.sciencedirect.com/science/article/pii/S009286742031254X">Gouwens, Sorensen, et al 2020</a> as query.</li>
+			<li><i class="fa-brands fa-r-project"></i> <a href="https://github.com/AllenInstitute/scrattch.patchseq/blob/main/examples/build_MTG_patchseq_taxonomy.md"><strong>Build and map against a human MTG PatchSeq taxonomy</strong></a> - Similar example using data from the <a href="https://portal.brain-map.org/explore/seattle-alzheimers-disease">Seattle Alzheimer’s Disease Brain Cell Atlas (SEA-AD)</a> as reference and patch-seq data from layer 2-3, excitatory neurons from <a href="https://www.nature.com/articles/s41586-021-03813-8">Berg et al (2021)</a> as query.</li>
+        </ul>
+		
+		<h3 id="spatial">Analysis of spatial transcriptomics data</h3>
+        <p>We encourage the use of <strong><a href="#mapping">the mapping algorithms discussed above</a></strong> for mapping reference cell types to (cell-centric) spatial transcriptomics data set. In addition <code>mfishtools</code> include code for creation of marker gene panels, and sanity checking and mapping spatial transcriptomics data sets.</p>
+        <ul>
+            <li><i class="fa-brands fa-r-project"></i> <a href="http://htmlpreview.github.io/?https://github.com/AllenInstitute/mfishtools/blob/master/vignettes/inhibitory_marker_selection.html"><strong>Building a combinatorial marker gene panel for spatial transcriptomics</strong></a> - Example demonstrating how to generate a computationally "optimal" marker gene panel based on reference single cell RNAseq data. Relevant statistics and plots show the predicted success for the panel.</li>
+			<li><i class="fa-brands fa-python"></i> <a href="https://github.com/AllenNeuralDynamics/mfishtoolspy"><strong>Python version of mfishtools</strong></a> - Includes a couple of Jupyter notebooks reproducing the above example in python, with a few modifications.
+			<li><i class="fa-brands fa-r-project"></i> <a href="http://htmlpreview.github.io/?https://github.com/AllenInstitute/mfishtools/blob/master/vignettes/inhibitory_marker_mapping.html"><strong>Mapping cells from spatial transcriptomics data sets to reference cell types</strong></a> - Example showing a modified correlation-based cell type mapping method optimized for (historic) spatial transcriptomics data. Also includes code for predicting the accuracy of the calls based on reference data. Note that this script is experimental and results should be confirmed.</li>
+        </ul>
+
+        <br><hr>
+    
+        <h2 id="usage"><i class="fas fa-brain"></i> Usage and contribution</h2>
+        <p><code>Scrattch</code> is under active development. Please reach out if you have any challenges or suggestions!</p>
+    
+        <h3 id="documentation">Documentation</h3>
+        <p>There is no specific documentation for <code>scrattch</code>. However, each child package has extensive documentation available via help commands within R and/or through the corresponding GitHub page. Conversion of documentation to web-based versions is complete for <a href="https://alleninstitute.github.io/scrattch.taxonomy"><code>scrattch.taxonomy</code></a>, <a href="https://alleninstitute.github.io/scrattch.mapping"><code>scrattch.mapping</code></a>, and <a href="https://alleninstitute.github.io/scrattch.patchseq"><code>scrattch.patchseq</code></a>.</p>
+    
+        <h3 id="license">License</h3>
+        <p>The license for this package is available on Github at: <a href="https://github.com/AllenInstitute/scrattch/blob/master/LICENSE">https://github.com/AllenInstitute/scrattch/blob/master/LICENSE</a>.</p>
+    
+        <h3 id="contribution">Contribution Agreement</h3>
+        <p>If you contribute code to this repository through pull requests or other mechanisms, you are subject to the Allen Institute Contribution Agreement, which is available in full at: <a href="https://github.com/AllenInstitute/scrattch/blob/master/CONTRIBUTION">https://github.com/AllenInstitute/scrattch/blob/master/CONTRIBUTION</a>.</p>
+    
+        <h3 id="support">Level of Support</h3>
+        <p>We frequently update the child packages of this tool with no fixed schedule. Community involvement is encouraged through both issues and pull requests. We encourage community involvement in child packages directly, rather than through the <code>scrattch</code> umbrella package, when appropriate.</p>
+		
+		<h3 id="contributors">Contributors</h3>
+        <p>The <code>scrattch</code> suite includes code developed by the following individuals (listed alphabetically): Lucas Graybuck, Nelson Johansen, Inkar Kapen, Changkyu Lee, Jeremy Miller, Cindy van Velthoven, and Zizhen Yao.</p>
+    </div>
+
+</body>
+</html>
