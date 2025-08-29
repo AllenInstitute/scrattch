@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scratch Publications</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Simple styling for table header */
+        thead th {
+            position: sticky;
+            top: 0;
+            background-color: #f9fafb; /* A light gray background */
+        }
+        /* Style for alternating row colors for better readability */
+        tbody tr:nth-child(even) {
+            background-color: #f3f4f6;
+        }
+        /* Style for the links in the table */
+        #publicationsTableBody a {
+            color: #2563eb; /* A shade of blue */
+            text-decoration: none; /* No underline by default */
+        }
+        #publicationsTableBody a:hover {
+            text-decoration: underline; /* Underline on hover */
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans">
+
+    <div class="max-w-full p-4 sm:p-6 lg:p-8">
+        <div class="mb-6">
+            <input type="text" id="searchInput" placeholder="Search for any term..." class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-150 ease-in-out">
+        </div>
+
+        <div class="overflow-x-auto bg-white rounded-lg shadow">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th scope="col" class="py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r border-gray-200">Title</th>
+                        <th scope="col" class="py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r border-gray-200">Tools</th>
+                        <th scope="col" class="py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r border-gray-200">First author</th>
+                        <th scope="col" class="py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pub. year</th>
+                    </tr>
+                </thead>
+                <tbody id="publicationsTableBody" class="bg-white divide-y divide-gray-200">
+                    </tbody>
+            </table>
+        </div>
+
+        <div id="paginationControls" class="flex justify-center items-center mt-4 space-x-2">
+            </div>
+    </div>
+
+    <script>
+        const tableBody = document.getElementById('publicationsTableBody');
+        const searchInput = document.getElementById('searchInput');
+        let allData = []; // This will hold the parsed data
+        const state = {
+            'currentPage': 1,
+            'rowsPerPage': 10,
+            'data': allData
+        };
+
+        // CSV data is now embedded directly in the script
+            const csvData =`Title,First author,Tool(s) used,Pub. year,Source
+<a href='https://doi.org/10.1038/nn.4216' target='_blank' rel='noopener noreferrer'>Adult mouse cortical cell taxonomy revealed by single cell transcriptomics</a>,Tasic,.hicat; .vis; tasic2016data,2016,Allen Institute
+<a href='https://doi.org/10.1038/s41586-018-0654-5' target='_blank' rel='noopener noreferrer'>Shared and distinct transcriptomic cell types across neocortical areas</a>,Tasic,.hicat; .vis,2018,Allen Institute
+<a href='https://doi.org/10.1016/j.cell.2020.09.057' target='_blank' rel='noopener noreferrer'>Integrated Morphoelectric and Transcriptomic Classification of Cortical GABAergic Cells</a>,Gouwens,.vis; .mapping,2019,Allen Institute
+<a href='https://doi.org/10.1038/s41586-019-1506-7' target='_blank' rel='noopener noreferrer'>Conserved cell types with divergent features in human versus mouse cortex</a>,Hodge,hodge2019data,2019,Allen Institute
+<a href='https://doi.org/10.1016/j.cell.2019.09.020' target='_blank' rel='noopener noreferrer'>Multimodal analysis of cell types in a hypothalamic node controlling social behavior</a>,Kim,.hicat,2019,Allen Institute
+<a href='https://doi.org/10.1371/journal.pone.0212898' target='_blank' rel='noopener noreferrer'>Identification of genetic markers for cortical areas using a Random Forest classification routine and the Allen Mouse Brain Atlas</a>,Weed,.vis,2019,Allen Institute
+<a href='https://doi.org/10.1126/science.ade9516' target='_blank' rel='noopener noreferrer'>Comparative transcriptomics reveals human-specific cortical features</a>,Jorstad,.hicat; mfishtools,2020,Allen Institute
+<a href='https://doi.org/10.48550/arXiv.2301.08436' target='_blank' rel='noopener noreferrer'>SpaceTx: a roadmap for benchmarking spatial transcriptomics exploration of the brain</a>,Long,mfishtools,2020,Allen Institute
+<a href='https://doi.org/10.7554/eLife.87866.2' target='_blank' rel='noopener noreferrer'>Rabies virus-based barcoded neuroanatomy resolved by single-cell RNA and in situ sequencing</a>,Zhang,.mapping,2020,Allen Institute
+"<a href='https://doi.org/10.1038/s41586-021-03465-8' target='_blank' rel='noopener noreferrer'>Comparative cellular analysis of motor cortex in human, marmoset and mouse</a>",Bakken,.hicat,2021,Allen Institute
+<a href='https://doi.org/10.1038/s41586-021-03813-8' target='_blank' rel='noopener noreferrer'>Human neocortical expansion involves glutamatergic neuron diversification</a>,Berg,.mapping,2021,Allen Institute
+<a href='https://doi.org/10.1016/j.celrep.2024.114718' target='_blank' rel='noopener noreferrer'>Areal specializations in the morpho-electric and transcriptomic properties of primate layer 5 extratelencephalic projection neurons</a>,Dembrow,.mapping,2021,Allen Institute
+<a href='https://doi.org/10.1016/j.celrep.2020.107648' target='_blank' rel='noopener noreferrer'>Distinct Transcriptomic Cell Types and Neural Circuits of the Subiculum and Prosubiculum along the Dorsal-Ventral Axis</a>,Ding,.hicat,2021,Allen Institute
+<a href='https://doi.org/10.1016/j.neuron.2021.03.011' target='_blank' rel='noopener noreferrer'>Enhancer viruses for combinatorial cell-subclass-specific labeling</a>,Graybuck,.hicat; .io,2021,Allen Institute
+<a href='https://doi.org/10.1126/science.adf6812' target='_blank' rel='noopener noreferrer'>Transcriptomic cytoarchitecture reveals principles of human neocortex organization</a>,Jorstad,.hicat; mfishtools,2021,Allen Institute
+"<a href='https://doi.org/10.1016/j.neuron.2021.08.030' target='_blank' rel='noopener noreferrer'>Signature morpho-electric, transcriptomic, and dendritic properties of human layer 5 neocortical pyramidal neurons</a>",Kalmbach,.mapping,2021,Allen Institute
+<a href='https://doi.org/10.1126/science.adf6484' target='_blank' rel='noopener noreferrer'>Signature morphoelectric properties of diverse GABAergic interneurons in the human neocortex</a>,Lee,.mapping; mfishtools,2021,Allen Institute
+<a href='https://doi.org/10.1038/s41586-021-03941-1' target='_blank' rel='noopener noreferrer'>Morphological diversity of single neurons in molecularly defined cell types</a>,Peng,.hicat,2021,Allen Institute
+"<a href='https://doi.org/10.7554/eLife.63632' target='_blank' rel='noopener noreferrer'>Simultaneous trimodal single-cell measurement of transcripts, epitopes, and chromatin accessibility using TEA-seq</a>",Swanson,.vis,2021,Allen Institute
+<a href='https://doi.org/10.1016/j.celrep.2024.114963' target='_blank' rel='noopener noreferrer'>Distinctive physiology of molecularly identified medium spiny neurons in the macaque putamen</a>,Ting,.mapping; .taxonomy,2021,Allen Institute
+<a href='https://doi.org/10.1038/s41586-023-06817-8' target='_blank' rel='noopener noreferrer'>A transcriptomic taxonomy of mouse brain-wide spinal projecting neurons</a>,Winter,.bigcat; .mapping,2021,Allen Institute
+<a href='https://doi.org/10.1016/j.cell.2021.04.021' target='_blank' rel='noopener noreferrer'>A taxonomy of transcriptomic cell types across the isocortex and hippocampal formation</a>,Yao,.hicat; .vis,2021,Allen Institute
+<a href='https://doi.org/10.1038/s41586-021-03500-8' target='_blank' rel='noopener noreferrer'>A transcriptomic and epigenomic cell atlas of the mouse primary motor cortex</a>,Yao,.hicat; .vis,2021,Allen Institute
+<a href='https://doi.org/10.1038/s41586-021-03969-3' target='_blank' rel='noopener noreferrer'>Isoform cell-type specificity in the mouse primary motor cortex</a>,Booeshaghi,.hicat,2022,Allen Institute
+<a href='https://doi.org/10.1038/s41598-021-94732-1' target='_blank' rel='noopener noreferrer'>A comprehensive analysis of gene expression changes in a high replicate and open-source dataset of differentiating hiPSC-derived cardiomyocytes</a>,Grancharova,.vis,2022,Allen Institute
+<a href='https://doi.org/10.1038/s41467-020-14952-3' target='_blank' rel='noopener noreferrer'>Transcriptomic evidence that von Economo neurons are regionally specialized extratelencephalic-projecting excitatory neurons</a>,Hodge,.hicat,2022,Allen Institute
+<a href='https://doi.org/10.1016/j.neuron.2025.04.035' target='_blank' rel='noopener noreferrer'>Enhancer AAV toolbox for accessing and perturbing striatal cell types and circuits</a>,Hunker,.hicat; .mapping,2022,Allen Institute
+<a href='https://doi.org/10.1016/j.xgen.2022.100107' target='_blank' rel='noopener noreferrer'>Single nucleus multi-omics identifies human cortical cell regulatory genome diversity</a>,Luo,.hicat,2022,Allen Institute
+<a href='https://doi.org/10.1038/s43588-024-00683-8' target='_blank' rel='noopener noreferrer'>Joint inference of discrete cell types and continuous type-specific variability in single-cell datasets with MMIDAS</a>,Marghi,.hicat,2022,Allen Institute
+<a href='https://doi.org/10.1016/j.celrep.2021.108754' target='_blank' rel='noopener noreferrer'>Functional enhancer elements drive subclass-selective expression from mouse to primate neocortex</a>,Mich,.hicat,2022,Allen Institute
+<a href='https://doi.org/10.1016/j.cell.2025.05.002' target='_blank' rel='noopener noreferrer'>A suite of enhancer AAVs and transgenic mouse lines for genetic access to cortical cell types</a>,Ben-Simon,.mapping,2023,Allen Institute
+<a href='https://doi.org/10.1126/science.adf0805' target='_blank' rel='noopener noreferrer'>Morphoelectric and transcriptomic divergence of the layer 1 interneuron repertoire in human versus mouse neocortex</a>,Chartrand,.mapping; mfishtools,2023,Allen Institute
+<a href='https://doi.org/10.1038/s41586-025-08805-6' target='_blank' rel='noopener noreferrer'>Connectomics of predicted Sst transcriptomic types in mouse visual cortex</a>,Gamlin,.hicat,2023,Allen Institute
+<a href='https://doi.org/10.1126/science.adf2359' target='_blank' rel='noopener noreferrer'>Interindividual variation in human cortical cell type abundance and expression</a>,Johansen,transcriptomic_clustering,2023,Allen Institute
+<a href='https://doi.org/10.1016/j.celrep.2025.115730' target='_blank' rel='noopener noreferrer'>Enhancer AAVs for targeting spinal motor neurons and descending motor pathways in rodents and macaque</a>,Kussick,.bigcat; .taxonomy; .mapping,2023,Allen Institute
+<a href='https://doi.org/10.1038/s42003-021-02517-z' target='_blank' rel='noopener noreferrer'>Comprehensive in situ mapping of human cortical transcriptomic cell types</a>,Langseth,mfishtools,2023,Allen Institute
+<a href='https://doi.org/10.1101/2025.02.11.637559' target='_blank' rel='noopener noreferrer'>Annotation Comparison Explorer (ACE): connecting brain cell types across studies of health and Alzheimer's Disease</a>,Miller,ACE,2023,Allen Institute
+<a href='https://doi.org/10.1101/525451' target='_blank' rel='noopener noreferrer'>Multimodal cell type correspondence by intersectional mFISH in intact tissues</a>,Nicovich,mfishtools,2023,Allen Institute
+<a href='https://doi.org/10.1101/2024.06.18.599583' target='_blank' rel='noopener noreferrer'>The transcriptomic and spatial organization of telencephalic GABAergic neuronal types</a>,van Velthoven,.bigcat; .mapping; .example,2023,Allen Institute
+<a href='https://doi.org/10.1038/s41586-023-06812-z' target='_blank' rel='noopener noreferrer'>A high-resolution transcriptomic and spatial atlas of cell types in the whole mouse brain</a>,Yao,.bigcat; .vis; mfishtools; cell_type_mapper,2023,Allen Institute
+<a href='https://doi.org/10.1038/s41598-023-36638-8' target='_blank' rel='noopener noreferrer'>Reference-based cell type matching of in situ image-based spatial transcriptomics data on primary visual cortex of mouse brain</a>,Zhang,mfishtools,2023,Allen Institute
+<a href='https://doi.org/10.1038/s41593-024-01774-5' target='_blank' rel='noopener noreferrer'>Integrated multimodal cell atlas of Alzheimer's disease</a>,Gabitto,transcriptomic_clustering,2024,Allen Institute
+<a href='https://doi.org/10.1038/s41586-024-08350-8' target='_blank' rel='noopener noreferrer'>Brain-wide cell-type-specific transcriptomic signatures of healthy ageing in mice</a>,Jin,.bigcat; .mapping; .hicat,2024,Allen Institute
+"<a href='https://doi.org/10.7554/eLife.65482' target='_blank' rel='noopener noreferrer'>Scaled, high fidelity electrophysiological, morphological, and transcriptomic cell characterization</a>",Lee,.mapping,2024,Allen Institute
+<a href='https://doi.org/10.1016/j.cels.2019.06.004' target='_blank' rel='noopener noreferrer'>SingleCellNet: A Computational Tool to Classify Single Cell RNA-Seq Data Across Platforms and Across Species</a>,Tan,tasic2016data,2019,External Study
+<a href='https://doi.org/10.1681/ASN.2018090912' target='_blank' rel='noopener noreferrer'>Advantages of single nucleus over single cell RNA-seq in adult kidney</a>,Wu,.hicat,2019,External Study
+<a href='https://doi.org/10.1038/s41598-024-69255-0' target='_blank' rel='noopener noreferrer'>A single-nucleus transcriptomic atlas of medium spiny neurons in the rat nucleus accumbens</a>,Reiner,.example,2020,External Study
+<a href='https://doi.org/10.1016/j.cell.2023.06.009' target='_blank' rel='noopener noreferrer'>Single-cell spatial transcriptome reveals cell-type organization in the macaque cortex</a>,Chen,.hicat,2021,External Study
+<a href='https://doi.org/10.1038/s41467-019-10861-2' target='_blank' rel='noopener noreferrer'>A single-nucleus RNA-sequencing pipeline to decipher the molecular anatomy and pathophysiology of human kidneys</a>,Lake,.hicat,2021,External Study
+<a href='https://doi.org/10.1242/dev.197962' target='_blank' rel='noopener noreferrer'>Single-cell transcriptomics of the early developing mouse cerebral cortex disentangle the spatial and temporal components of neuronal fate acquisition</a>,Moreau,.hicat; .vis,2021,External Study
+<a href='https://doi.org/10.1093/database/baad035' target='_blank' rel='noopener noreferrer'>scBrainMap: a landscape for cell types and associated genetic markers in the brain</a>,Chi,.hicat,2022,External Study
+<a href='https://doi.org/10.1038/s41467-022-33045-x' target='_blank' rel='noopener noreferrer'>devCellPy is a machine learning-enabled pipeline for automated annotation of complex multilayered single-cell transcriptomic data</a>,Galdos,.io,2022,External Study
+<a href='https://doi.org/10.1038/s41593-022-01041-5' target='_blank' rel='noopener noreferrer'>Single-neuron projectome of mouse prefrontal cortex</a>,Gao,.hicat; .example,2022,External Study
+<a href='https://doi.org/10.1016/j.cell.2023.11.016' target='_blank' rel='noopener noreferrer'>Spatiotemporal transcriptome atlas reveals the regional specification of the developing human brain</a>,Li,.example,2022,External Study
+<a href='https://doi.org/10.1016/j.ebiom.2020.102904' target='_blank' rel='noopener noreferrer'>Chronic myelomonocytic leukaemia stem cell transcriptomes anticipate disease morphology and outcome</a>,Wiseman,.hicat,2022,External Study
+<a href='https://doi.org/10.1002/alz.14222' target='_blank' rel='noopener noreferrer'>Loss of TREM2 diminishes CAA despite an overall increase of amyloid load in Tg-SwDI mice</a>,Zhong,.hicat,2022,External Study
+<a href='https://doi.org/10.1016/j.xplc.2023.100631' target='_blank' rel='noopener noreferrer'>scPlant: A versatile framework for single-cell transcriptomic data analysis in plants</a>,Cao,.hicat,2023,External Study
+<a href='http://doi.org/10.1101/gr.278717.123' target='_blank' rel='noopener noreferrer'>Single-cell spatial transcriptomics reveals a dystrophic trajectory following a developmental bifurcation of myoblast cell fates in facioscapulohumeral muscular dystrophy</a>,Chen,.hicat,2023,External Study
+<a href='https://doi.org/10.1016/j.csbj.2024.11.038' target='_blank' rel='noopener noreferrer'>BrainCellR: A precise cell type nomenclature pipeline for comparative analysis across brain single-cell datasets</a>,Chi,.hicat,2023,External Study
+<a href='https://doi.org/10.1016/j.neuron.2025.02.015' target='_blank' rel='noopener noreferrer'>Single-cell spatial transcriptomic atlas of the whole mouse brain</a>,Han,.hicat,2023,External Study
+<a href='https://doi.org/10.1016/j.cell.2025.02.037' target='_blank' rel='noopener noreferrer'>Single-cell spatial transcriptome atlas and whole-brain connectivity of the macaque claustrum</a>,Lei,.hicat,2023,External Study
+<a href='https://doi.org/10.1101/2024.09.02.610245' target='_blank' rel='noopener noreferrer'>Inferring Ligand-Receptor Interactions between GABAergic and Glutamatergic neurons during somatosensory cortex development</a>,Mathieu,.hicat,2023,External Study
+<a href='https://doi.org/10.1016/j.celrep.2022.111810' target='_blank' rel='noopener noreferrer'>p53/p21 pathway activation contributes to the ependymal fate decision downstream of GemC1</a>,Ortiz-Álvarez,.hicat,2023,External Study
+<a href='https://doi.org/10.7554/eLife.84262' target='_blank' rel='noopener noreferrer'>Multimodal mapping of cell types and projections in the central nucleus of the amygdala</a>,Wang,mfishtools,2023,External Study
+<a href='https://doi.org/10.1038/s41586-021-03910-8' target='_blank' rel='noopener noreferrer'>An atlas of cortical arealization identifies dynamic molecular signatures</a>,Bhaduri,example,2024,External Study
+<a href='https://doi.org/10.1038/s41467-019-13206-1' target='_blank' rel='noopener noreferrer'>Embryonic progenitor pools generate diversity in fine-scale excitatory cortical subnetworks</a>,Ellender,.hicat,2024,External Study
+<a href='https://doi.org/10.1126/sciadv.abg3203' target='_blank' rel='noopener noreferrer'>A neurogenetic mechanism of experience-dependent suppression of aggression</a>,Ishii,.hicat,2024,External Study
+<a href='https://doi.org/10.1016/j.cell.2020.11.046' target='_blank' rel='noopener noreferrer'>Differential encoding in prefrontal cortex projection neuron classes across cognitive tasks</a>,Lui,.hicat,2024,External Study
+<a href='https://doi.org/10.1038/s41467-025-58098-6' target='_blank' rel='noopener noreferrer'>CREB3 gain of function variants protect against ALS</a>,Megat,.hicat,2024,External Study
+<a href='https://doi.org/10.1038/s41380-023-01970-y' target='_blank' rel='noopener noreferrer'>Identification of brain cell types underlying genetic association with word reading and correlated traits</a>,Price,.io,2024,External Study
+<a href='https://doi.org/10.1016/j.cell.2021.11.024' target='_blank' rel='noopener noreferrer'>EASI-FISH for thick tissue defines lateral hypothalamus spatio-molecular organization</a>,Wang,mfishtools,2024,External Study
+<a href='https://doi.org/10.1038/s41467-025-62793-9' target='_blank' rel='noopener noreferrer'>Charting the spatial transcriptome of the human cerebral cortex at single-cell resolution</a>,Wei,.hicat,2024,External Study`;
+
+        /**
+         * A simple CSV parser. This handles quoted fields but not more complex cases.
+         * @param {string} csv - The CSV string to parse.
+         * @returns {Array<Object>} An array of objects representing the rows.
+         */
+        function parseCSV(csv) {
+            const lines = csv.trim().split('\n');
+            // Handle potential carriage return characters (\r) in headers
+            const headers = lines[0].replace(/\r$/, '').split(',');
+            const result = [];
+
+            for (let i = 1; i < lines.length; i++) {
+                // Skip empty lines
+                if (lines[i].trim() === '') continue;
+
+                // This regex handles comma-separated values, including those inside quotes.
+                const values = lines[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+                const obj = {};
+                for (let j = 0; j < headers.length; j++) {
+                    let value = values[j] || '';
+                    // Remove quotes from start and end if they exist
+                    if (value.startsWith('"') && value.endsWith('"')) {
+                        value = value.slice(1, -1);
+                    }
+                    // Trim whitespace and remove potential carriage return from the last field
+                    obj[headers[j].trim()] = value.trim().replace(/\r$/, '');
+                }
+                result.push(obj);
+            }
+            return result;
+        }
+
+        /**
+         * Renders the table rows for the current page.
+         * @param {Array<Object>} data - The data to render.
+         */
+        function renderTable(data) {
+            tableBody.innerHTML = ''; // Clear existing rows
+
+            const start = (state.currentPage - 1) * state.rowsPerPage;
+            const end = start + state.rowsPerPage;
+            const paginatedData = data.slice(start, end);
+
+            if (paginatedData.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="4" class="text-center text-gray-500 py-4">No results found.</td></tr>';
+                return;
+            }
+
+            paginatedData.forEach(row => {
+                const tr = document.createElement('tr');
+
+                // Sanitize content to prevent potential XSS issues
+                const sanitize = (str) => {
+                    if (!str) return '';
+                    const temp = document.createElement('div');
+                    temp.textContent = str;
+                    return temp.innerHTML;
+                };
+
+                // Create a temporary element to parse the HTML string
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = row['Title'];
+
+                // Find the anchor tag inside the parsed content
+                const link = tempDiv.querySelector('a');
+                if (link) {
+                    // Add attributes to the link to open in a new tab
+                    link.setAttribute('target', '_blank');
+                    link.setAttribute('rel', 'noopener noreferrer');
+                }
+
+                tr.innerHTML = `
+                    <td class="p-2 whitespace-normal text-sm font-medium text-gray-900 border-r border-gray-200">${tempDiv.innerHTML}</td>
+                    <td class="p-2 whitespace-normal text-sm text-gray-500 border-r border-gray-200">${sanitize(row['Tool(s) used'])}</td>
+                    <td class="p-2 whitespace-normal text-sm text-gray-500 border-r border-gray-200">${sanitize(row['First author'])}</td>
+                    <td class="p-2 whitespace-normal text-sm text-gray-500">${sanitize(row['Pub. year'])}</td>
+                `;
+                tableBody.appendChild(tr);
+            });
+        }
+        
+        /**
+         * Sets up the pagination controls.
+         * @param {Array<Object>} data - The data to paginate.
+         */
+        function setupPagination(data) {
+            const paginationControls = document.getElementById('paginationControls');
+            paginationControls.innerHTML = ''; // Clear existing controls
+            const pageCount = Math.ceil(data.length / state.rowsPerPage);
+
+            // Previous button
+            const prevButton = document.createElement('button');
+            prevButton.innerText = 'Previous';
+            prevButton.classList.add('px-3', 'py-1', 'border', 'rounded', 'text-sm', 'text-gray-700', 'bg-gray-200', 'hover:bg-gray-300', 'disabled:opacity-50', 'disabled:cursor-not-allowed');
+            prevButton.disabled = state.currentPage === 1;
+            prevButton.addEventListener('click', () => {
+                state.currentPage--;
+                renderTable(state.data);
+                setupPagination(state.data);
+            });
+            paginationControls.appendChild(prevButton);
+
+            // Page number indicators
+            const pageNumbers = document.createElement('div');
+            pageNumbers.classList.add('flex', 'space-x-1');
+            for (let i = 1; i <= pageCount; i++) {
+                const button = document.createElement('button');
+                button.innerText = i;
+                button.classList.add('px-3', 'py-1', 'border', 'rounded', 'text-sm', 'text-gray-700', 'hover:bg-gray-300');
+                if (i === state.currentPage) {
+                    button.classList.add('bg-blue-500', 'text-white', 'hover:bg-blue-600');
+                } else {
+                    button.classList.add('bg-gray-200');
+                }
+                button.addEventListener('click', () => {
+                    state.currentPage = i;
+                    renderTable(state.data);
+                    setupPagination(state.data);
+                });
+                pageNumbers.appendChild(button);
+            }
+            paginationControls.appendChild(pageNumbers);
+
+            // Next button
+            const nextButton = document.createElement('button');
+            nextButton.innerText = 'Next';
+            nextButton.classList.add('px-3', 'py-1', 'border', 'rounded', 'text-sm', 'text-gray-700', 'bg-gray-200', 'hover:bg-gray-300', 'disabled:opacity-50', 'disabled:cursor-not-allowed');
+            nextButton.disabled = state.currentPage === pageCount || pageCount === 0;
+            nextButton.addEventListener('click', () => {
+                state.currentPage++;
+                renderTable(state.data);
+                setupPagination(state.data);
+            });
+            paginationControls.appendChild(nextButton);
+        }
+
+
+        // Process data when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            allData = parseCSV(csvData);
+            state.data = allData;
+            renderTable(state.data);
+            setupPagination(state.data);
+
+            // Setup search listener
+            searchInput.addEventListener('input', (e) => {
+                const searchTerm = e.target.value.toLowerCase();
+                const filteredData = allData.filter(row => {
+                    return Object.values(row).some(value =>
+                        value && value.toLowerCase().includes(searchTerm)
+                    );
+                });
+                state.currentPage = 1; // Reset to first page on search
+                state.data = filteredData;
+                renderTable(state.data);
+                setupPagination(state.data);
+            });
+        });
+    </script>
+
+</body>
+</html>
