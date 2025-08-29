@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scratch Publications</title>
+    <title>scrattch publications</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* Simple styling for table header */
@@ -38,9 +38,10 @@
                 <thead class="bg-gray-50">
                     <tr>
                         <th scope="col" class="py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r border-gray-200">Title</th>
-                        <th scope="col" class="py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r border-gray-200">Tools</th>
+                        <th scope="col" class="py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r border-gray-200">Libraries</th>
                         <th scope="col" class="py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r border-gray-200">First author</th>
-                        <th scope="col" class="py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pub. year</th>
+                        <th scope="col" class="py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r border-gray-200">Pub. year</th>
+                        <th scope="col" class="py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Source</th>
                     </tr>
                 </thead>
                 <tbody id="publicationsTableBody" class="bg-white divide-y divide-gray-200">
@@ -97,7 +98,7 @@
 <a href='https://doi.org/10.1016/j.cell.2025.05.002' target='_blank' rel='noopener noreferrer'>A suite of enhancer AAVs and transgenic mouse lines for genetic access to cortical cell types</a>,Ben-Simon,.mapping,2023,Allen Institute
 <a href='https://doi.org/10.1126/science.adf0805' target='_blank' rel='noopener noreferrer'>Morphoelectric and transcriptomic divergence of the layer 1 interneuron repertoire in human versus mouse neocortex</a>,Chartrand,.mapping; mfishtools,2023,Allen Institute
 <a href='https://doi.org/10.1038/s41586-025-08805-6' target='_blank' rel='noopener noreferrer'>Connectomics of predicted Sst transcriptomic types in mouse visual cortex</a>,Gamlin,.hicat,2023,Allen Institute
-<a href='https://doi.org/10.1126/science.adf2359' target='_blank' rel='noopener noreferrer'>Interindividual variation in human cortical cell type abundance and expression</a>,Johansen,transcriptomic_clustering,2023,Allen Institute
+<a href='https://doi.org/1126/science.adf2359' target='_blank' rel='noopener noreferrer'>Interindividual variation in human cortical cell type abundance and expression</a>,Johansen,transcriptomic_clustering,2023,Allen Institute
 <a href='https://doi.org/10.1016/j.celrep.2025.115730' target='_blank' rel='noopener noreferrer'>Enhancer AAVs for targeting spinal motor neurons and descending motor pathways in rodents and macaque</a>,Kussick,.bigcat; .taxonomy; .mapping,2023,Allen Institute
 <a href='https://doi.org/10.1038/s42003-021-02517-z' target='_blank' rel='noopener noreferrer'>Comprehensive in situ mapping of human cortical transcriptomic cell types</a>,Langseth,mfishtools,2023,Allen Institute
 <a href='https://doi.org/10.1101/2025.02.11.637559' target='_blank' rel='noopener noreferrer'>Annotation Comparison Explorer (ACE): connecting brain cell types across studies of health and Alzheimer's Disease</a>,Miller,ACE,2023,Allen Institute
@@ -130,7 +131,7 @@
 <a href='https://doi.org/10.7554/eLife.84262' target='_blank' rel='noopener noreferrer'>Multimodal mapping of cell types and projections in the central nucleus of the amygdala</a>,Wang,mfishtools,2023,External Study
 <a href='https://doi.org/10.1038/s41586-021-03910-8' target='_blank' rel='noopener noreferrer'>An atlas of cortical arealization identifies dynamic molecular signatures</a>,Bhaduri,example,2024,External Study
 <a href='https://doi.org/10.1038/s41467-019-13206-1' target='_blank' rel='noopener noreferrer'>Embryonic progenitor pools generate diversity in fine-scale excitatory cortical subnetworks</a>,Ellender,.hicat,2024,External Study
-<a href='https://doi.org/10.1126/sciadv.abg3203' target='_blank' rel='noopener noreferrer'>A neurogenetic mechanism of experience-dependent suppression of aggression</a>,Ishii,.hicat,2024,External Study
+<a href='https://doi.1126/sciadv.abg3203' target='_blank' rel='noopener noreferrer'>A neurogenetic mechanism of experience-dependent suppression of aggression</a>,Ishii,.hicat,2024,External Study
 <a href='https://doi.org/10.1016/j.cell.2020.11.046' target='_blank' rel='noopener noreferrer'>Differential encoding in prefrontal cortex projection neuron classes across cognitive tasks</a>,Lui,.hicat,2024,External Study
 <a href='https://doi.org/10.1038/s41467-025-58098-6' target='_blank' rel='noopener noreferrer'>CREB3 gain of function variants protect against ALS</a>,Megat,.hicat,2024,External Study
 <a href='https://doi.org/10.1038/s41380-023-01970-y' target='_blank' rel='noopener noreferrer'>Identification of brain cell types underlying genetic association with word reading and correlated traits</a>,Price,.io,2024,External Study
@@ -181,7 +182,7 @@
             const paginatedData = data.slice(start, end);
 
             if (paginatedData.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="4" class="text-center text-gray-500 py-4">No results found.</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="5" class="text-center text-gray-500 py-4">No results found.</td></tr>';
                 return;
             }
 
@@ -212,7 +213,8 @@
                     <td class="p-2 whitespace-normal text-sm font-medium text-gray-900 border-r border-gray-200">${tempDiv.innerHTML}</td>
                     <td class="p-2 whitespace-normal text-sm text-gray-500 border-r border-gray-200">${sanitize(row['Tool(s) used'])}</td>
                     <td class="p-2 whitespace-normal text-sm text-gray-500 border-r border-gray-200">${sanitize(row['First author'])}</td>
-                    <td class="p-2 whitespace-normal text-sm text-gray-500">${sanitize(row['Pub. year'])}</td>
+                    <td class="p-2 whitespace-normal text-sm text-gray-500 border-r border-gray-200">${sanitize(row['Pub. year'])}</td>
+                    <td class="p-2 whitespace-normal text-sm text-gray-500">${sanitize(row['Source'])}</td>
                 `;
                 tableBody.appendChild(tr);
             });
