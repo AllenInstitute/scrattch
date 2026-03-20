@@ -215,7 +215,7 @@
         <p><strong>We strongly encourage the use of docker to install the <code>scrattch</code> suite.</strong> In particular, several functions in <code>scrattch.taxonomy</code> and <code>scrattch.mapping</code> have known issues in certain R environments. That said, we provide options for installing and running R in both a docker environment and through standard R approaches.</p>
     
         <h3 id="docker">Using docker (RECOMMENDED)</h3>
-        <p>The current docker version is accessible through <a href="https://hub.docker.com/u/alleninstitute">Docker Hub</a>. As of 26 March 2025 the <a href="https://hub.docker.com/r/alleninst/scrattch/tags">Docker version</a> is <strong><code>docker://alleninst/scrattch:1.1.2</code></strong>. This corresponds to AIT (v1.1.2) (see <a href="https://github.com/AllenInstitute/AllenInstituteTaxonomy/">the Allen Institute Taxonomy GitHub respository</a> for details).</p>
+        <p>The current docker version is accessible through <a href="https://hub.docker.com/u/alleninstitute">Docker Hub</a>. As of 19 March 2026 the <a href="https://hub.docker.com/r/alleninst/scrattch/tags">Docker version</a> is <strong><code>docker://alleninst/scrattch:1.1.5</code></strong>. This corresponds to AIT (v1.1.2) (see <a href="https://github.com/AllenInstitute/AllenInstituteTaxonomy/">the Allen Institute Taxonomy GitHub respository</a> for details).</p>
         <p>Docker can be run on some HPC environments that use singularity as follows:</p>
         <ul>
             <li><strong>Non-interactive</strong>: <code>singularity shell --cleanenv [Docker version] Rscript YOUR_CODE.R</code></li>
@@ -223,7 +223,7 @@
             <li><strong>To create a sif file for use in other environments</strong>: <code>singularity pull scrattch:[#.#.#].sif [Docker version]</code></li>
         </ul>
         <p>If you cannot figure out how to use Docker in your specific environment, please post an issue.</p>
-        <p><em>--WARNING-- The 1.1.2 docker listed above provides all the tooling for AIT (v1.1.2) and some functionality for scrattch.mapping, but is broken for hierarchical mapping and all scrattch.patchseq functionality. An update mid-April will bring both of these packages back up to speed with the AIT schema / format.</em></p>
+        <p><em>--NOTICE-- The 1.1.5 docker listed above provides all the tooling for AIT (v1.1.2) and the same functionality for scrattch.mapping as in docker version 1.1.2. Updates in this version fix issues with hierarchical mapping and scrattch.patchseq functionality, which should now work. If you find any issues with any of the packages, please post an issue in the relevant GitHub repo.</em></p>
     
         <h3 id="in-r">Installing <code>scrattch</code> in R</h3>
         <p>While we advise using the provided docker, you can install all <code>scrattch</code> packages along with their GitHub and BioConductor dependencies, as follows:</p>
